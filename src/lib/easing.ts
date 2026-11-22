@@ -12,3 +12,9 @@ export function dwell(x: number) {
   x = clamp01(x)
   return x * x * x * (x * (6 * x - 15) + 10)
 }
+
+/** Ease-out with a small overshoot, for paper layers snapping upright. */
+export function backOut(x: number, c = 1.25) {
+  x = clamp01(x) - 1
+  return 1 + (c + 1) * x * x * x + c * x * x
+}

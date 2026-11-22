@@ -18,6 +18,8 @@ export interface PopUpLayerDef {
   /** width in page widths, and height / width ratio */
   w: number
   ratio: number
+  /** how far the layer stands up from the page, degrees (90 = upright) */
+  stand?: number
   /** kept on mobile (2 per spread) */
   mobile?: boolean
 }
@@ -55,7 +57,11 @@ export const spreads: Spread[] = [
     body_en: 'Stories to read aloud, to look at, and to grow up with.',
     body_ar: null,
     link: { href: '#children', label_en: "Explore children's books", label_ar: null },
-    layers: [],
+    layers: [
+      { src: '/popups/spreadA-layer1.svg', base: 0.4, x: 0.08, w: 1.0, ratio: 540 / 880, stand: 86, mobile: true },
+      { src: '/popups/spreadA-layer2.svg', base: 0.5, x: 0.2, w: 0.86, ratio: 460 / 720, stand: 82 },
+      { src: '/popups/spreadA-layer3.svg', base: 0.6, x: -0.18, w: 0.72, ratio: 230 / 560, stand: 78, mobile: true },
+    ],
     bgPaper: '#f4f1ea',
   },
   {
@@ -76,7 +82,11 @@ export const spreads: Spread[] = [
       ],
       lines_ar: null,
     },
-    layers: [],
+    layers: [
+      { src: '/popups/spreadB-layer1.svg', base: 0.38, x: 0.1, w: 1.0, ratio: 420 / 880, stand: 86, mobile: true },
+      { src: '/popups/spreadB-layer2.svg', base: 0.47, x: -0.12, w: 0.56, ratio: 300 / 440, stand: 76, mobile: true },
+      { src: '/popups/spreadB-layer3.svg', base: 0.54, x: 0.2, w: 0.38, ratio: 340 / 320, stand: 72 },
+    ],
     bgPaper: '#f4f1ea',
   },
   {
@@ -94,7 +104,11 @@ export const spreads: Spread[] = [
       lines_en: ['Event title placeholder', 'Date [TBC]', 'Location [TBC]'],
       lines_ar: null,
     },
-    layers: [],
+    layers: [
+      { src: '/popups/spreadC-layer1.svg', base: 0.36, x: 0.1, w: 1.04, ratio: 400 / 900, stand: 86, mobile: true },
+      { src: '/popups/spreadC-layer2.svg', base: 0.45, x: 0.06, w: 0.8, ratio: 380 / 700, stand: 82, mobile: true },
+      { src: '/popups/spreadC-layer3.svg', base: 0.53, x: 0.08, w: 0.86, ratio: 200 / 700, stand: 76 },
+    ],
     bgPaper: '#f4f1ea',
   },
   {
@@ -107,7 +121,11 @@ export const spreads: Spread[] = [
     body_en: 'Manuscripts, maps and photographs from the heritage collection.',
     body_ar: null,
     link: { href: '#heritage', label_en: 'Explore the heritage collection', label_ar: null },
-    layers: [],
+    layers: [
+      { src: '/popups/spreadD-layer1.svg', base: 0.4, x: 0.17, w: 0.9, ratio: 500 / 860, stand: 84, mobile: true },
+      { src: '/popups/spreadD-layer2.svg', base: 0.5, x: 0.24, w: 0.5, ratio: 480 / 440, stand: 74, mobile: true },
+      { src: '/popups/spreadD-layer3.svg', base: 0.58, x: -0.14, w: 0.66, ratio: 170 / 620, stand: 78 },
+    ],
     bgPaper: '#f1ece0',
   },
 ]

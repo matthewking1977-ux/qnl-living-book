@@ -27,6 +27,8 @@ export function IntroStage() {
   const progress = useRef(0)
   const [chapter, setChapter] = useState(-1)
   const [chromeOn, setChromeOn] = useState(false)
+  // pop-up artwork is loaded one spread ahead of the reader
+  const [loadUpTo, setLoadUpTo] = useState(0)
   const first = useMemo(() => frameAt(0, innerWidth, innerHeight), [])
 
   useEffect(() => {
@@ -39,6 +41,7 @@ export function IntroStage() {
       chrome.current!.style.opacity = String(f.chrome)
       railFill.current!.style.transform = `scaleY(${s})`
       setChapter(f.chapter)
+      setLoadUpTo((n) => Math.max(n, f.chapter + 1))
       setChromeOn(f.chrome > 0.5)
     }
     const st = ScrollTrigger.create({
@@ -74,7 +77,7 @@ export function IntroStage() {
           <img src="/img/qnl-logo-white.webp" alt="Qatar National Library" width={480} height={250} className="h-12 w-auto md:h-14" />
         </header>
 
-        <Book ref={book} pose={first.pose} />
+        <Book ref={book} pose={first.pose} loadUpTo={loadUpTo} />
 
         {/* Phase 0 copy */}
         <div

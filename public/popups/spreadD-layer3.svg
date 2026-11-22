@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 170" width="620" height="170">
+<defs><filter id="g" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="14"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .16 0"/><feComposite in2="SourceAlpha" operator="in" result="n"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="n"/></feMerge></filter></defs>
+<g filter="url(#g)" stroke="#8f8c84" stroke-width="1" stroke-linejoin="round" stroke-linecap="round">
+
+<g stroke="#7a6038">
+<rect x="20" y="118" width="250" height="26" fill="#d6c39a"/>
+<rect x="34" y="92" width="226" height="26" fill="#e9dcc0"/>
+<rect x="26" y="144" width="238" height="26" fill="#f1e7d0"/>
+<path fill="none" d="M60 92V118M230 92V118M50 118V144M240 118V144"/>
+<path fill="#f1e7d0" d="M360 170V70Q360 40 390 40H560Q590 40 590 70V170Z"/>
+<path fill="none" d="M392 80H558M392 100H558M392 120H500"/>
+<circle cx="344" cy="66" r="26" fill="#e9dcc0"/><circle cx="344" cy="66" r="12" fill="#d6c39a"/>
+</g>
+</g></svg>

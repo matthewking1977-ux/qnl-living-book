@@ -1,9 +1,10 @@
 import { forwardRef, useImperativeHandle, useLayoutEffect, useRef } from 'react'
 import { spreads } from '../../data/spreads'
-import { lerp } from '../../lib/easing'
+import { backOut, clamp01, lerp } from '../../lib/easing'
 import { sign, useDir } from '../../lib/dir'
-import { BLOCK, C, H, LEAF_GAP, LEAVES, M, PH, PW, S, T, W, type BookPose } from './geometry'
+import { BLOCK, BLOCK_OPEN, C, H, LEAF, LEAF_GAP, LEAVES, M, PH, PW, S, T, W, type BookPose } from './geometry'
 import { Page, PaperFace, SpreadLead, SpreadTrail } from './Page'
+import { PopUpLayer, type PopUpNodes } from './PopUpLayer'
 import { FaceContent, MirrorContext, Slab } from './Slab'
 
 export interface BookHandle {
@@ -21,7 +22,7 @@ export interface BookHandle {
  * far end of the spine). Opening lays spine and front board flat to the left,
  * and the page block slides half a spine-width so the gutter sits centred.
  */
-export const Book = forwardRef<BookHandle, { pose: BookPose }>(function Book({ pose }, ref) {
+export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }>(function Book({ pose, loadUpTo = 0 }, ref) {
   const dir = useDir()
   const mirrored = dir === 'rtl'
   const k = sign(dir)
@@ -36,6 +37,8 @@ export const Book = forwardRef<BookHandle, { pose: BookPose }>(function Book({ p
   const floor = useRef<HTMLDivElement>(null)
   const leaves = useRef<(HTMLDivElement | null)[]>([])
   const shades = useRef<HTMLElement[][]>([])
+  const blockBox = useRef<HTMLDivElement>(null)
+  const pops = useRef<PopUpNodes[][]>(spreads.map(() => []))
 
   const apply = (p: BookPose) => {
     const o = p.open
@@ -51,16 +54,43 @@ export const Book = forwardRef<BookHandle, { pose: BookPose }>(function Book({ p
     floor.current!.style.opacity = String(1 - o)
     floor.current!.style.transform = `translate(-50%, ${p.y + (H / 2) * p.scale + 36}px) scale(${p.scale})`
 
+    // the page block relaxes as the cover opens
+    const kz = lerp(1, BLOCK_OPEN / BLOCK, o)
+    const blockT = BLOCK * kz
+    blockBox.current!.style.transform = `scale3d(1,1,${kz})`
+
     for (let i = 0; i < LEAVES; i++) {
       const el = leaves.current[i]
       if (!el) continue
       const t = p.turns[i] ?? 0
-      const zRest = BLOCK + LEAF_GAP * (LEAVES - 1 - i) + LEAF_GAP / 2 // on the reading-side stack
+      const zRest = blockT + LEAF_GAP * (LEAVES - 1 - i) + LEAF_GAP / 2 // on the reading-side stack
       const zTurned = LEAF_GAP * i + LEAF_GAP / 2 // on the turned stack
       el.style.transform = `translateZ(${lerp(zRest, zTurned, t)}px) rotateY(${-180 * t}deg)`
       const shade = String(Math.sin(Math.PI * t) * 0.45) // darkest at 90°
       const nodes = (shades.current[i] ??= Array.from(el.querySelectorAll<HTMLElement>('[data-shade]')))
       for (const n of nodes) n.style.opacity = shade
+    }
+    applyPops(p)
+  }
+
+  // pop-ups: each layer folds up about its base line, staggered by depth
+  const applyPops = (p: BookPose) => {
+    for (let i = 0; i < pops.current.length; i++) {
+      const u = p.pops[i] ?? 0
+      // fold line height: just above the higher of this spread's two page surfaces
+      const zLeft = LEAF_GAP * (i + 0.5) + LEAF / 2
+      const zRight = i < LEAVES - 1 ? BLOCK_OPEN + LEAF_GAP * (LEAVES - 1.5 - i) + LEAF / 2 : BLOCK_OPEN
+      const z = Math.max(zLeft, zRight) + 0.6
+      const group = pops.current[i]
+      for (let j = 0; j < group.length; j++) {
+        const n = group[j]
+        if (!n) continue
+        const x = clamp01(u * (1 + 0.22 * (group.length - 1)) - 0.22 * j)
+        n.layer.style.transform = `translateZ(${z + j * 0.4}px) rotateX(${-n.stand * backOut(x)}deg)`
+        n.layer.style.opacity = String(Math.min(1, x * 7))
+        n.shadow.style.transform = `translateZ(${z}px)`
+        n.shadow.style.opacity = String(x)
+      }
     }
   }
 
@@ -165,6 +195,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose }>(function Book({ p
 
               {/* page block + turning pages; slides to centre the gutter */}
               <div ref={block} className="absolute left-0 top-0">
+                <div ref={blockBox} className="absolute left-0 top-0">
                 <Slab
                   w={PW} h={PH} t={BLOCK}
                   style={{ top: M }}
@@ -175,6 +206,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose }>(function Book({ p
                     </PaperFace>
                   }
                 />
+                </div>
                 {/* DOM order = paint order for coplanar cases: last page first */}
                 {Array.from({ length: LEAVES }, (_, n) => LEAVES - 1 - n).map((i) => (
                   <Page
@@ -200,6 +232,17 @@ export const Book = forwardRef<BookHandle, { pose: BookPose }>(function Book({ p
                     }
                   />
                 ))}
+                {/* pop-up layers, anchored on the gutter */}
+                {spreads.map((sp, i) =>
+                  sp.layers.map((def, j) => (
+                    <PopUpLayer
+                      key={def.src}
+                      def={def}
+                      load={i <= loadUpTo}
+                      register={(n) => { pops.current[i][j] = n! }}
+                    />
+                  )),
+                )}
               </div>
             </div>
           </div>

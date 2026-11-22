@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 380" width="700" height="380">
+<defs><filter id="g" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="10"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .16 0"/><feComposite in2="SourceAlpha" operator="in" result="n"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="n"/></feMerge></filter></defs>
+<g filter="url(#g)" stroke="#8f8c84" stroke-width="1" stroke-linejoin="round" stroke-linecap="round">
+
+<path fill="#6b6b6b" fill-rule="evenodd" d="M0 380V60Q0 0 60 0H640Q700 0 700 60V380ZM92 380V160Q350 50 608 160V380Z"/>
+<path fill="#b9b7b2" d="M92 380V160Q150 132 214 116Q206 270 124 380Z"/>
+<path fill="#b9b7b2" d="M608 380V160Q550 132 486 116Q494 270 576 380Z"/>
+<path fill="#e6e3dc" d="M124 380Q350 330 576 380Z"/>
+<path fill="none" stroke="#e6e3dc" d="M40 40H660"/>
+</g></svg>

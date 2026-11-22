@@ -1,4 +1,4 @@
-import { dwell, lerp, smoothstep } from '../../lib/easing'
+import { clamp01, dwell, lerp, smoothstep } from '../../lib/easing'
 import { H, POSE_CLOSED, POSE_OPEN, T, W, type BookPose } from './geometry'
 
 /**
@@ -9,13 +9,16 @@ import { H, POSE_CLOSED, POSE_OPEN, T, W, type BookPose } from './geometry'
 
 /** [start of turn, end of turn, end of spread] for spreads A–D */
 export const SPREAD_WINDOWS: [number, number, number][] = [
-  [0.18, 0.245, 0.34],
-  [0.34, 0.405, 0.5],
-  [0.5, 0.565, 0.66],
-  [0.66, 0.725, 0.8],
+  [0.18, 0.232, 0.34],
+  [0.34, 0.392, 0.5],
+  [0.5, 0.552, 0.66],
+  [0.66, 0.712, 0.8],
 ]
-/** where the chapter index sends you: the middle of each spread's rest */
-export const SPREAD_STOPS = SPREAD_WINDOWS.map(([, b, c]) => (b + c) / 2)
+/** pop-up timing relative to a spread window: rise just as the page lands, fold before the next turn */
+const POP_RISE: [number, number] = [-0.012, 0.04]
+const POP_FOLD: [number, number] = [-0.034, -0.004]
+/** where the chapter index sends you: the middle of each spread's rest, pop-up standing */
+export const SPREAD_STOPS = SPREAD_WINDOWS.map(([, b, c]) => (b + POP_RISE[1] + c + POP_FOLD[0]) / 2)
 
 export const PHASES = [
   [0.0, 'Arrival'],
@@ -60,6 +63,14 @@ export function frameAt(s: number, vw: number, vh: number): Frame {
   // ── Phases 2–5 · Spreads A–D (0.18–0.80): one page turn each, then rest ──
   const turns = SPREAD_WINDOWS.map(([a, b]) => dwell((s - a) / (b - a)))
 
+  // Pop-ups: fold up slightly after the page lands, fold flat before the next turn.
+  // The value is linear here; Book staggers it by depth and adds the overshoot.
+  const pops = SPREAD_WINDOWS.map(
+    ([, b, c]) =>
+      clamp01((s - (b + POP_RISE[0])) / (POP_RISE[1] - POP_RISE[0])) *
+      (1 - clamp01((s - (c + POP_FOLD[0])) / (POP_FOLD[1] - POP_FOLD[0]))),
+  )
+
   // ── Phase 6 · Close (0.80–0.92): pages riffle back, cover closes, book settles ──
   for (let i = 0; i < turns.length; i++) {
     const delay = (turns.length - 1 - i) * 0.009 // last-turned page goes first
@@ -80,6 +91,7 @@ export function frameAt(s: number, vw: number, vh: number): Frame {
     rz: lerp(POSE_CLOSED.rz, POSE_OPEN.rz, face),
     open,
     turns,
+    pops,
   }
 
   let chapter = -1

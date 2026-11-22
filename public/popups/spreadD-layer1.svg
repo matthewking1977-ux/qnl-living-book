@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 500" width="860" height="500">
+<defs><filter id="g" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="12"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .16 0"/><feComposite in2="SourceAlpha" operator="in" result="n"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="n"/></feMerge></filter></defs>
+<g filter="url(#g)" stroke="#8f8c84" stroke-width="1" stroke-linejoin="round" stroke-linecap="round">
+
+<g stroke="#a98d5c">
+<path fill="#e9dcc0" d="M12 500V30Q200 8 430 24T848 18V500Z"/>
+<rect x="36" y="44" width="788" height="456" fill="none"/>
+<path fill="none" stroke-width=".6" d="M110 44V500M196 44V500M282 44V500M368 44V500M454 44V500M540 44V500M626 44V500M712 44V500M798 44V500M36 110H824M36 188H824M36 266H824M36 344H824M36 422H824"/>
+<path fill="#d6c39a" stroke="#7a6038" d="M36 300C120 280 150 220 230 228C300 236 300 300 370 290C420 282 410 210 470 190C500 150 548 150 540 200C534 240 560 262 620 250C700 236 720 300 824 280V500H36Z"/>
+<path fill="#f1e7d0" stroke="#7a6038" d="M440 310C470 290 520 300 512 336C506 362 460 366 444 344Z"/>
+<g fill="#7a6038" stroke="none"><circle cx="232" cy="330" r="4"/><circle cx="486" cy="330" r="4"/><circle cx="650" cy="350" r="4"/></g>
+<path fill="none" stroke-dasharray="3 5" d="M232 330Q360 420 486 330T650 350"/>
+<g transform="translate(700 130)"><circle r="44" fill="#f1e7d0"/><path fill="#7a6038" stroke="none" d="M0-40L7 0L0 40L-7 0Z"/><path fill="#a98d5c" stroke="none" d="M-40 0L0-7L40 0L0 7Z"/></g>
+</g>
+</g></svg>

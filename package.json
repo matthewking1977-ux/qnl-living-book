@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "assets": "node scripts/build-assets.mjs",
+    "assets": "node scripts/build-assets.mjs && node scripts/build-popups.mjs",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview"
   },
