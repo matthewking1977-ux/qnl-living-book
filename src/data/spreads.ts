@@ -49,7 +49,8 @@ export interface Spread {
 }
 
 /** height / width of each supplied artwork file after trimming (printed by `npm run assets`) */
-const R = { A1: 797 / 1200, A2: 519 / 1200, A3: 659 / 660, A4: 900 / 680, A5: 1200 / 725, A6: 214 / 1200 }
+const R = { A1: 797 / 1200, A2: 519 / 1200, A3: 659 / 660, A4: 900 / 680, A5: 1200 / 725, A6: 214 / 1200,
+  B2: 594 / 1200, B3: 1200 / 790, B4: 900 / 677, B5: 780 / 585, B6: 221 / 1200 }
 
 export const spreads: Spread[] = [
   {
@@ -63,8 +64,8 @@ export const spreads: Spread[] = [
     body_ar: null,
     link: { href: '#children', label_en: "Explore children's books", label_ar: null },
     layers: [
-      { src: '/popups/spreadA-layer1.webp', base: 0.45, x: 0.12, w: 1.1, ratio: R.A1, stand: 88, mobile: true },
-      { src: '/popups/spreadA-layer2.webp', base: 0.51, x: 0.06, w: 1.26, ratio: R.A2, stand: 84 },
+      { src: '/popups/spreadA-layer1.webp', base: 0.4, x: 0.12, w: 1.1, ratio: R.A1, stand: 88, mobile: true },
+      { src: '/popups/spreadA-layer2.webp', base: 0.49, x: 0.06, w: 1.26, ratio: R.A2, stand: 84 },
       { src: '/popups/spreadA-layer3.webp', base: 0.58, x: 0.27, w: 0.64, ratio: R.A3, stand: 82, mobile: true },
       { src: '/popups/spreadA-layer4.webp', base: 0.64, x: -0.6, w: 0.36, ratio: R.A4, stand: 80, yaw: -22 },
       { src: '/popups/spreadA-layer5.webp', base: 0.64, x: 0.62, w: 0.38, ratio: R.A5, stand: 80, yaw: 22 },
@@ -91,9 +92,12 @@ export const spreads: Spread[] = [
       lines_ar: null,
     },
     layers: [
-      { src: '/popups/spreadB-layer1.svg', base: 0.45, x: 0.1, w: 1.12, ratio: 420 / 880, stand: 86, mobile: true },
-      { src: '/popups/spreadB-layer2.svg', base: 0.54, x: -0.12, w: 0.63, ratio: 300 / 440, stand: 76, mobile: true },
-      { src: '/popups/spreadB-layer3.svg', base: 0.61, x: 0.2, w: 0.43, ratio: 340 / 320, stand: 72 },
+      // layer 1 (shelf-wall backdrop) not yet supplied
+      { src: '/popups/spreadB-layer2.webp', base: 0.42, x: 0.06, w: 1.2, ratio: R.B2, stand: 86, mobile: true },
+      { src: '/popups/spreadB-layer3.webp', base: 0.52, x: 0.1, w: 0.46, ratio: R.B3, stand: 82, mobile: true },
+      { src: '/popups/spreadB-layer4.webp', base: 0.58, x: -0.6, w: 0.36, ratio: R.B4, stand: 80, yaw: -22 },
+      { src: '/popups/spreadB-layer5.webp', base: 0.58, x: 0.64, w: 0.38, ratio: R.B5, stand: 80, yaw: 22 },
+      { src: '/popups/spreadB-layer6.webp', base: 0.63, x: 0.02, w: 1.2, ratio: R.B6, stand: 58 },
     ],
     bgPaper: '#f4f1ea',
   },

@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import type { PopUpLayerDef } from '../../data/spreads'
-import { M, PH, PW } from './geometry'
+import { M, PH, PW, S } from './geometry'
 import { MirrorContext } from './Slab'
 
 export interface PopUpNodes {
@@ -17,7 +17,7 @@ export interface PopUpNodes {
  * lies flat on the page and stands as the spread opens, plus its shadow on the
  * paper. Book drives both through `register`.
  */
-export function PopUpLayer({ def, load, register }: { def: PopUpLayerDef; load: boolean; register: (n: PopUpNodes | null) => void }) {
+export function PopUpLayer({ def, depth, load, register }: { def: PopUpLayerDef; depth: number; load: boolean; register: (n: PopUpNodes | null) => void }) {
   const mirrored = useContext(MirrorContext)
   const w = def.w * PW
   const h = w * def.ratio
@@ -46,7 +46,7 @@ export function PopUpLayer({ def, load, register }: { def: PopUpLayerDef; load: 
       <div
         ref={(el) => { layer = el; sync() }}
         className="absolute"
-        style={{ left, top: foldY - h, width: w, height: h, transformOrigin: 'bottom center', opacity: 0 }}
+        style={{ left, top: foldY - h, width: w, height: h, transformOrigin: 'bottom center', opacity: 0, clipPath: 'inset(-200px -200px 0 -200px)' }}
       >
         <img
           src={load ? def.src : undefined}
@@ -54,7 +54,13 @@ export function PopUpLayer({ def, load, register }: { def: PopUpLayerDef; load: 
           decoding="async"
           draggable={false}
           className="block h-full w-full"
-          style={mirrored ? { transform: 'scaleX(-1)' } : undefined}
+          style={{
+            transform: mirrored ? 'scaleX(-1)' : undefined,
+            // Depth between layers: each cut-out throws a soft shadow onto whatever stands
+            // behind it, and layers further back sit slightly in shade. Static, so it is
+            // rasterised once and costs nothing during the scrub.
+            filter: `drop-shadow(0 ${3 * S}px ${2 * S}px rgba(12,8,2,.38)) drop-shadow(0 ${12 * S}px ${14 * S}px rgba(12,8,2,.42)) brightness(${0.8 + 0.2 * depth})`,
+          }}
         />
       </div>
     </>

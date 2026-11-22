@@ -235,6 +235,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
                     <PopUpLayer
                       key={def.src}
                       def={def}
+                      depth={sp.layers.length > 1 ? j / (sp.layers.length - 1) : 1}
                       load={i <= loadUpTo}
                       register={(n) => { pops.current[i][j] = n! }}
                     />
