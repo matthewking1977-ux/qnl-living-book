@@ -50,7 +50,8 @@ export interface Frame {
 }
 
 const fitClosed = (vw: number, vh: number) => Math.min((vh * 0.46) / H, (vw * 0.62) / W)
-const fitOpen = (vw: number, vh: number) => Math.min((vw * 0.84) / (2 * W + T), (vh * 0.68) / H)
+// the open book is seen from low down, so it is short on screen and can run wide; the pop-ups need the headroom
+const fitOpen = (vw: number, vh: number) => Math.min((vw * 0.8) / (2 * W + T), (vh * 0.92) / H)
 
 export function frameAt(s: number, vw: number, vh: number): Frame {
   // ── Phase 0 · Arrival (0.00–0.08): closed book, three-quarter view ──
@@ -84,9 +85,9 @@ export function frameAt(s: number, vw: number, vh: number): Frame {
   const open = coverOpen * (1 - coverClose)
   const pose: BookPose = {
     x: 0,
-    y: lerp(-vh * 0.03, vh * 0.03, face) - vh * 0.04 * settle,
+    y: lerp(-vh * 0.03, vh * 0.1, face) - vh * 0.1 * settle,
     scale: lerp(fitClosed(vw, vh), fitOpen(vw, vh), coverOpen) * lerp(1, 0.72, settle),
-    rx: lerp(POSE_CLOSED.rx, POSE_OPEN.rx, face) + 10 * settle,
+    rx: lerp(POSE_CLOSED.rx, POSE_OPEN.rx, face),
     ry: lerp(POSE_CLOSED.ry, POSE_OPEN.ry, face),
     rz: lerp(POSE_CLOSED.rz, POSE_OPEN.rz, face),
     open,

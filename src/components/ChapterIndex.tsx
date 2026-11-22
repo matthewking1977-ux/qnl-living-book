@@ -19,7 +19,7 @@ export function ChapterIndex({ active, onSelect, disabled }: { active: number; o
             >
               <span>{sp.index}</span>
               <span
-                className={`hidden origin-left whitespace-nowrap uppercase transition-[opacity,transform] duration-300 ease-(--ease-ui) lg:inline rtl:origin-right ${
+                className={`hidden origin-left whitespace-nowrap uppercase transition-[opacity,transform] duration-300 ease-(--ease-ui) 2xl:inline rtl:origin-right ${
                   active === i ? 'translate-x-0 opacity-100' : '-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:opacity-100'
                 }`}
               >

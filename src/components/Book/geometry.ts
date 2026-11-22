@@ -53,7 +53,7 @@ export const POSE_CLOSED: Omit<BookPose, 'scale' | 'x' | 'y' | 'pops'> = {
   turns: [0, 0, 0, 0],
 }
 export const POSE_OPEN: Omit<BookPose, 'scale' | 'x' | 'y' | 'pops'> = {
-  rx: 42,
+  rx: 54,
   ry: 0,
   rz: 0,
   open: 1,

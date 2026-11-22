@@ -47,16 +47,16 @@ export const Page = forwardRef<HTMLDivElement, { front: ReactNode; back: ReactNo
 
 /* ---------- spread content ---------- */
 
-/** First page in reading order: chapter label and the one Playfair title. */
+/** First page in reading order: chapter label and the one Playfair title, kept low so the pop-up has the page. */
 export function SpreadLead({ spread }: { spread: Spread }) {
   return (
-    <div className="flex h-full flex-col justify-between pb-10 pt-9 pe-11 ps-9">
+    <div className="flex h-full flex-col justify-end gap-4 pb-8 pt-9 pe-11 ps-9">
       <p className="label text-g1">
         <span lang="en">{spread.index}</span>
         <span className="mx-2">·</span>
         <Tx en={spread.label_en} ar={spread.label_ar} />
       </p>
-      <h3 className="font-display max-w-[11em] text-[34px] leading-[1.12] tracking-[-0.01em]">
+      <h3 className="font-display max-w-[11em] text-[30px] leading-[1.12] tracking-[-0.01em]">
         <Tx en={spread.title_en} ar={spread.title_ar} />
       </h3>
     </div>

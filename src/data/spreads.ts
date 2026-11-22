@@ -49,7 +49,7 @@ export interface Spread {
 }
 
 /** height / width of each supplied artwork file after trimming (printed by `npm run assets`) */
-const R = { A1: 797 / 1200, A2: 519 / 1200, A3: 659 / 660, A4: 900 / 680, A5: 1040 / 780, A6: 214 / 1200 }
+const R = { A1: 797 / 1200, A2: 519 / 1200, A3: 659 / 660, A4: 900 / 680, A5: 1200 / 725, A6: 214 / 1200 }
 
 export const spreads: Spread[] = [
   {
@@ -65,7 +65,7 @@ export const spreads: Spread[] = [
     layers: [
       { src: '/popups/spreadA-layer1.webp', base: 0.45, x: 0.12, w: 1.1, ratio: R.A1, stand: 88, mobile: true },
       { src: '/popups/spreadA-layer2.webp', base: 0.51, x: 0.06, w: 1.26, ratio: R.A2, stand: 84 },
-      { src: '/popups/spreadA-layer3.webp', base: 0.58, x: 0.06, w: 0.78, ratio: R.A3, stand: 82, mobile: true },
+      { src: '/popups/spreadA-layer3.webp', base: 0.58, x: 0.27, w: 0.64, ratio: R.A3, stand: 82, mobile: true },
       { src: '/popups/spreadA-layer4.webp', base: 0.64, x: -0.6, w: 0.36, ratio: R.A4, stand: 80, yaw: -22 },
       { src: '/popups/spreadA-layer5.webp', base: 0.64, x: 0.62, w: 0.38, ratio: R.A5, stand: 80, yaw: 22 },
       { src: '/popups/spreadA-layer6.webp', base: 0.7, x: 0.02, w: 1.2, ratio: R.A6, stand: 58 },
