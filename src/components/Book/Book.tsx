@@ -85,9 +85,9 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
         // a layer wholly on one page stands on that page; one that bridges the gutter stands on the higher side
         const z = (n.side < 0 ? zLeft : n.side > 0 ? zRight : Math.max(zLeft, zRight)) + 0.6
         const x = clamp01(u * (1 + 0.22 * (group.length - 1)) - 0.22 * j)
-        n.layer.style.transform = `translateZ(${z + j * 0.4}px) rotateX(${-n.stand * backOut(x)}deg)`
+        n.layer.style.transform = `translateZ(${z + j * 0.4}px) rotateZ(${n.yaw}deg) rotateX(${-n.stand * backOut(x)}deg)`
         n.layer.style.opacity = String(Math.min(1, x * 7))
-        n.shadow.style.transform = `translateZ(${z}px)`
+        n.shadow.style.transform = `translateZ(${z}px) rotateZ(${n.yaw}deg)`
         n.shadow.style.opacity = String(x)
       }
     }

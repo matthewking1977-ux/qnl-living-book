@@ -41,10 +41,15 @@ for (const f of await readdir('assets/popups')) {
   if (!/\.(png|webp)$/i.test(f)) continue
   const name = f.replace(/\.\w+$/, '')
   const dest = `public/popups/${name}.webp`
-  const info = await sharp(`assets/popups/${f}`)
-    .trim({ threshold: 40 })
-    .resize({ width: 1200, withoutEnlargement: true })
-    .webp({ quality: 70, alphaQuality: 85 })
-    .toFile(dest)
+  // step the long side down until the layer fits the 120 KB budget
+  let info
+  for (const side of [1200, 1040, 900, 780, 660]) {
+    info = await sharp(`assets/popups/${f}`)
+      .trim({ threshold: 40 })
+      .resize({ width: side, height: side, fit: 'inside', withoutEnlargement: true })
+      .webp({ quality: 70, alphaQuality: 85 })
+      .toFile(dest)
+    if (info.size <= 120 * 1024) break
+  }
   console.log(`${name}: ${info.width}x${info.height}, ${Math.round((await stat(dest)).size / 1024)} KB`)
 }

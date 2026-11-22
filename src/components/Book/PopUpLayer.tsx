@@ -7,6 +7,7 @@ export interface PopUpNodes {
   layer: HTMLElement
   shadow: HTMLElement
   stand: number
+  yaw: number
   /** −1 wholly on the left page, +1 wholly on the right, 0 bridges the gutter */
   side: number
 }
@@ -26,7 +27,7 @@ export function PopUpLayer({ def, load, register }: { def: PopUpLayerDef; load: 
 
   let layer: HTMLElement | null = null
   let shadow: HTMLElement | null = null
-  const sync = () => register(layer && shadow ? { layer, shadow, stand: def.stand ?? 84, side: def.x + def.w / 2 <= 0 ? -1 : def.x - def.w / 2 >= 0 ? 1 : 0 } : null)
+  const sync = () => register(layer && shadow ? { layer, shadow, stand: def.stand ?? 84, yaw: def.yaw ?? 0, side: def.x + def.w / 2 <= 0 ? -1 : def.x - def.w / 2 >= 0 ? 1 : 0 } : null)
 
   return (
     <>
@@ -37,6 +38,7 @@ export function PopUpLayer({ def, load, register }: { def: PopUpLayerDef; load: 
         style={{
           left: left - w * 0.04, top: foldY - cast, width: w * 1.08, height: cast + 10,
           opacity: 0,
+          transformOrigin: `50% ${cast}px`,
           background:
             'radial-gradient(ellipse 48% 22% at 50% 92%, rgba(20,14,4,.34), transparent 100%), radial-gradient(ellipse 50% 100% at 50% 100%, rgba(20,14,4,.2), transparent 70%)',
         }}

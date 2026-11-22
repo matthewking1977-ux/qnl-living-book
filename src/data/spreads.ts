@@ -18,6 +18,8 @@ export interface PopUpLayerDef {
   /** width in page widths, and height / width ratio */
   w: number
   ratio: number
+  /** turn of the fold line on the page, degrees. Wings fan outward: negative on the left page, positive on the right */
+  yaw?: number
   /** how far the layer stands up from the page, degrees (90 = upright) */
   stand?: number
   /** kept on mobile (2 per spread) */
@@ -46,6 +48,9 @@ export interface Spread {
   bgPaper: string
 }
 
+/** height / width of each supplied artwork file after trimming (printed by `npm run assets`) */
+const R = { A1: 797 / 1200, A2: 519 / 1200, A3: 659 / 660, A4: 900 / 680, A5: 1040 / 780, A6: 214 / 1200 }
+
 export const spreads: Spread[] = [
   {
     id: 'children',
@@ -58,9 +63,12 @@ export const spreads: Spread[] = [
     body_ar: null,
     link: { href: '#children', label_en: "Explore children's books", label_ar: null },
     layers: [
-      { src: '/popups/spreadA-layer1.webp', base: 0.47, x: 0.08, w: 1.12, ratio: 797 / 1200, stand: 86, mobile: true },
-      { src: '/popups/spreadA-layer2.svg', base: 0.57, x: 0.2, w: 0.96, ratio: 460 / 720, stand: 82 },
-      { src: '/popups/spreadA-layer3.svg', base: 0.67, x: -0.18, w: 0.81, ratio: 230 / 560, stand: 78, mobile: true },
+      { src: '/popups/spreadA-layer1.webp', base: 0.45, x: 0.12, w: 1.1, ratio: R.A1, stand: 88, mobile: true },
+      { src: '/popups/spreadA-layer2.webp', base: 0.51, x: 0.06, w: 1.26, ratio: R.A2, stand: 84 },
+      { src: '/popups/spreadA-layer3.webp', base: 0.58, x: 0.06, w: 0.78, ratio: R.A3, stand: 82, mobile: true },
+      { src: '/popups/spreadA-layer4.webp', base: 0.64, x: -0.6, w: 0.36, ratio: R.A4, stand: 80, yaw: -22 },
+      { src: '/popups/spreadA-layer5.webp', base: 0.64, x: 0.62, w: 0.38, ratio: R.A5, stand: 80, yaw: 22 },
+      { src: '/popups/spreadA-layer6.webp', base: 0.7, x: 0.02, w: 1.2, ratio: R.A6, stand: 58 },
     ],
     bgPaper: '#f4f1ea',
   },
