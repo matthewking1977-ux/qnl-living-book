@@ -1,0 +1,112 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-ink: #0b0b0b;
+  --color-paper: #f4f1ea;
+  --color-g1: #6b6b6b;
+  --color-g2: #b9b7b2;
+  --color-g3: #e6e3dc;
+  --font-sans: 'Roboto', system-ui, sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-arabic: 'Noto Sans Arabic', 'Roboto', system-ui, sans-serif;
+  --ease-ui: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html {
+  background: #0b0b0b;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: var(--font-sans);
+}
+/* All Arabic is Noto Sans Arabic, including display type. */
+:lang(ar),
+:lang(ar) .font-display {
+  font-family: var(--font-arabic);
+}
+:lang(en) {
+  font-family: var(--font-sans);
+}
+.font-display:lang(en),
+.font-display :lang(en) {
+  font-family: var(--font-display);
+}
+
+/* Small tracked uppercase label (R3). Arabic has no case, and tracking breaks joins. */
+.label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+:lang(ar).label,
+:lang(ar) .label {
+  letter-spacing: 0;
+  font-size: 0.8125rem;
+}
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* ---------- Book (CSS 3D) ---------- */
+.b3d,
+.b3d-all * {
+  transform-style: preserve-3d;
+}
+.b-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  transform-style: flat;
+  overflow: hidden;
+}
+.b-face *,
+.b-edge * {
+  transform-style: flat;
+}
+.b-edge {
+  position: absolute;
+}
+
+/* paper grain: feTurbulence, multiplied at low opacity */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  opacity: 0.16;
+}
+.cloth {
+  background-color: #0e0e0e;
+}
+.cloth.grain::after {
+  mix-blend-mode: screen;
+  filter: invert(1);
+  opacity: 0.1;
+}
+/* board edges: cloth wrapped over thick greyboard, catching a little light */
+.cloth-edge {
+  background: linear-gradient(#3a3a3a, #232323 30%, #161616);
+}
+.board {
+  border-radius: 3px;
+}
+/* cream page edges */
+.pages-x {
+  background: repeating-linear-gradient(90deg, #efe9da 0 1px, #d9d2c0 1px 2px, #f4f1ea 2px 3px);
+}
+.pages-y {
+  background: repeating-linear-gradient(0deg, #efe9da 0 1px, #d2cbb9 1px 2px, #f4f1ea 2px 3px);
+}
+.leaf-edge {
+  background: #dcd6c6;
+}
+.paper {
+  background-color: #f4f1ea;
+  color: #0b0b0b;
+}

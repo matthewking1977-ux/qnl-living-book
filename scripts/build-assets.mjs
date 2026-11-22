@@ -1,0 +1,33 @@
+// Converts source assets in /assets into responsive WebP/AVIF in /public/img.
+// Re-run with `npm run assets` whenever /assets changes.
+import sharp from 'sharp'
+import { mkdir } from 'node:fs/promises'
+
+const out = 'public/img'
+await mkdir(out, { recursive: true })
+
+const photos = [
+  ['assets/photos/QNL 0001.jpg', 'exterior-day'],
+  ['assets/photos/QNL 0002.jpg', 'exterior-dusk'],
+  ['assets/photos/QNL 0003.jpg', 'interior'],
+  ['assets/photos/QNL 0004.jpg', 'aisle'],
+  ['assets/photos/QNL 0005.jpg', 'mezzanine'],
+  ['assets/photos/QNL 0006.jpg', 'terraces'],
+  ['assets/photos/QNL 0007.jpg', 'hall'],
+  ['assets/photos/QNL 0008.jpg', 'stone'],
+]
+for (const [src, name] of photos) {
+  for (const w of [640, 1280, 1920]) {
+    const img = sharp(src).resize({ width: w, withoutEnlargement: true })
+    await img.clone().webp({ quality: 68 }).toFile(`${out}/${name}-${w}.webp`)
+    await img.clone().avif({ quality: 48 }).toFile(`${out}/${name}-${w}.avif`)
+  }
+}
+// Logos: resized only, never recoloured.
+for (const tone of ['white', 'black']) {
+  await sharp(`assets/logo/qnl-logo-${tone}.png`)
+    .resize({ width: 480 })
+    .webp({ lossless: true })
+    .toFile(`${out}/qnl-logo-${tone}.webp`)
+}
+console.log('assets built')
