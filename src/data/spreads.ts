@@ -58,7 +58,7 @@ export const spreads: Spread[] = [
     body_ar: null,
     link: { href: '#children', label_en: "Explore children's books", label_ar: null },
     layers: [
-      { src: '/popups/spreadA-layer1.svg', base: 0.47, x: 0.08, w: 1.12, ratio: 540 / 880, stand: 86, mobile: true },
+      { src: '/popups/spreadA-layer1.webp', base: 0.47, x: 0.08, w: 1.12, ratio: 797 / 1200, stand: 86, mobile: true },
       { src: '/popups/spreadA-layer2.svg', base: 0.57, x: 0.2, w: 0.96, ratio: 460 / 720, stand: 82 },
       { src: '/popups/spreadA-layer3.svg', base: 0.67, x: -0.18, w: 0.81, ratio: 230 / 560, stand: 78, mobile: true },
     ],

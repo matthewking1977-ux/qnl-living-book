@@ -31,3 +31,20 @@ for (const tone of ['white', 'black']) {
     .toFile(`${out}/qnl-logo-${tone}.webp`)
 }
 console.log('assets built')
+
+// Supplied pop-up artwork: /assets/popups/spreadX-layerN.(png|webp) replaces the
+// placeholder SVG of the same name. Trimmed to the cut-out so the bottom edge is
+// the fold line, then saved as WebP (budget: 120 KB per layer).
+import { readdir, stat } from 'node:fs/promises'
+await mkdir('public/popups', { recursive: true })
+for (const f of await readdir('assets/popups')) {
+  if (!/\.(png|webp)$/i.test(f)) continue
+  const name = f.replace(/\.\w+$/, '')
+  const dest = `public/popups/${name}.webp`
+  const info = await sharp(`assets/popups/${f}`)
+    .trim({ threshold: 40 })
+    .resize({ width: 1200, withoutEnlargement: true })
+    .webp({ quality: 70, alphaQuality: 85 })
+    .toFile(dest)
+  console.log(`${name}: ${info.width}x${info.height}, ${Math.round((await stat(dest)).size / 1024)} KB`)
+}
