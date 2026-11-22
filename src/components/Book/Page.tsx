@@ -67,24 +67,24 @@ export function SpreadLead({ spread }: { spread: Spread }) {
 export function SpreadTrail({ spread }: { spread: Spread }) {
   const dir = useDir()
   return (
-    <div className="flex h-full flex-col justify-end gap-4 pb-8 pt-9 pe-9 ps-11">
+    <div className="flex h-full flex-col justify-end gap-2 pb-6 pt-9 pe-9 ps-11">
       {spread.sample && (
-        <div className="border-t border-ink/25 pt-3">
-          <p className="label mb-1 text-g1" lang="en">Sample</p>
+        <div className="border-t border-ink/25 pt-2">
+          <p className="label mb-0.5 text-g1" style={{ fontSize: 9 }} lang="en">Sample</p>
           {spread.sample.lines_en.map((l, i) => (
-            <p key={i} className={i === 0 ? 'text-[15px] font-medium' : 'text-[13px] leading-snug text-g1'}>
+            <p key={i} className={i === 0 ? 'text-[12px] font-medium' : 'text-[10.5px] leading-snug text-g1'}>
               <Tx en={l} ar={spread.sample!.lines_ar?.[i] ?? null} />
             </p>
           ))}
         </div>
       )}
-      <p className="max-w-[26em] text-[15px] leading-[1.5]">
+      <p className="text-[12px] leading-[1.45]">
         <Tx en={spread.body_en} ar={spread.body_ar} />
       </p>
       <a
         href={spread.link.href}
         tabIndex={-1}
-        className="group inline-flex min-h-11 items-center gap-2 self-start border-b border-ink text-[14px] font-medium"
+        className="group inline-flex min-h-11 items-center gap-2 self-start text-[12px] font-medium underline decoration-1 underline-offset-[5px]"
       >
         <Tx en={spread.link.label_en} ar={spread.link.label_ar} />
         <span aria-hidden className="transition-transform duration-300 ease-(--ease-ui) group-hover:translate-x-1 rtl:group-hover:-translate-x-1">

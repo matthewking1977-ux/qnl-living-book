@@ -6,17 +6,22 @@
 export const S = 1.5
 export const W = 400 * S // cover width
 export const H = 540 * S // cover height
-export const T = 26 * S // spine width = closed thickness between the boards
 export const C = 7 * S // cover board thickness (hardback greyboard)
 export const M = 13 * S // the 'squares': how far the boards overhang the pages
 export const PW = W - M // page width
 export const PH = H - 2 * M // page height
-export const LEAF = 2 * S // visible thickness of a turning page
-export const LEAF_GAP = 2.5 * S // stacking distance between turning pages
+export const LEAF = 2.4 * S // visible thickness of a turning page (card stock)
+export const LEAF_GAP = 3 * S // stacking distance between turning pages
 export const LEAVES = 4 // turning pages (one per spread)
-export const BLOCK = T - LEAVES * LEAF_GAP // the page block under the turning pages
-/** The block relaxes as the book opens, so both sides of a spread sit at a similar height for the pop-ups. */
-export const BLOCK_OPEN = 3 * S
+/**
+ * The book opens into two page blocks, like a thick pop-up book: BLOCK_R stays
+ * on the back board, BLOCK_L swings over with the front board. The turning
+ * pages travel between them, so both sides of every spread sit at a similar
+ * height and both show a stack of page edges.
+ */
+export const BLOCK_R = 18 * S
+export const BLOCK_L = 15 * S
+export const T = BLOCK_R + BLOCK_L + LEAVES * LEAF_GAP // spine width = closed thickness between the boards
 
 /**
  * Everything that can change about the book. The scroll timeline produces one
@@ -48,7 +53,7 @@ export const POSE_CLOSED: Omit<BookPose, 'scale' | 'x' | 'y' | 'pops'> = {
   turns: [0, 0, 0, 0],
 }
 export const POSE_OPEN: Omit<BookPose, 'scale' | 'x' | 'y' | 'pops'> = {
-  rx: 36,
+  rx: 42,
   ry: 0,
   rz: 0,
   open: 1,

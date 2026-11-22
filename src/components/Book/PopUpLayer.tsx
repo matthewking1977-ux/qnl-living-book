@@ -7,6 +7,8 @@ export interface PopUpNodes {
   layer: HTMLElement
   shadow: HTMLElement
   stand: number
+  /** −1 wholly on the left page, +1 wholly on the right, 0 bridges the gutter */
+  side: number
 }
 
 /**
@@ -24,7 +26,7 @@ export function PopUpLayer({ def, load, register }: { def: PopUpLayerDef; load: 
 
   let layer: HTMLElement | null = null
   let shadow: HTMLElement | null = null
-  const sync = () => register(layer && shadow ? { layer, shadow, stand: def.stand ?? 84 } : null)
+  const sync = () => register(layer && shadow ? { layer, shadow, stand: def.stand ?? 84, side: def.x + def.w / 2 <= 0 ? -1 : def.x - def.w / 2 >= 0 ? 1 : 0 } : null)
 
   return (
     <>

@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useLayoutEffect, useRef } from 'react'
 import { spreads } from '../../data/spreads'
 import { backOut, clamp01, lerp } from '../../lib/easing'
 import { sign, useDir } from '../../lib/dir'
-import { BLOCK, BLOCK_OPEN, C, H, LEAF, LEAF_GAP, LEAVES, M, PH, PW, S, T, W, type BookPose } from './geometry'
+import { BLOCK_L, BLOCK_R, C, H, LEAF, LEAF_GAP, LEAVES, M, PH, PW, T, W, type BookPose } from './geometry'
 import { Page, PaperFace, SpreadLead, SpreadTrail } from './Page'
 import { PopUpLayer, type PopUpNodes } from './PopUpLayer'
 import { FaceContent, MirrorContext, Slab } from './Slab'
@@ -37,7 +37,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
   const floor = useRef<HTMLDivElement>(null)
   const leaves = useRef<(HTMLDivElement | null)[]>([])
   const shades = useRef<HTMLElement[][]>([])
-  const blockBox = useRef<HTMLDivElement>(null)
+  const leftBlock = useRef<HTMLDivElement>(null)
   const pops = useRef<PopUpNodes[][]>(spreads.map(() => []))
 
   const apply = (p: BookPose) => {
@@ -48,23 +48,21 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
     center.current!.style.transform = `translate3d(${lerp(-W / 2, T / 2, o)}px,${-H / 2}px,${(-T / 2) * (1 - o)}px)`
     spine.current!.style.transform = `rotateY(${-90 - 90 * o}deg)`
     cover.current!.style.transform = `rotateY(${90 * (1 - o)}deg)`
-    block.current!.style.transform = `translateX(${(-T / 2) * o}px)`
+    block.current!.style.transform = `translate3d(${(-T / 2) * o}px,0,-2px)`
     sheen.current!.style.transform = `translateX(${-30 - p.ry * 1.2}%)`
     table.current!.style.opacity = String(o)
     floor.current!.style.opacity = String(1 - o)
     floor.current!.style.transform = `translate(-50%, ${p.y + (H / 2) * p.scale + 36}px) scale(${p.scale})`
 
-    // the page block relaxes as the cover opens
-    const kz = lerp(1, BLOCK_OPEN / BLOCK, o)
-    const blockT = BLOCK * kz
-    blockBox.current!.style.transform = `scale3d(1,1,${kz})`
+    // the left block rides on the front board and slides to meet the gutter
+    leftBlock.current!.style.transform = `translate3d(${(-T / 2) * o}px,0,-2px)`
 
     for (let i = 0; i < LEAVES; i++) {
       const el = leaves.current[i]
       if (!el) continue
       const t = p.turns[i] ?? 0
-      const zRest = blockT + LEAF_GAP * (LEAVES - 1 - i) + LEAF_GAP / 2 // on the reading-side stack
-      const zTurned = LEAF_GAP * i + LEAF_GAP / 2 // on the turned stack
+      const zRest = BLOCK_R + LEAF_GAP * (LEAVES - 1 - i) + LEAF_GAP / 2 // on the reading-side stack
+      const zTurned = BLOCK_L + LEAF_GAP * i + LEAF_GAP / 2 // on the turned stack
       el.style.transform = `translateZ(${lerp(zRest, zTurned, t)}px) rotateY(${-180 * t}deg)`
       const shade = String(Math.sin(Math.PI * t) * 0.45) // darkest at 90°
       const nodes = (shades.current[i] ??= Array.from(el.querySelectorAll<HTMLElement>('[data-shade]')))
@@ -77,14 +75,15 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
   const applyPops = (p: BookPose) => {
     for (let i = 0; i < pops.current.length; i++) {
       const u = p.pops[i] ?? 0
-      // fold line height: just above the higher of this spread's two page surfaces
-      const zLeft = LEAF_GAP * (i + 0.5) + LEAF / 2
-      const zRight = i < LEAVES - 1 ? BLOCK_OPEN + LEAF_GAP * (LEAVES - 1.5 - i) + LEAF / 2 : BLOCK_OPEN
-      const z = Math.max(zLeft, zRight) + 0.6
+      // page surface heights either side of the gutter for this spread
+      const zLeft = BLOCK_L + LEAF_GAP * (i + 0.5) + LEAF / 2
+      const zRight = i < LEAVES - 1 ? BLOCK_R + LEAF_GAP * (LEAVES - 1.5 - i) + LEAF / 2 : BLOCK_R
       const group = pops.current[i]
       for (let j = 0; j < group.length; j++) {
         const n = group[j]
         if (!n) continue
+        // a layer wholly on one page stands on that page; one that bridges the gutter stands on the higher side
+        const z = (n.side < 0 ? zLeft : n.side > 0 ? zRight : Math.max(zLeft, zRight)) + 0.6
         const x = clamp01(u * (1 + 0.22 * (group.length - 1)) - 0.22 * j)
         n.layer.style.transform = `translateZ(${z + j * 0.4}px) rotateX(${-n.stand * backOut(x)}deg)`
         n.layer.style.opacity = String(Math.min(1, x * 7))
@@ -97,8 +96,6 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
   useImperativeHandle(ref, () => ({ apply }))
   useLayoutEffect(() => apply(pose), [pose, dir]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const pastedownW = (PW - T / 2) / S
-  const m = M / S
 
   return (
     <MirrorContext.Provider value={mirrored}>
@@ -147,10 +144,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
                       <div className="absolute inset-x-0 bottom-[10.2%] h-px bg-white/25" />
                     </div>
                   }
-                  back={
-                    /* hinge crease in the endpaper */
-                    <div className="absolute" style={{ left: 0, right: 0, top: m, bottom: m, background: 'linear-gradient(90deg, #f4f1ea, #d8d2c2 45%, #c9c2b0 55%, #f4f1ea)' }} />
-                  }
+                  back={<div />}
                 />
                 {/* front board, hinged on the far edge of the spine */}
                 <div ref={cover} className="absolute top-0" style={{ left: T, width: W, height: H, transformOrigin: 'left center' }}>
@@ -177,27 +171,31 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
                         />
                       </>
                     }
-                    back={
-                      /* pastedown endpaper with tone-on-tone logo */
-                      <div className="paper grain absolute" style={{ right: 0, top: m, bottom: m, width: pastedownW }}>
-                        <FaceContent>
+                    back={<div />}
+                  />
+                  {/* left page block: rides on the inside of the front board, endpaper on top */}
+                  <div ref={leftBlock} className="absolute left-0" style={{ top: M, width: PW, height: PH }}>
+                    <Slab
+                      w={PW} h={PH} t={BLOCK_L}
+                      style={{ transform: 'rotateY(180deg)' }}
+                      edgeX="pages-x" edgeY="pages-y" noFarEdge
+                      front={
+                        <PaperFace gutter="right">
                           <img
                             src="/img/qnl-logo-black.webp" alt="" width={480} height={250}
                             className="absolute left-1/2 top-1/2 w-[44%] -translate-x-1/2 -translate-y-1/2 opacity-[0.09]"
                           />
-                        </FaceContent>
-                        <div className="absolute inset-y-0 right-0 w-10" style={{ background: 'linear-gradient(to left, rgba(40,30,10,.2), transparent)' }} />
-                      </div>
-                    }
-                  />
+                        </PaperFace>
+                      }
+                    />
+                  </div>
                 </div>
               </div>
 
               {/* page block + turning pages; slides to centre the gutter */}
               <div ref={block} className="absolute left-0 top-0">
-                <div ref={blockBox} className="absolute left-0 top-0">
                 <Slab
-                  w={PW} h={PH} t={BLOCK}
+                  w={PW} h={PH} t={BLOCK_R}
                   style={{ top: M }}
                   edgeX="pages-x" edgeY="pages-y" noHingeEdge
                   front={
@@ -206,7 +204,6 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
                     </PaperFace>
                   }
                 />
-                </div>
                 {/* DOM order = paint order for coplanar cases: last page first */}
                 {Array.from({ length: LEAVES }, (_, n) => LEAVES - 1 - n).map((i) => (
                   <Page

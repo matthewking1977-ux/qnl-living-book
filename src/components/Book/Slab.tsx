@@ -27,6 +27,8 @@ interface SlabProps {
   edgeY?: string
   /** omit the strip on the hinge side */
   noHingeEdge?: boolean
+  /** omit the strip on the far (x = w) side */
+  noFarEdge?: boolean
   style?: CSSProperties
 }
 
@@ -34,7 +36,7 @@ interface SlabProps {
  * A box with real thickness: front face at z = t, back face at z = 0 and four
  * edge strips between them. Covers, spine, page block and pages are all slabs.
  */
-export function Slab({ w, h, t, front, back, frontClass = '', backClass = '', edgeX, edgeY, noHingeEdge, style }: SlabProps) {
+export function Slab({ w, h, t, front, back, frontClass = '', backClass = '', edgeX, edgeY, noHingeEdge, noFarEdge, style }: SlabProps) {
   return (
     <div className="b3d absolute left-0 top-0" style={{ width: w, height: h, ...style }}>
       {back !== undefined && (
@@ -47,7 +49,7 @@ export function Slab({ w, h, t, front, back, frontClass = '', backClass = '', ed
           {!noHingeEdge && (
             <div className={`b-edge ${edgeX}`} style={{ left: 0, top: 0, width: t, height: h, transformOrigin: 'left', transform: 'rotateY(-90deg)' }} />
           )}
-          <div className={`b-edge ${edgeX}`} style={{ left: w, top: 0, width: t, height: h, transformOrigin: 'left', transform: 'rotateY(-90deg)' }} />
+          {!noFarEdge && <div className={`b-edge ${edgeX}`} style={{ left: w, top: 0, width: t, height: h, transformOrigin: 'left', transform: 'rotateY(-90deg)' }} />}
         </>
       )}
       {edgeY && (
