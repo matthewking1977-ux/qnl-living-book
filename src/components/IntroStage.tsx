@@ -10,6 +10,7 @@ import { SearchMorph, type SearchMorphHandle } from './SearchMorph'
 import { SkipIntro } from './SkipIntro'
 import { Tx } from './Tx'
 import { ui } from '../data/spreads'
+import gsap from 'gsap'
 import { ScrollTrigger, scrollToY } from '../lib/scroll'
 
 const debug = new URLSearchParams(location.search).get('debug') === '1'
@@ -62,6 +63,20 @@ export function IntroStage() {
       onUpdate: (self) => render(self.progress),
       onRefresh: (self) => render(self.progress),
     })
+    // Idle breath: the only thing that moves on its own. While the closed book waits
+    // at the top it sways ±2° on a 6 s loop, fading out as soon as the scroll begins.
+    const breathe = (time: number) => {
+      const s = progress.current
+      if (s > 0.04) return
+      const f = frameAt(s, innerWidth, innerHeight)
+      const k = 1 - s / 0.04
+      const a = (time / 6) * Math.PI * 2
+      f.pose.ry += 2 * Math.sin(a) * k
+      f.pose.rx += 0.7 * Math.sin(a + 1.3) * k
+      book.current?.applyRoot(f.pose)
+    }
+    gsap.ticker.add(breathe)
+
     // Returning visitors (skipped before, or already watched this session) start at the
     // search bar. Only when the page loads at the very top: a restored scroll position
     // or an anchor link always wins. ?intro=1 forces the intro.
@@ -94,6 +109,7 @@ export function IntroStage() {
 
     return () => {
       st.kill()
+      gsap.ticker.remove(breathe)
       removeEventListener('resize', onResize)
       removeEventListener('keydown', onKey)
     }

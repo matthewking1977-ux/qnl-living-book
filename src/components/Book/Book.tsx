@@ -10,6 +10,8 @@ import { FaceContent, MirrorContext, Slab } from './Slab'
 export interface BookHandle {
   /** Draw the book in this pose. Transform and opacity writes only. */
   apply(pose: BookPose): void
+  /** Cheap update of the book's position and tilt only (used by the idle breath). */
+  applyRoot(pose: BookPose): void
 }
 
 /**
@@ -38,19 +40,25 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
   const leaves = useRef<(HTMLDivElement | null)[]>([])
   const shades = useRef<HTMLElement[][]>([])
   const leafFaces = useRef<HTMLElement[][]>([])
+  const castNodes = useRef<Record<string, HTMLElement> | null>(null)
   const leftBlock = useRef<HTMLDivElement>(null)
   const pops = useRef<PopUpNodes[][]>(spreads.map(() => []))
 
-  const apply = (p: BookPose) => {
-    const o = p.open
+  const applyRoot = (p: BookPose) => {
     root.current!.style.transform =
       `translate3d(${p.x * k}px,${p.y}px,0) scale(${p.scale}) rotateX(${p.rx}deg) rotateY(${p.ry * k}deg) rotateZ(${p.rz * k}deg)`
+    sheen.current!.style.transform = `translateX(${-30 - p.ry * 1.2}%)`
+  }
+
+  const apply = (p: BookPose) => {
+    const o = p.open
+    applyRoot(p)
+    root.current!.classList.toggle('book-closed', o < 0.001)
     // keep the visual centre of the book on the rotation origin
     center.current!.style.transform = `translate3d(${lerp(-W / 2, T / 2, o)}px,${-H / 2}px,${(-T / 2) * (1 - o)}px)`
     spine.current!.style.transform = `rotateY(${-90 - 90 * o}deg)`
     cover.current!.style.transform = `rotateY(${90 * (1 - o)}deg)`
     block.current!.style.transform = `translate3d(${(-T / 2) * o}px,0,-2px)`
-    sheen.current!.style.transform = `translateX(${-30 - p.ry * 1.2}%)`
     table.current!.style.opacity = String(o)
     floor.current!.style.opacity = String(1 - o)
     floor.current!.style.transform = `translate(-50%, ${p.y + (H / 2) * p.scale + 36}px) scale(${p.scale})`
@@ -76,6 +84,22 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
       const nodes = (shades.current[i] ??= Array.from(el.querySelectorAll<HTMLElement>('[data-shade]')))
       for (const n of nodes) n.style.opacity = shade
     }
+    // Cast shadows: a turning page darkens the page it is leaving (to its right, first
+    // half of the turn) and then the page it is landing on (to its left, second half).
+    const casts = (castNodes.current ??= Object.fromEntries(
+      Array.from(root.current!.querySelectorAll<HTMLElement>('[data-cast]'), (n) => [n.dataset.cast!, n]),
+    ))
+    const amount: Record<string, number> = {}
+    for (let i = 0; i < LEAVES; i++) {
+      const t = p.turns[i] ?? 0
+      if (t <= 0.001 || t >= 0.999) continue
+      const lift = Math.sin(Math.PI * t)
+      const lean = Math.cos(Math.PI * t)
+      amount[`R${i + 1}`] = Math.max(amount[`R${i + 1}`] ?? 0, lift * Math.max(0, lean) * 1.6)
+      amount[`L${i - 1}`] = Math.max(amount[`L${i - 1}`] ?? 0, lift * Math.max(0, -lean) * 1.6)
+    }
+    for (const id in casts) casts[id].style.opacity = String(Math.min(1, amount[id] ?? 0))
+
     applyPops(p)
   }
 
@@ -94,6 +118,8 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
         const z = (n.side < 0 ? zLeft : n.side > 0 ? zRight : Math.max(zLeft, zRight)) + 0.6
         const x = clamp01(u * (1 + 0.22 * (group.length - 1)) - 0.22 * j)
         n.layer.style.transform = `translateZ(${z + j * 0.4}px) rotateZ(${n.yaw}deg) rotateX(${-n.stand * backOut(x)}deg)`
+        // a folded layer is not painted at all
+        n.layer.style.visibility = n.shadow.style.visibility = x > 0 ? 'visible' : 'hidden'
         n.layer.style.opacity = String(Math.min(1, x * 7))
         n.shadow.style.transform = `translateZ(${z}px) rotateZ(${n.yaw}deg)`
         n.shadow.style.opacity = String(x)
@@ -101,7 +127,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
     }
   }
 
-  useImperativeHandle(ref, () => ({ apply }))
+  useImperativeHandle(ref, () => ({ apply, applyRoot }))
   useLayoutEffect(() => apply(pose), [pose, dir]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
@@ -188,7 +214,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
                       style={{ transform: 'rotateY(180deg)' }}
                       edgeX="pages-x" edgeY="pages-y" noHingeEdge
                       front={
-                        <PaperFace gutter="right">
+                        <PaperFace gutter="right" cast="L-1">
                           <img
                             src="/img/qnl-logo-black.webp" alt="" width={480} height={250}
                             className="absolute left-1/2 top-1/2 w-[44%] -translate-x-1/2 -translate-y-1/2 opacity-[0.09]"
@@ -207,7 +233,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
                   style={{ top: M }}
                   edgeX="pages-x" edgeY="pages-y" noHingeEdge
                   front={
-                    <PaperFace gutter="left" bg={spreads[LEAVES - 1].bgPaper}>
+                    <PaperFace gutter="left" bg={spreads[LEAVES - 1].bgPaper} cast={`R${LEAVES}`}>
                       <SpreadTrail spread={spreads[LEAVES - 1]} />
                     </PaperFace>
                   }
@@ -219,19 +245,19 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
                     ref={(el) => { leaves.current[i] = el }}
                     front={
                       i === 0 ? (
-                        <PaperFace gutter="left">
+                        <PaperFace gutter="left" cast="R0">
                           <div className="flex h-full items-end justify-center pb-12">
                             <p className="label text-g1" lang="en">Qatar National Library</p>
                           </div>
                         </PaperFace>
                       ) : (
-                        <PaperFace gutter="left" bg={spreads[i - 1].bgPaper}>
+                        <PaperFace gutter="left" bg={spreads[i - 1].bgPaper} cast={`R${i}`}>
                           <SpreadTrail spread={spreads[i - 1]} />
                         </PaperFace>
                       )
                     }
                     back={
-                      <PaperFace gutter="right" bg={spreads[i].bgPaper}>
+                      <PaperFace gutter="right" bg={spreads[i].bgPaper} cast={`L${i}`}>
                         <SpreadLead spread={spreads[i]} />
                       </PaperFace>
                     }

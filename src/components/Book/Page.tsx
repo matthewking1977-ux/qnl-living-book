@@ -19,13 +19,21 @@ function Gutter({ side }: { side: 'left' | 'right' }) {
 }
 
 /** A paper face. Shading sits on the face (and mirrors); text sits in FaceContent (and does not). */
-export function PaperFace({ gutter, children, bg }: { gutter: 'left' | 'right'; children?: ReactNode; bg?: string }) {
+export function PaperFace({ gutter, children, bg, cast }: { gutter: 'left' | 'right'; children?: ReactNode; bg?: string; cast?: string }) {
   return (
     <div className="paper grain absolute inset-0" style={bg ? { backgroundColor: bg } : undefined}>
       <FaceContent>{children}</FaceContent>
       <Gutter side={gutter} />
       {/* turn shading, driven by the timeline */}
       <div data-shade className="pointer-events-none absolute inset-0 bg-black opacity-0" />
+      {/* shadow cast onto this page by the page turning above it: deepest at the gutter */}
+      {cast && (
+        <div
+          data-cast={cast}
+          className="pointer-events-none absolute inset-0 opacity-0"
+          style={{ background: `linear-gradient(to ${gutter === 'left' ? 'right' : 'left'}, rgba(20,14,4,.5), rgba(20,14,4,.18) 45%, transparent 85%)` }}
+        />
+      )}
     </div>
   )
 }

@@ -75,25 +75,23 @@ body {
   position: absolute;
 }
 
-/* paper grain: feTurbulence, multiplied at low opacity */
+/* Paper grain: feTurbulence noise laid over the face at low opacity. Plain alpha, no
+   blend mode: a blend mode on every face forces a separate render surface for each. */
 .grain::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  mix-blend-mode: multiply;
-  opacity: 0.16;
+  opacity: 0.13;
 }
 .cloth {
   background-color: #0e0e0e;
 }
 .cloth.grain::after {
-  mix-blend-mode: screen;
-  filter: invert(1);
-  opacity: 0.1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.09;
 }
-/* board edges: cloth wrapped over thick greyboard, catching a little light */
 .cloth-edge {
   background: linear-gradient(#3a3a3a, #232323 30%, #161616);
 }
@@ -152,3 +150,6 @@ body {
 /* The single-page pan pushes half the book off-screen, where Chromium drops some
    page layers unless the slabs are promoted. Mobile only; desktop never pans. */
 .book-mobile .b3d { will-change: transform; }
+
+/* While the cover is shut nothing inside can be seen, so the pages are not painted. */
+.book-closed .paper { visibility: hidden !important; }

@@ -12,7 +12,7 @@ npm run dev
 - `?lang=ar` previews the mirrored right-to-left book (Arabic copy not yet supplied).
 - Spread content: `src/data/spreads.ts`. Scroll choreography: `src/components/Book/choreography.ts`.
 
-Status: phases 1–5 of 6 complete. Remaining: polish, Lighthouse run and Vercel deploy.
+Status: all six phases built. Lighthouse (mobile, local production build): Performance 100, Accessibility 100.
 
 - `?intro=1` forces the intro for visitors who have already seen or skipped it.
 
