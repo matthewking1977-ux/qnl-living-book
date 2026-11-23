@@ -50,7 +50,8 @@ export interface Spread {
 
 /** height / width of each supplied artwork file after trimming (printed by `npm run assets`) */
 const R = { A1: 797 / 1200, A2: 519 / 1200, A3: 659 / 660, A4: 900 / 680, A5: 1200 / 725, A6: 214 / 1200,
-  B2: 594 / 1200, B3: 1200 / 790, B4: 900 / 677, B5: 780 / 585, B6: 221 / 1200 }
+  B2: 594 / 1200, B3: 1200 / 790, B4: 900 / 677, B5: 780 / 585, B6: 221 / 1200,
+  C2: 798 / 1200, C3: 780 / 697, C4: 1040 / 655, C5: 1040 / 783, C6: 276 / 1200 }
 
 export const spreads: Spread[] = [
   {
@@ -117,9 +118,12 @@ export const spreads: Spread[] = [
       lines_ar: null,
     },
     layers: [
-      { src: '/popups/spreadC-layer1.svg', base: 0.43, x: 0.1, w: 1.16, ratio: 400 / 900, stand: 86, mobile: true },
-      { src: '/popups/spreadC-layer2.svg', base: 0.52, x: 0.06, w: 0.90, ratio: 380 / 700, stand: 82, mobile: true },
-      { src: '/popups/spreadC-layer3.svg', base: 0.60, x: 0.08, w: 0.96, ratio: 200 / 700, stand: 76 },
+      // layer 1 (building backdrop) not yet supplied
+      { src: '/popups/spreadC-layer2.webp', base: 0.42, x: 0.06, w: 1.14, ratio: R.C2, stand: 86, mobile: true },
+      { src: '/popups/spreadC-layer3.webp', base: 0.5, x: 0.08, w: 0.5, ratio: R.C3, stand: 82, mobile: true },
+      { src: '/popups/spreadC-layer4.webp', base: 0.58, x: -0.62, w: 0.34, ratio: R.C4, stand: 80, yaw: -22 },
+      { src: '/popups/spreadC-layer5.webp', base: 0.58, x: 0.66, w: 0.38, ratio: R.C5, stand: 80, yaw: 22 },
+      { src: '/popups/spreadC-layer6.webp', base: 0.63, x: 0.02, w: 1.2, ratio: R.C6, stand: 58 },
     ],
     bgPaper: '#f4f1ea',
   },
