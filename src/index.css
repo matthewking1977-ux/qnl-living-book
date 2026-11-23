@@ -110,3 +110,38 @@ body {
   background-color: #f4f1ea;
   color: #0b0b0b;
 }
+
+/* Button hover: the fill slides across (R3) */
+.btn-slide {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #6b6b6b;
+  transform: translateX(-101%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-slide:hover::before,
+.btn-slide:focus-visible::before {
+  transform: translateX(0);
+}
+.btn-slide.light::before {
+  background: #0b0b0b;
+}
+.btn-slide.light:hover,
+.btn-slide.light:focus-visible {
+  color: #fff;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -17,6 +17,8 @@ export const SPREAD_WINDOWS: [number, number, number][] = [
 /** pop-up timing relative to a spread window: rise just as the page lands, fold before the next turn */
 const POP_RISE: [number, number] = [-0.012, 0.04]
 const POP_FOLD: [number, number] = [-0.034, -0.004]
+/** scroll progress at which the search bar is fully formed (Skip intro lands here) */
+export const SEARCH_STOP = 0.96
 /** where the chapter index sends you: the middle of each spread's rest, pop-up standing */
 export const SPREAD_STOPS = SPREAD_WINDOWS.map(([, b, c]) => (b + POP_RISE[1] + c + POP_FOLD[0]) / 2)
 
@@ -47,6 +49,10 @@ export interface Frame {
   chrome: number
   /** active spread, −1 when none */
   chapter: number
+  /** 0 book … 1 search bar */
+  search: number
+  /** book opacity during the cross-fade */
+  bookFade: number
 }
 
 const fitClosed = (vw: number, vh: number) => Math.min((vh * 0.46) / H, (vw * 0.62) / W)
@@ -77,17 +83,20 @@ export function frameAt(s: number, vw: number, vh: number): Frame {
     const delay = (turns.length - 1 - i) * 0.009 // last-turned page goes first
     turns[i] *= 1 - smoothstep(0.8 + delay, 0.838 + delay, s)
   }
-  const coverClose = smoothstep(0.835, 0.895, s)
-  const settle = smoothstep(0.84, 0.92, s)
+  const coverClose = smoothstep(0.83, 0.875, s)
+  // the closed book lies down and shrinks towards the search bar's position…
+  const settle = smoothstep(0.84, 0.9, s)
+  // …then cross-fades into the bar as the bar widens out of the book's footprint
+  const search = smoothstep(0.875, 0.925, s)
 
   // ── Phase 7 · Release (0.92–1.00): pose holds while the stage unpins ──
 
   const open = coverOpen * (1 - coverClose)
   const pose: BookPose = {
     x: 0,
-    y: lerp(-vh * 0.03, vh * 0.1, face) - vh * 0.1 * settle,
-    scale: lerp(fitClosed(vw, vh), fitOpen(vw, vh), coverOpen) * lerp(1, 0.72, settle),
-    rx: lerp(POSE_CLOSED.rx, POSE_OPEN.rx, face),
+    y: lerp(-vh * 0.03, vh * 0.1, face) - vh * 0.17 * settle,
+    scale: lerp(fitClosed(vw, vh), fitOpen(vw, vh), coverOpen) * lerp(1, 0.5, settle) * lerp(1, 0.7, search),
+    rx: lerp(POSE_CLOSED.rx, POSE_OPEN.rx, face) + 8 * settle,
     ry: lerp(POSE_CLOSED.ry, POSE_OPEN.ry, face),
     rz: lerp(POSE_CLOSED.rz, POSE_OPEN.rz, face),
     open,
@@ -107,5 +116,7 @@ export function frameAt(s: number, vw: number, vh: number): Frame {
     dark: smoothstep(0.08, 0.18, s),
     chrome: smoothstep(0.15, 0.19, s) * (1 - smoothstep(0.8, 0.84, s)),
     chapter,
+    search,
+    bookFade: 1 - smoothstep(0.885, 0.915, s),
   }
 }

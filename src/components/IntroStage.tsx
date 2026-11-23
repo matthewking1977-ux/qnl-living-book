@@ -4,6 +4,7 @@ import { frameAt, SPREAD_STOPS } from './Book/choreography'
 import { ChapterIndex } from './ChapterIndex'
 import { DebugHud } from './DebugHud'
 import { ProgressRail } from './ProgressRail'
+import { SearchMorph, type SearchMorphHandle } from './SearchMorph'
 import { SkipIntro } from './SkipIntro'
 import { Tx } from './Tx'
 import { ui } from '../data/spreads'
@@ -24,6 +25,9 @@ export function IntroStage() {
   const dark = useRef<HTMLDivElement>(null)
   const chrome = useRef<HTMLDivElement>(null)
   const railFill = useRef<HTMLDivElement>(null)
+  const bookWrap = useRef<HTMLDivElement>(null)
+  const search = useRef<SearchMorphHandle>(null)
+  const [searchOn, setSearchOn] = useState(false)
   const progress = useRef(0)
   const [chapter, setChapter] = useState(-1)
   const [chromeOn, setChromeOn] = useState(false)
@@ -40,6 +44,9 @@ export function IntroStage() {
       dark.current!.style.opacity = String(0.66 + 0.22 * f.dark)
       chrome.current!.style.opacity = String(f.chrome)
       railFill.current!.style.transform = `scaleY(${s})`
+      bookWrap.current!.style.opacity = String(f.bookFade)
+      search.current?.apply(f.search)
+      setSearchOn(f.search > 0.9)
       setChapter(f.chapter)
       setLoadUpTo((n) => Math.max(n, f.chapter + 1))
       setChromeOn(f.chrome > 0.5)
@@ -77,7 +84,12 @@ export function IntroStage() {
           <img src="/img/qnl-logo-white.webp" alt="Qatar National Library" width={480} height={250} className="h-12 w-auto md:h-14" />
         </header>
 
-        <Book ref={book} pose={first.pose} loadUpTo={loadUpTo} />
+        <div ref={bookWrap} className="absolute inset-0">
+          <Book ref={book} pose={first.pose} loadUpTo={loadUpTo} />
+        </div>
+
+        {/* Phase 6: the book becomes the search bar */}
+        <SearchMorph ref={search} active={searchOn} />
 
         {/* Phase 0 copy */}
         <div

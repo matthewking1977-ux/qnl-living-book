@@ -52,7 +52,7 @@ export interface Spread {
 const R = { A1: 797 / 1200, A2: 519 / 1200, A3: 659 / 660, A4: 900 / 680, A5: 1200 / 725, A6: 214 / 1200,
   B2: 594 / 1200, B3: 1200 / 790, B4: 900 / 677, B5: 780 / 585, B6: 221 / 1200,
   C2: 798 / 1200, C3: 780 / 697, C4: 1040 / 655, C5: 1040 / 783, C6: 276 / 1200,
-  B1: 693 / 1040, C1: 580 / 1200, D1: 600 / 900, D2: 601 / 1040, D3: 655 / 660 }
+  B1: 693 / 1040, C1: 580 / 1200, D1: 600 / 900, D2: 601 / 1040, D3: 655 / 660, D4: 900 / 675, D5: 660 / 504, D6: 208 / 1200 }
 
 export const spreads: Spread[] = [
   {
@@ -139,10 +139,12 @@ export const spreads: Spread[] = [
     body_ar: null,
     link: { href: '#heritage', label_en: 'Explore the heritage collection', label_ar: null },
     layers: [
-      { src: '/popups/spreadD-layer1.webp', base: 0.42, x: 0.08, w: 1.1, ratio: R.D1, stand: 88, mobile: true },
-      { src: '/popups/spreadD-layer2.webp', base: 0.52, x: 0.04, w: 1.16, ratio: R.D2, stand: 84 },
-      { src: '/popups/spreadD-layer3.webp', base: 0.62, x: 0.08, w: 0.6, ratio: R.D3, stand: 80, mobile: true },
-      // layers 4-6 (astrolabe wing, wind-tower wing, books-and-pearls strip) not yet supplied
+      { src: '/popups/spreadD-layer1.webp', base: 0.37, x: 0.08, w: 1.1, ratio: R.D1, stand: 88, mobile: true },
+      { src: '/popups/spreadD-layer2.webp', base: 0.45, x: 0.04, w: 1.16, ratio: R.D2, stand: 84 },
+      { src: '/popups/spreadD-layer3.webp', base: 0.54, x: 0.08, w: 0.56, ratio: R.D3, stand: 80, mobile: true },
+      { src: '/popups/spreadD-layer4.webp', base: 0.59, x: -0.6, w: 0.36, ratio: R.D4, stand: 80, yaw: -22 },
+      { src: '/popups/spreadD-layer5.webp', base: 0.59, x: 0.64, w: 0.4, ratio: R.D5, stand: 80, yaw: 22 },
+      { src: '/popups/spreadD-layer6.webp', base: 0.64, x: 0.02, w: 1.2, ratio: R.D6, stand: 58 },
     ],
     bgPaper: '#f1ece0',
   },

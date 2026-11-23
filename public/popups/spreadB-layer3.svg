@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 340" width="320" height="340">
-<defs><filter id="g" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="8"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .16 0"/><feComposite in2="SourceAlpha" operator="in" result="n"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="n"/></feMerge></filter></defs>
-<g filter="url(#g)" stroke="#8f8c84" stroke-width="1" stroke-linejoin="round" stroke-linecap="round">
-
-<path fill="#2b2b2b" stroke="none" d="M214 196L240 180L306 340L262 340Z"/>
-<circle cx="150" cy="122" r="96" fill="rgba(255,255,255,.4)" stroke="#2b2b2b" stroke-width="18"/>
-<path fill="none" stroke="#f7f5ef" stroke-width="5" d="M96 96A62 62 0 0 1 150 62"/>
-</g></svg>
