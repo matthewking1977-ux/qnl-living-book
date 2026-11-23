@@ -22,7 +22,7 @@ export interface BookHandle {
  * far end of the spine). Opening lays spine and front board flat to the left,
  * and the page block slides half a spine-width so the gutter sits centred.
  */
-export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }>(function Book({ pose, loadUpTo = 0 }, ref) {
+export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; mobile?: boolean }>(function Book({ pose, loadUpTo = 0, mobile = false }, ref) {
   const dir = useDir()
   const mirrored = dir === 'rtl'
   const k = sign(dir)
@@ -37,6 +37,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
   const floor = useRef<HTMLDivElement>(null)
   const leaves = useRef<(HTMLDivElement | null)[]>([])
   const shades = useRef<HTMLElement[][]>([])
+  const leafFaces = useRef<HTMLElement[][]>([])
   const leftBlock = useRef<HTMLDivElement>(null)
   const pops = useRef<PopUpNodes[][]>(spreads.map(() => []))
 
@@ -64,6 +65,13 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
       const zRest = BLOCK_R + LEAF_GAP * (LEAVES - 1 - i) + LEAF_GAP / 2 // on the reading-side stack
       const zTurned = BLOCK_L + LEAF_GAP * i + LEAF_GAP / 2 // on the turned stack
       el.style.transform = `translateZ(${lerp(zRest, zTurned, t)}px) rotateY(${-180 * t}deg)`
+      // show only the face that is towards the reader; they swap as the page passes 90°
+      const faces = (leafFaces.current[i] ??= [
+        el.querySelector<HTMLElement>('[data-face="front"]')!,
+        el.querySelector<HTMLElement>('[data-face="back"]')!,
+      ])
+      faces[0].style.visibility = t < 0.5 ? 'visible' : 'hidden'
+      faces[1].style.visibility = t < 0.5 ? 'hidden' : 'visible'
       const shade = String(Math.sin(Math.PI * t) * 0.45) // darkest at 90°
       const nodes = (shades.current[i] ??= Array.from(el.querySelectorAll<HTMLElement>('[data-shade]')))
       for (const n of nodes) n.style.opacity = shade
@@ -99,7 +107,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
 
   return (
     <MirrorContext.Provider value={mirrored}>
-      <div aria-hidden className="pointer-events-none absolute inset-0" style={{ perspective: 3000 }}>
+      <div aria-hidden className={`pointer-events-none absolute inset-0 ${mobile ? 'book-mobile' : ''}`} style={{ perspective: 3000 }}>
         {/* floor shadow while the book hovers closed */}
         <div
           ref={floor}
@@ -178,7 +186,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
                     <Slab
                       w={PW} h={PH} t={BLOCK_L}
                       style={{ transform: 'rotateY(180deg)' }}
-                      edgeX="pages-x" edgeY="pages-y" noFarEdge
+                      edgeX="pages-x" edgeY="pages-y" noHingeEdge
                       front={
                         <PaperFace gutter="right">
                           <img
@@ -231,11 +239,16 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number }
                 ))}
                 {/* pop-up layers, anchored on the gutter */}
                 {spreads.map((sp, i) =>
-                  sp.layers.map((def, j) => (
+                  // mobile keeps the two layers flagged in the data
+                  (mobile
+                    ? // mobile: two layers, standing wholly on the second page so nothing is cut by the screen edge
+                      sp.layers.filter((l) => l.mobile).map((l) => ({ ...l, x: 0.5, w: Math.min(l.w * 0.8, 0.94) }))
+                    : sp.layers
+                  ).map((def, j, all) => (
                     <PopUpLayer
                       key={def.src}
                       def={def}
-                      depth={sp.layers.length > 1 ? j / (sp.layers.length - 1) : 1}
+                      depth={all.length > 1 ? j / (all.length - 1) : 1}
                       load={i <= loadUpTo}
                       register={(n) => { pops.current[i][j] = n! }}
                     />

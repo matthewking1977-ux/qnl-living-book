@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Book, type BookHandle } from './Book/Book'
-import { frameAt, SPREAD_STOPS } from './Book/choreography'
+import { frameAt, isMobile, SEARCH_STOP, SPREAD_STOPS } from './Book/choreography'
+import { SpreadOutline } from './SpreadOutline'
+import { introSeen, markIntroSeen, clearIntroSeen } from '../lib/intro'
 import { ChapterIndex } from './ChapterIndex'
 import { DebugHud } from './DebugHud'
 import { ProgressRail } from './ProgressRail'
@@ -34,6 +36,7 @@ export function IntroStage() {
   // pop-up artwork is loaded one spread ahead of the reader
   const [loadUpTo, setLoadUpTo] = useState(0)
   const first = useMemo(() => frameAt(0, innerWidth, innerHeight), [])
+  const [mobile, setMobile] = useState(() => isMobile(innerWidth))
 
   useEffect(() => {
     const render = (s: number) => {
@@ -47,6 +50,7 @@ export function IntroStage() {
       bookWrap.current!.style.opacity = String(f.bookFade)
       search.current?.apply(f.search)
       setSearchOn(f.search > 0.9)
+      if (f.search > 0.9) markIntroSeen('session') // the intro plays once per session
       setChapter(f.chapter)
       setLoadUpTo((n) => Math.max(n, f.chapter + 1))
       setChromeOn(f.chrome > 0.5)
@@ -58,17 +62,64 @@ export function IntroStage() {
       onUpdate: (self) => render(self.progress),
       onRefresh: (self) => render(self.progress),
     })
-    return () => st.kill()
-  }, [])
+    // Returning visitors (skipped before, or already watched this session) start at the
+    // search bar. Only when the page loads at the very top: a restored scroll position
+    // or an anchor link always wins. ?intro=1 forces the intro.
+    const force = new URLSearchParams(location.search).get('intro') === '1'
+    if (!force && introSeen() && scrollY < 4 && !location.hash) yAt(SEARCH_STOP, true)
 
-  const goTo = (i: number) => {
+    const onResize = () => setMobile(isMobile(innerWidth))
+    addEventListener('resize', onResize)
+
+    // Keyboard: arrows and Page Up/Down step between the resting points of the
+    // sequence. Outside the sequence (or past its ends) the keys scroll natively,
+    // so there is never a trap.
+    const stops = [0, ...SPREAD_STOPS, SEARCH_STOP]
+    const onKey = (e: KeyboardEvent) => {
+      if (e.altKey || e.ctrlKey || e.metaKey) return
+      const t = e.target as HTMLElement
+      if (t.closest('input, textarea, select, [contenteditable]')) return
+      const fwd = e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'PageDown'
+      const back = e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp'
+      if (!fwd && !back) return
+      const s = progress.current
+      const r = track.current!.getBoundingClientRect()
+      if (r.top > 1 || r.bottom < innerHeight - 1) return // stage not pinned
+      const next = fwd ? stops.find((x) => x > s + 0.004) : [...stops].reverse().find((x) => x < s - 0.004)
+      if (next === undefined) return
+      e.preventDefault()
+      yAt(next)
+    }
+    addEventListener('keydown', onKey)
+
+    return () => {
+      st.kill()
+      removeEventListener('resize', onResize)
+      removeEventListener('keydown', onKey)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  /** scroll so the sequence sits at progress s */
+  const yAt = (s: number, immediate = false) => {
     const el = track.current!
     const top = el.getBoundingClientRect().top + scrollY
-    scrollToY(top + SPREAD_STOPS[i] * (el.offsetHeight - innerHeight))
+    scrollToY(top + s * (el.offsetHeight - innerHeight), immediate)
+  }
+  const goTo = (i: number) => yAt(SPREAD_STOPS[i])
+
+  const skip = () => {
+    markIntroSeen('always')
+    yAt(SEARCH_STOP, true)
+    // hand focus to the search field the user skipped to
+    requestAnimationFrame(() => document.getElementById('q')?.focus({ preventScroll: true }))
+  }
+  const replay = () => {
+    clearIntroSeen()
+    yAt(0)
   }
 
   return (
-    <div ref={track} className="relative h-[500vh]">
+    <div ref={track} className="relative h-[350vh] md:h-[500vh]">
       <section className="sticky top-0 h-svh min-h-[560px] overflow-hidden bg-ink text-white" aria-label="Introduction">
         {/* LCP: poster still, darkened */}
         <picture>
@@ -79,13 +130,17 @@ export function IntroStage() {
         <div ref={dark} className="absolute inset-0 bg-ink" style={{ opacity: 0.66 }} />
 
         {/* Skip intro comes first in the DOM so it is the first focusable element */}
-        <header className="absolute inset-x-0 top-0 z-10 mx-auto flex max-w-[1440px] flex-row-reverse items-center justify-between px-4 py-4 md:px-10 md:py-6">
-          <SkipIntro />
+        <header className="absolute inset-x-0 top-0 z-20 mx-auto flex max-w-[1440px] flex-row-reverse items-center justify-between px-4 py-4 md:px-10 md:py-6">
+          <SkipIntro done={searchOn} onSkip={skip} onReplay={replay} />
           <img src="/img/qnl-logo-white.webp" alt="Qatar National Library" width={480} height={250} className="h-12 w-auto md:h-14" />
         </header>
 
+        {/* For screen readers and keyboard users: the four spreads as headings and links.
+            Focusing a link brings its spread on screen. The book itself is decorative. */}
+        <SpreadOutline onFocusSpread={goTo} />
+
         <div ref={bookWrap} className="absolute inset-0">
-          <Book ref={book} pose={first.pose} loadUpTo={loadUpTo} />
+          <Book key={mobile ? 'm' : 'd'} ref={book} pose={first.pose} loadUpTo={loadUpTo} mobile={mobile} />
         </div>
 
         {/* Phase 6: the book becomes the search bar */}
@@ -112,13 +167,13 @@ export function IntroStage() {
         {/* progress rail + chapter index */}
         <div
           ref={chrome}
-          className="absolute inset-y-0 start-4 z-10 flex items-center gap-4 md:start-10"
+          className="absolute inset-y-0 start-2 z-10 flex items-center gap-2 focus-within:opacity-100! md:start-10 md:gap-4"
           style={{ opacity: 0, pointerEvents: chromeOn ? 'auto' : 'none' }}
         >
           <div className="h-[34vh]">
             <ProgressRail ref={railFill} />
           </div>
-          <ChapterIndex active={chapter} onSelect={goTo} disabled={!chromeOn} />
+          <ChapterIndex active={chapter} onSelect={goTo} />
         </div>
       </section>
       {debug && <DebugHud progress={progress} />}

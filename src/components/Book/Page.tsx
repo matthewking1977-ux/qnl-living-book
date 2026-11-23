@@ -51,12 +51,12 @@ export const Page = forwardRef<HTMLDivElement, { front: ReactNode; back: ReactNo
 export function SpreadLead({ spread }: { spread: Spread }) {
   return (
     <div className="flex h-full flex-col justify-end gap-4 pb-8 pt-9 pe-11 ps-9">
-      <p className="label text-g1">
+      <p className="sp-label label text-g1">
         <span lang="en">{spread.index}</span>
         <span className="mx-2">·</span>
         <Tx en={spread.label_en} ar={spread.label_ar} />
       </p>
-      <h3 className="font-display max-w-[11em] text-[30px] leading-[1.12] tracking-[-0.01em]">
+      <h3 className="sp-title font-display max-w-[11em] text-[30px] leading-[1.12] tracking-[-0.01em]">
         <Tx en={spread.title_en} ar={spread.title_ar} />
       </h3>
     </div>
@@ -69,7 +69,7 @@ export function SpreadTrail({ spread }: { spread: Spread }) {
   return (
     <div className="flex h-full flex-col justify-end gap-2 pb-6 pt-9 pe-9 ps-11">
       {spread.sample && (
-        <div className="border-t border-ink/25 pt-2">
+        <div className="sp-sample border-t border-ink/25 pt-2">
           <p className="label mb-0.5 text-g1" style={{ fontSize: 9 }} lang="en">Sample</p>
           {spread.sample.lines_en.map((l, i) => (
             <p key={i} className={i === 0 ? 'text-[12px] font-medium' : 'text-[10.5px] leading-snug text-g1'}>
@@ -78,13 +78,13 @@ export function SpreadTrail({ spread }: { spread: Spread }) {
           ))}
         </div>
       )}
-      <p className="text-[12px] leading-[1.45]">
+      <p className="sp-body text-[12px] leading-[1.45]">
         <Tx en={spread.body_en} ar={spread.body_ar} />
       </p>
       <a
         href={spread.link.href}
         tabIndex={-1}
-        className="group inline-flex min-h-11 items-center gap-2 self-start text-[12px] font-medium underline decoration-1 underline-offset-[5px]"
+        className="sp-link group pointer-events-auto inline-flex min-h-11 items-center gap-2 self-start text-[12px] font-medium underline decoration-1 underline-offset-[5px]"
       >
         <Tx en={spread.link.label_en} ar={spread.link.label_ar} />
         <span aria-hidden className="transition-transform duration-300 ease-(--ease-ui) group-hover:translate-x-1 rtl:group-hover:-translate-x-1">

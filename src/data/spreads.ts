@@ -94,8 +94,8 @@ export const spreads: Spread[] = [
       lines_ar: null,
     },
     layers: [
-      { src: '/popups/spreadB-layer1.webp', base: 0.35, x: 0.08, w: 1.04, ratio: R.B1, stand: 88 },
-      { src: '/popups/spreadB-layer2.webp', base: 0.42, x: 0.06, w: 1.2, ratio: R.B2, stand: 86, mobile: true },
+      { src: '/popups/spreadB-layer1.webp', base: 0.35, x: 0.08, w: 1.04, ratio: R.B1, stand: 88, mobile: true },
+      { src: '/popups/spreadB-layer2.webp', base: 0.42, x: 0.06, w: 1.2, ratio: R.B2, stand: 86 },
       { src: '/popups/spreadB-layer3.webp', base: 0.52, x: 0.1, w: 0.46, ratio: R.B3, stand: 82, mobile: true },
       { src: '/popups/spreadB-layer4.webp', base: 0.58, x: -0.6, w: 0.36, ratio: R.B4, stand: 80, yaw: -22 },
       { src: '/popups/spreadB-layer5.webp', base: 0.58, x: 0.64, w: 0.38, ratio: R.B5, stand: 80, yaw: 22 },

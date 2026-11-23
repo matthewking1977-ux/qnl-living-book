@@ -1,7 +1,7 @@
 import { spreads } from '../data/spreads'
 
 /** 01–04. Real buttons, so the spreads can be reached without scrolling. */
-export function ChapterIndex({ active, onSelect, disabled }: { active: number; onSelect: (i: number) => void; disabled?: boolean }) {
+export function ChapterIndex({ active, onSelect }: { active: number; onSelect: (i: number) => void }) {
   return (
     <nav aria-label="Book chapters">
       <ol className="flex flex-col">
@@ -9,7 +9,6 @@ export function ChapterIndex({ active, onSelect, disabled }: { active: number; o
           <li key={sp.id}>
             <button
               type="button"
-              tabIndex={disabled ? -1 : 0}
               aria-current={active === i ? 'step' : undefined}
               aria-label={`${sp.index}, ${sp.label_en}`}
               onClick={() => onSelect(i)}

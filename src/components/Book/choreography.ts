@@ -57,7 +57,13 @@ export interface Frame {
 
 const fitClosed = (vw: number, vh: number) => Math.min((vh * 0.46) / H, (vw * 0.62) / W)
 // the open book is seen from low down, so it is short on screen and can run wide; the pop-ups need the headroom
-const fitOpen = (vw: number, vh: number) => Math.min((vw * 0.8) / (2 * W + T), (vh * 0.92) / H)
+const fitOpen = (vw: number, vh: number) =>
+  isMobile(vw)
+    ? // single-page view: the book runs wider than the screen and pans from page to page
+      Math.min((vw * 1.5) / (2 * W + T), (vh * 0.8) / H)
+    : Math.min((vw * 0.8) / (2 * W + T), (vh * 0.92) / H)
+
+export const isMobile = (vw: number) => vw < 768
 
 export function frameAt(s: number, vw: number, vh: number): Frame {
   // ── Phase 0 · Arrival (0.00–0.08): closed book, three-quarter view ──
@@ -92,11 +98,27 @@ export function frameAt(s: number, vw: number, vh: number): Frame {
   // ── Phase 7 · Release (0.92–1.00): pose holds while the stage unpins ──
 
   const open = coverOpen * (1 - coverClose)
+
+  // Mobile: show one page at a time. Each spread starts on its first page (label
+  // and title) and pans across to the second (copy and link) once the pop-up is up.
+  const mobile = isMobile(vw)
+  let pan = 0
+  if (mobile) {
+    pan = 1
+    SPREAD_WINDOWS.forEach(([a, b], i) => {
+      const stop = SPREAD_STOPS[i]
+      pan -= 2 * smoothstep(stop - 0.035, stop - 0.005, s)
+      if (i > 0) pan += 2 * smoothstep(a, b, s)
+    })
+    const overhang = Math.max(0, ((2 * W + T) * fitOpen(vw, vh) - vw) / 2 + 10)
+    pan *= overhang * open
+  }
+  const rxOpen = mobile ? 44 : POSE_OPEN.rx
   const pose: BookPose = {
-    x: 0,
+    x: pan,
     y: lerp(-vh * 0.03, vh * 0.1, face) - vh * 0.17 * settle,
     scale: lerp(fitClosed(vw, vh), fitOpen(vw, vh), coverOpen) * lerp(1, 0.5, settle) * lerp(1, 0.7, search),
-    rx: lerp(POSE_CLOSED.rx, POSE_OPEN.rx, face) + 8 * settle,
+    rx: lerp(POSE_CLOSED.rx, rxOpen, face) + 8 * settle,
     ry: lerp(POSE_CLOSED.ry, POSE_OPEN.ry, face),
     rz: lerp(POSE_CLOSED.rz, POSE_OPEN.rz, face),
     open,

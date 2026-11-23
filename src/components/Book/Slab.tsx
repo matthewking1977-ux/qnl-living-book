@@ -40,7 +40,7 @@ export function Slab({ w, h, t, front, back, frontClass = '', backClass = '', ed
   return (
     <div className="b3d absolute left-0 top-0" style={{ width: w, height: h, ...style }}>
       {back !== undefined && (
-        <div className={`b-face ${backClass}`} style={{ transform: 'rotateY(180deg)' }}>
+        <div data-face="back" className={`b-face ${backClass}`} style={{ transform: 'rotateY(180deg)' }}>
           <div className="absolute inset-0" style={{ zoom: S }}>{back}</div>
         </div>
       )}
@@ -59,7 +59,7 @@ export function Slab({ w, h, t, front, back, frontClass = '', backClass = '', ed
         </>
       )}
       {front !== undefined && (
-        <div className={`b-face ${frontClass}`} style={{ transform: `translateZ(${t}px)` }}>
+        <div data-face="front" className={`b-face ${frontClass}`} style={{ transform: `translateZ(${t}px)` }}>
           <div className="absolute inset-0" style={{ zoom: S }}>{front}</div>
         </div>
       )}

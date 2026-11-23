@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { ReducedMotionHero } from './components/ReducedMotionHero'
 import { IntroStage } from './components/IntroStage'
 import { applyLang, LangContext, type Lang } from './lib/dir'
 import { initScroll } from './lib/scroll'
@@ -16,15 +17,24 @@ import { Footer } from './components/home/Footer'
 const lang: Lang = new URLSearchParams(location.search).get('lang') === 'ar' ? 'ar' : 'en'
 
 export default function App() {
+  // prefers-reduced-motion: no smooth scroll, no pinned sequence. Follows the setting live.
+  const [reduced, setReduced] = useState(() => matchMedia('(prefers-reduced-motion: reduce)').matches)
+  useEffect(() => {
+    const mq = matchMedia('(prefers-reduced-motion: reduce)')
+    const on = () => setReduced(mq.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [])
+
   useEffect(() => {
     applyLang(lang)
     return initScroll()
-  }, [])
+  }, [reduced])
 
   return (
     <LangContext.Provider value={lang}>
       <main>
-        <IntroStage />
+        {reduced ? <ReducedMotionHero /> : <IntroStage />}
         {/* the normal homepage: the book is an entrance, not the whole site */}
         <div className="bg-[#fcfcfc] text-ink">
           <ServiceStrip />
