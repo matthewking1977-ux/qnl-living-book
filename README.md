@@ -1,6 +1,8 @@
 # QNL homepage — Concept F "The Living Book" (MVP)
 
-Tender concept. Vite + React 19 + TypeScript, Tailwind CSS 4, GSAP ScrollTrigger + Lenis, CSS 3D only.
+Tender concept. Live: https://qnl-living-book.vercel.app/
+
+Vite + React 19 + TypeScript, Tailwind CSS 4, GSAP ScrollTrigger + Lenis, CSS 3D only.
 
 ```bash
 npm install
