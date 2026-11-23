@@ -1,7 +1,12 @@
 // Converts source assets in /assets into responsive WebP/AVIF in /public/img.
 // Re-run with `npm run assets` whenever /assets changes.
 import sharp from 'sharp'
-import { mkdir } from 'node:fs/promises'
+import { mkdir, readdir, stat } from 'node:fs/promises'
+
+/** true when dest exists and is newer than src */
+const fresh = async (src, dest) => {
+  try { return (await stat(dest)).mtimeMs >= (await stat(src)).mtimeMs } catch { return false }
+}
 
 const out = 'public/img'
 await mkdir(out, { recursive: true })
@@ -17,6 +22,7 @@ const photos = [
   ['assets/photos/QNL 0008.jpg', 'stone'],
 ]
 for (const [src, name] of photos) {
+  if (await fresh(src, `${out}/${name}-1920.avif`)) continue
   for (const w of [640, 1280, 1920]) {
     const img = sharp(src).resize({ width: w, withoutEnlargement: true })
     await img.clone().webp({ quality: 68 }).toFile(`${out}/${name}-${w}.webp`)
@@ -35,12 +41,16 @@ console.log('assets built')
 // Supplied pop-up artwork: /assets/popups/spreadX-layerN.(png|webp) replaces the
 // placeholder SVG of the same name. Trimmed to the cut-out so the bottom edge is
 // the fold line, then saved as WebP (budget: 120 KB per layer).
-import { readdir, stat } from 'node:fs/promises'
 await mkdir('public/popups', { recursive: true })
 for (const f of await readdir('assets/popups')) {
   if (!/\.(png|webp)$/i.test(f)) continue
   const name = f.replace(/\.\w+$/, '')
   const dest = `public/popups/${name}.webp`
+  if (await fresh(`assets/popups/${f}`, dest)) {
+    const m = await sharp(dest).metadata()
+    console.log(`${name}: ${m.width}x${m.height} (unchanged)`)
+    continue
+  }
   // step the long side down until the layer fits the 120 KB budget
   let info
   for (const side of [1200, 1040, 900, 780, 660]) {

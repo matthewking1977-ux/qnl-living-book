@@ -51,7 +51,8 @@ export interface Spread {
 /** height / width of each supplied artwork file after trimming (printed by `npm run assets`) */
 const R = { A1: 797 / 1200, A2: 519 / 1200, A3: 659 / 660, A4: 900 / 680, A5: 1200 / 725, A6: 214 / 1200,
   B2: 594 / 1200, B3: 1200 / 790, B4: 900 / 677, B5: 780 / 585, B6: 221 / 1200,
-  C2: 798 / 1200, C3: 780 / 697, C4: 1040 / 655, C5: 1040 / 783, C6: 276 / 1200 }
+  C2: 798 / 1200, C3: 780 / 697, C4: 1040 / 655, C5: 1040 / 783, C6: 276 / 1200,
+  B1: 693 / 1040, C1: 580 / 1200, D1: 600 / 900, D2: 601 / 1040, D3: 655 / 660 }
 
 export const spreads: Spread[] = [
   {
@@ -93,7 +94,7 @@ export const spreads: Spread[] = [
       lines_ar: null,
     },
     layers: [
-      // layer 1 (shelf-wall backdrop) not yet supplied
+      { src: '/popups/spreadB-layer1.webp', base: 0.35, x: 0.08, w: 1.04, ratio: R.B1, stand: 88 },
       { src: '/popups/spreadB-layer2.webp', base: 0.42, x: 0.06, w: 1.2, ratio: R.B2, stand: 86, mobile: true },
       { src: '/popups/spreadB-layer3.webp', base: 0.52, x: 0.1, w: 0.46, ratio: R.B3, stand: 82, mobile: true },
       { src: '/popups/spreadB-layer4.webp', base: 0.58, x: -0.6, w: 0.36, ratio: R.B4, stand: 80, yaw: -22 },
@@ -118,9 +119,9 @@ export const spreads: Spread[] = [
       lines_ar: null,
     },
     layers: [
-      // layer 1 (building backdrop) not yet supplied
-      { src: '/popups/spreadC-layer2.webp', base: 0.42, x: 0.06, w: 1.14, ratio: R.C2, stand: 86, mobile: true },
-      { src: '/popups/spreadC-layer3.webp', base: 0.5, x: 0.08, w: 0.5, ratio: R.C3, stand: 82, mobile: true },
+      { src: '/popups/spreadC-layer1.webp', base: 0.34, x: 0.04, w: 1.72, ratio: R.C1, stand: 88 },
+      { src: '/popups/spreadC-layer2.webp', base: 0.43, x: 0.06, w: 0.98, ratio: R.C2, stand: 86, mobile: true },
+      { src: '/popups/spreadC-layer3.webp', base: 0.5, x: 0.08, w: 0.44, ratio: R.C3, stand: 82, mobile: true },
       { src: '/popups/spreadC-layer4.webp', base: 0.58, x: -0.62, w: 0.34, ratio: R.C4, stand: 80, yaw: -22 },
       { src: '/popups/spreadC-layer5.webp', base: 0.58, x: 0.66, w: 0.38, ratio: R.C5, stand: 80, yaw: 22 },
       { src: '/popups/spreadC-layer6.webp', base: 0.63, x: 0.02, w: 1.2, ratio: R.C6, stand: 58 },
@@ -138,9 +139,10 @@ export const spreads: Spread[] = [
     body_ar: null,
     link: { href: '#heritage', label_en: 'Explore the heritage collection', label_ar: null },
     layers: [
-      { src: '/popups/spreadD-layer1.svg', base: 0.47, x: 0.17, w: 1.01, ratio: 500 / 860, stand: 84, mobile: true },
-      { src: '/popups/spreadD-layer2.svg', base: 0.57, x: 0.24, w: 0.56, ratio: 480 / 440, stand: 74, mobile: true },
-      { src: '/popups/spreadD-layer3.svg', base: 0.65, x: -0.14, w: 0.74, ratio: 170 / 620, stand: 78 },
+      { src: '/popups/spreadD-layer1.webp', base: 0.42, x: 0.08, w: 1.1, ratio: R.D1, stand: 88, mobile: true },
+      { src: '/popups/spreadD-layer2.webp', base: 0.52, x: 0.04, w: 1.16, ratio: R.D2, stand: 84 },
+      { src: '/popups/spreadD-layer3.webp', base: 0.62, x: 0.08, w: 0.6, ratio: R.D3, stand: 80, mobile: true },
+      // layers 4-6 (astrolabe wing, wind-tower wing, books-and-pearls strip) not yet supplied
     ],
     bgPaper: '#f1ece0',
   },
