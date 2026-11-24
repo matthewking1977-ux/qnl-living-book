@@ -28,8 +28,8 @@ export function initScroll() {
   }
 }
 
-export function scrollToY(y: number, immediate = false) {
-  if (lenis) lenis.scrollTo(y, { immediate, duration: immediate ? 0 : 1.4 })
+export function scrollToY(y: number, immediate = false, duration = 1.4) {
+  if (lenis) lenis.scrollTo(y, { immediate, duration: immediate ? 0 : duration })
   else window.scrollTo({ top: y, behavior: immediate || prefersReducedMotion() ? 'auto' : 'smooth' })
 }
 

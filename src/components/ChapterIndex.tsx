@@ -1,10 +1,10 @@
 import { spreads } from '../data/spreads'
 
 /** 01–04. Real buttons, so the spreads can be reached without scrolling. */
-export function ChapterIndex({ active, onSelect }: { active: number; onSelect: (i: number) => void }) {
+export function ChapterIndex({ active, onSelect, row = false }: { active: number; onSelect: (i: number) => void; row?: boolean }) {
   return (
     <nav aria-label="Book chapters">
-      <ol className="flex flex-col">
+      <ol className={row ? 'flex flex-row gap-1' : 'flex flex-col'}>
         {spreads.map((sp, i) => (
           <li key={sp.id}>
             <button

@@ -1,5 +1,5 @@
-import { forwardRef, type ReactNode } from 'react'
-import { FaceContent, Slab } from './Slab'
+import { forwardRef, useContext, type ReactNode } from 'react'
+import { FaceContent, PortraitContext, Slab } from './Slab'
 import { LEAF, M, PH, PW } from './geometry'
 import type { Spread } from '../../data/spreads'
 import { Tx } from '../Tx'
@@ -57,6 +57,8 @@ export const Page = forwardRef<HTMLDivElement, { front: ReactNode; back: ReactNo
 
 /** First page in reading order: chapter label and the one Playfair title, kept low so the pop-up has the page. */
 export function SpreadLead({ spread }: { spread: Spread }) {
+  // portrait: this page stands behind the pop-up, so everything is on the lower page
+  if (useContext(PortraitContext)) return null
   return (
     <div className="flex h-full flex-col justify-end gap-4 pb-8 pt-9 pe-11 ps-9">
       <p className="sp-label label text-g1">
@@ -73,6 +75,7 @@ export function SpreadLead({ spread }: { spread: Spread }) {
 
 /** Second page: one line of copy, optional SAMPLE card, and a real link. */
 export function SpreadTrail({ spread }: { spread: Spread }) {
+  if (useContext(PortraitContext)) return <SpreadCard spread={spread} />
   const dir = useDir()
   return (
     <div className="flex h-full flex-col justify-end gap-2 pb-6 pt-9 pe-9 ps-11">
@@ -98,6 +101,37 @@ export function SpreadTrail({ spread }: { spread: Spread }) {
         <span aria-hidden className="transition-transform duration-300 ease-(--ease-ui) group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
           {arrow(dir)}
         </span>
+      </a>
+    </div>
+  )
+}
+
+/**
+ * Portrait (phone) lower page: label, the Playfair title, one line of copy and the
+ * link, set low on the page so the pop-up stands clear above it.
+ */
+function SpreadCard({ spread }: { spread: Spread }) {
+  return (
+    <div className="flex h-full flex-col justify-end px-10 pb-9">
+      <p className="label text-g1" style={{ fontSize: 17, letterSpacing: '0.16em' }}>
+        <span lang="en">{spread.index}</span>
+        <span className="mx-2">·</span>
+        <Tx en={spread.label_en} ar={spread.label_ar} />
+      </p>
+      <h3 className="font-display mt-3 leading-[1.08] tracking-[-0.01em]" style={{ fontSize: 50 }}>
+        <Tx en={spread.title_en} ar={spread.title_ar} />
+      </h3>
+      <p className="mt-3 leading-[1.35]" style={{ fontSize: 25 }}>
+        <Tx en={spread.body_en} ar={spread.body_ar} />
+      </p>
+      <a
+        href={spread.link.href}
+        tabIndex={-1}
+        className="pointer-events-auto mt-4 inline-flex items-center gap-3 self-start font-medium underline decoration-2 underline-offset-[8px]"
+        style={{ fontSize: 25 }}
+      >
+        <Tx en={spread.link.label_en} ar={spread.link.label_ar} />
+        <span aria-hidden>→</span>
       </a>
     </div>
   )

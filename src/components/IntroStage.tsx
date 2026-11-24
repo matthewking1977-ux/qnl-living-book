@@ -44,8 +44,10 @@ export function IntroStage() {
   const progress = useRef(0)
   const [chapter, setChapter] = useState(-1)
   const [chromeOn, setChromeOn] = useState(false)
-  // pop-up artwork is loaded one spread ahead of the reader
-  const [loadUpTo, setLoadUpTo] = useState(0)
+  // Pop-up artwork is loaded one spread ahead of the reader. Nothing is fetched until
+  // the visitor starts scrolling or the page has settled, so it never competes with
+  // the first paint (the closed book needs none of it).
+  const [loadUpTo, setLoadUpTo] = useState(-1)
   const first = useMemo(() => frameAt(0, innerWidth, innerHeight), [])
   const [mobile, setMobile] = useState(() => isMobile(innerWidth))
 
@@ -67,7 +69,7 @@ export function IntroStage() {
       setSearchOn(f.search > 0.9)
       if (f.search > 0.9) markIntroSeen('session') // the intro plays once per session
       setChapter(f.chapter)
-      setLoadUpTo((n) => Math.max(n, f.chapter + 1))
+      if (s > 0.004) setLoadUpTo((n) => Math.max(n, f.chapter + 1, 0))
       setChromeOn(f.chrome > 0.5)
     }
     const st = ScrollTrigger.create({
@@ -111,6 +113,12 @@ export function IntroStage() {
     }
     gsap.ticker.add(tick)
 
+    const warm = () => setLoadUpTo((n) => Math.max(n, 0))
+    const warmTimer = window.setTimeout(() => {
+      if ('requestIdleCallback' in window) requestIdleCallback(warm, { timeout: 2000 })
+      else warm()
+    }, 2500)
+
     // Returning visitors (skipped before, or already watched this session) start at the
     // search bar. Only when the page loads at the very top: a restored scroll position
     // or an anchor link always wins. ?intro=1 forces the intro.
@@ -141,20 +149,69 @@ export function IntroStage() {
     }
     addEventListener('keydown', onKey)
 
+    // Touch snapping (phones): when a swipe comes to rest inside the sequence, glide on
+    // to the next resting point in the direction of the swipe, or back to the nearest
+    // one after a small nudge. Past the search bar the page scrolls freely.
+    let touching = false
+    let startS = 0
+    let settle = 0
+    const snapNow = () => {
+      if (touching || !isMobile(innerWidth)) return
+      const s = progress.current
+      if (s <= 0.002 || s >= SEARCH_STOP - 0.002) return
+      if (stops.some((x) => Math.abs(x - s) < 0.004)) return
+      const moved = s - startS
+      let target: number
+      if (Math.abs(moved) < 0.01) target = stops.reduce((a, b) => (Math.abs(b - s) < Math.abs(a - s) ? b : a))
+      else if (moved > 0) target = stops.find((x) => x >= s) ?? SEARCH_STOP
+      else target = [...stops].reverse().find((x) => x <= s) ?? 0
+      yAt(target, false, 0.8)
+    }
+    const onScroll = () => {
+      clearTimeout(settle)
+      settle = window.setTimeout(snapNow, 140)
+    }
+    const onTouchStart = () => {
+      touching = true
+      startS = progress.current
+      clearTimeout(settle)
+    }
+    const onTouchEnd = () => {
+      touching = false
+      clearTimeout(settle)
+      settle = window.setTimeout(snapNow, 140)
+    }
+    addEventListener('scroll', onScroll, { passive: true })
+    addEventListener('touchstart', onTouchStart, { passive: true })
+    addEventListener('touchend', onTouchEnd, { passive: true })
+    addEventListener('touchcancel', onTouchEnd, { passive: true })
+
     return () => {
       st.kill()
       gsap.ticker.remove(tick)
       removeEventListener('pointermove', onPointer)
       removeEventListener('resize', onResize)
       removeEventListener('keydown', onKey)
+      clearTimeout(settle)
+      clearTimeout(warmTimer)
+      removeEventListener('scroll', onScroll)
+      removeEventListener('touchstart', onTouchStart)
+      removeEventListener('touchend', onTouchEnd)
+      removeEventListener('touchcancel', onTouchEnd)
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // newly built pop-up pieces start hidden; draw them in the current pose
+  useEffect(() => {
+    if (loadUpTo < 0) return
+    book.current?.apply(withPointer(frameAt(progress.current, innerWidth, innerHeight).pose))
+  }, [loadUpTo])
+
   /** scroll so the sequence sits at progress s */
-  const yAt = (s: number, immediate = false) => {
+  const yAt = (s: number, immediate = false, duration?: number) => {
     const el = track.current!
     const top = el.getBoundingClientRect().top + scrollY
-    scrollToY(top + s * (el.offsetHeight - innerHeight), immediate)
+    scrollToY(top + s * (el.offsetHeight - innerHeight), immediate, duration)
   }
   const goTo = (i: number) => yAt(SPREAD_STOPS[i])
 
@@ -231,16 +288,20 @@ export function IntroStage() {
           </div>
         </div>
 
-        {/* progress rail + chapter index */}
+        {/* progress rail + chapter index; on phones a row along the bottom, clear of the book */}
         <div
           ref={chrome}
-          className="absolute inset-y-0 start-2 z-10 flex items-center gap-2 focus-within:opacity-100! md:start-10 md:gap-4"
+          className={
+            mobile
+              ? 'absolute inset-x-0 bottom-3 z-10 flex justify-center focus-within:opacity-100!'
+              : 'absolute inset-y-0 start-10 z-10 flex items-center gap-4 focus-within:opacity-100!'
+          }
           style={{ opacity: 0, pointerEvents: chromeOn ? 'auto' : 'none' }}
         >
-          <div className="h-[34vh]">
+          <div className={mobile ? 'hidden' : 'h-[34vh]'}>
             <ProgressRail ref={railFill} />
           </div>
-          <ChapterIndex active={chapter} onSelect={goTo} />
+          <ChapterIndex active={chapter} onSelect={goTo} row={mobile} />
         </div>
       </section>
       {debug && <DebugHud progress={progress} />}

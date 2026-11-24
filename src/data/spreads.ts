@@ -27,6 +27,13 @@ export interface PopUpLayerDef {
   fold?: number
   /** how far the layer stands up from the page, degrees (90 = upright) */
   stand?: number
+  /**
+   * Portrait (phone) placement, where the book opens top-to-bottom and the scene
+   * stands on the lower page. x: centre, −1…1 across the page; d: fold line, 0 at the
+   * spine … 1 at the bottom edge; w: width as a share of the page width. Derived from
+   * the desktop values when omitted.
+   */
+  m?: { x: number; d: number; w: number }
   /** kept on mobile (2 per spread) */
   mobile?: boolean
 }
@@ -71,12 +78,12 @@ export const spreads: Spread[] = [
     body_ar: null,
     link: { href: '#children', label_en: "Explore children's books", label_ar: null },
     layers: [
-      { src: '/popups/spreadA-layer1.webp', base: 0.4, x: 0.12, w: 1.1, ratio: R.A1, stand: 88, mobile: true, fold: 9 },
-      { src: '/popups/spreadA-layer2.webp', base: 0.49, x: 0.06, w: 1.26, ratio: R.A2, stand: 84 },
-      { src: '/popups/spreadA-layer3.webp', base: 0.58, x: 0.27, w: 0.64, ratio: R.A3, stand: 82, mobile: true },
-      { src: '/popups/spreadA-layer4.webp', base: 0.64, x: -0.74, w: 0.36, ratio: R.A4, stand: 80, yaw: -22, fold: 24 },
-      { src: '/popups/spreadA-layer5.webp', base: 0.64, x: 0.76, w: 0.38, ratio: R.A5, stand: 80, yaw: 22, fold: 24 },
-      { src: '/popups/spreadA-layer6.webp', base: 0.7, x: 0.02, w: 1.2, ratio: R.A6, stand: 58 },
+      { src: '/popups/spreadA-layer1.webp', base: 0.4, x: 0.12, w: 1.1, ratio: R.A1, stand: 88, mobile: true, fold: 9, m: { x: 0.04, d: 0.0, w: 0.98 } },
+      { src: '/popups/spreadA-layer2.webp', base: 0.49, x: 0.06, w: 1.26, ratio: R.A2, stand: 84, m: { x: 0.0, d: 0.035, w: 1.04 } },
+      { src: '/popups/spreadA-layer3.webp', base: 0.58, x: 0.27, w: 0.64, ratio: R.A3, stand: 82, mobile: true, m: { x: 0.14, d: 0.07, w: 0.6 } },
+      { src: '/popups/spreadA-layer4.webp', base: 0.64, x: -0.74, w: 0.36, ratio: R.A4, stand: 80, yaw: -22, fold: 24, m: { x: -0.7, d: 0.09, w: 0.3 } },
+      { src: '/popups/spreadA-layer5.webp', base: 0.64, x: 0.76, w: 0.38, ratio: R.A5, stand: 80, yaw: 22, fold: 24, m: { x: 0.72, d: 0.09, w: 0.28 } },
+      { src: '/popups/spreadA-layer6.webp', base: 0.7, x: 0.02, w: 1.2, ratio: R.A6, stand: 58, m: { x: 0.0, d: 0.12, w: 1.0 } },
     ],
     bgPaper: '#f4f1ea',
   },

@@ -141,15 +141,8 @@ body {
 }
 
 
-/* Mobile single-page view: the page is drawn smaller on screen, so its type is set larger. */
-.book-mobile .sp-label { font-size: 13px; }
-.book-mobile .sp-title { font-size: 40px; }
-.book-mobile .sp-body { font-size: 19px; line-height: 1.4; }
-.book-mobile .sp-link { font-size: 19px; }
-.book-mobile .sp-sample { display: none; }
-/* The single-page pan pushes half the book off-screen, where Chromium drops some
-   page layers unless the slabs are promoted. Mobile only; desktop never pans. */
-.book-mobile .b3d { will-change: transform; }
+
+
 
 /* While the cover is shut nothing inside can be seen, so the pages are not painted. */
 .book-closed .paper { visibility: hidden !important; }

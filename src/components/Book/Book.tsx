@@ -4,8 +4,9 @@ import { backOut, clamp01, lerp } from '../../lib/easing'
 import { sign, useDir } from '../../lib/dir'
 import { BLOCK_L, BLOCK_R, C, H, LEAF, LEAF_GAP, LEAVES, M, PH, PW, T, W, type BookPose } from './geometry'
 import { Page, PaperFace, SpreadLead, SpreadTrail } from './Page'
-import { PopUpLayer, type PopUpNodes } from './PopUpLayer'
-import { FaceContent, MirrorContext, Slab } from './Slab'
+import { PopUpLayer, type Placement, type PopUpNodes } from './PopUpLayer'
+import { FaceContent, MirrorContext, PortraitContext, Slab } from './Slab'
+import type { PopUpLayerDef } from '../../data/spreads'
 
 export interface BookHandle {
   /** Draw the book in this pose. Transform and opacity writes only. */
@@ -26,8 +27,11 @@ export interface BookHandle {
  */
 export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; mobile?: boolean }>(function Book({ pose, loadUpTo = 0, mobile = false }, ref) {
   const dir = useDir()
-  const mirrored = dir === 'rtl'
-  const k = sign(dir)
+  // Portrait (phone): the book is turned 90° so it opens top-to-bottom like a pop-up
+  // card. English only for now, so the portrait book is never mirrored.
+  const portrait = mobile
+  const mirrored = dir === 'rtl' && !portrait
+  const k = portrait ? 1 : sign(dir)
 
   const root = useRef<HTMLDivElement>(null)
   const center = useRef<HTMLDivElement>(null)
@@ -49,7 +53,8 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
 
   const applyRoot = (p: BookPose) => {
     root.current!.style.transform = popRoot.current!.style.transform =
-      `translate3d(${p.x * k}px,${p.y}px,0) scale(${p.scale}) rotateX(${p.rx}deg) rotateY(${p.ry * k}deg) rotateZ(${p.rz * k}deg)`
+      `translate3d(${p.x * k}px,${p.y}px,0) scale(${p.scale}) rotateX(${p.rx}deg) rotateY(${p.ry * k}deg) rotateZ(${p.rz * k}deg)` +
+      (portrait ? ' rotateZ(90deg)' : '')
     sheen.current!.style.transform = `translateX(${-30 - p.ry * 1.2}%)`
   }
 
@@ -142,6 +147,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
 
 
   return (
+    <PortraitContext.Provider value={portrait}>
     <MirrorContext.Provider value={mirrored}>
       <div aria-hidden className={`pointer-events-none absolute inset-0 ${mobile ? 'book-mobile' : ''}`} style={{ perspective: 3000 }}>
         {/* floor shadow while the book hovers closed */}
@@ -290,22 +296,38 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
             <div ref={popCenter} className="absolute left-0 top-0">
               <div ref={popBlock} className="absolute left-0 top-0">
                 {/* pop-up layers, anchored on the gutter */}
-                {spreads.map((sp, i) =>
-                  // mobile keeps the two layers flagged in the data
-                  (mobile
-                    ? // mobile: two layers, standing wholly on the second page so nothing is cut by the screen edge
-                      sp.layers.filter((l) => l.mobile).map((l) => ({ ...l, x: 0.5, w: Math.min(l.w * 0.8, 0.94) }))
-                    : sp.layers
-                  ).map((def, j, all) => (
-                    <PopUpLayer
-                      key={def.src}
-                      def={def}
-                      depth={all.length > 1 ? j / (all.length - 1) : 1}
-                      soft={!mobile}
-                      load={i <= loadUpTo}
-                      register={(n) => { pops.current[i][j] = n! }}
-                    />
-                  )),
+                {portrait ? (
+                  // Portrait: a frame turned back upright, with its origin on the spine
+                  // (the fold): x runs across the page, y down the lower page.
+                  <div className="absolute left-0" style={{ top: M + PH / 2, transform: 'rotateZ(-90deg)', transformOrigin: '0 0' }}>
+                    {spreads.map((sp, i) =>
+                      // a spread's pieces are only built once its artwork is due (see loadUpTo)
+                      i > loadUpTo ? null : sp.layers.map((def, j, all) => (
+                        <PopUpLayer
+                          key={def.src}
+                          def={def}
+                          depth={all.length > 1 ? j / (all.length - 1) : 1}
+                          soft={false}
+                          load
+                          place={portraitPlacement(def)}
+                          register={(n) => { pops.current[i][j] = n! }}
+                        />
+                      )),
+                    )}
+                  </div>
+                ) : (
+                  spreads.map((sp, i) =>
+                    i > loadUpTo ? null : sp.layers.map((def, j, all) => (
+                      <PopUpLayer
+                        key={def.src}
+                        def={def}
+                        depth={all.length > 1 ? j / (all.length - 1) : 1}
+                        soft
+                        load
+                        register={(n) => { pops.current[i][j] = n! }}
+                      />
+                    )),
+                  )
                 )}
               </div>
             </div>
@@ -313,5 +335,26 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
         </div>
       </div>
     </MirrorContext.Provider>
+    </PortraitContext.Provider>
   )
 })
+
+/**
+ * Where a pop-up piece stands in the portrait book. The page is PH wide (across the
+ * screen) and PW deep (from the spine down). Pieces hug the spine, back to front, and
+ * the side wings sit at the page edges, slightly overhanging like a real pop-up.
+ */
+function portraitPlacement(def: PopUpLayerDef): Placement {
+  const half = PH / 2
+  const m = def.m ?? autoPortrait(def)
+  return { x: m.x * half, foldY: m.d * PW, w: m.w * PH, side: 1 }
+}
+
+function autoPortrait(def: PopUpLayerDef) {
+  const wing = Math.abs(def.x) > 0.4
+  const w = wing ? Math.min((def.w * PW) / PH, 0.3) : Math.min((def.w * PW * 1.25) / PH, 1.02)
+  const x = wing ? Math.sign(def.x) * (1 - w) : (def.x * PW * 1.1) / (PH / 2)
+  // back to front, all within the first eighth of the lower page so the text stays clear
+  const d = Math.max(0, (def.base - 0.34) * 0.4)
+  return { x, d, w }
+}

@@ -20,12 +20,21 @@ export interface PopUpNodes {
  * lies flat on the page and stands as the spread opens, plus its shadow on the
  * paper. Book drives both through `register`.
  */
-export function PopUpLayer({ def, depth, load, register, soft = true }: { def: PopUpLayerDef; depth: number; load: boolean; register: (n: PopUpNodes | null) => void; soft?: boolean }) {
+/** Explicit position (portrait book): centre x, fold line y and width, in the parent's px. */
+export interface Placement {
+  x: number
+  foldY: number
+  w: number
+  /** which page the piece stands on, as in PopUpNodes.side */
+  side: number
+}
+
+export function PopUpLayer({ def, depth, load, register, soft = true, place }: { def: PopUpLayerDef; depth: number; load: boolean; register: (n: PopUpNodes | null) => void; soft?: boolean; place?: Placement }) {
   const mirrored = useContext(MirrorContext)
-  const w = def.w * PW
+  const w = place ? place.w : def.w * PW
   const h = w * def.ratio
-  const left = def.x * PW - w / 2
-  const foldY = M + def.base * PH
+  const left = place ? place.x - w / 2 : def.x * PW - w / 2
+  const foldY = place ? place.foldY : M + def.base * PH
   const cast = Math.max(h * 0.3, 60)
 
   const folded = !!def.fold && !mirrored
@@ -41,7 +50,7 @@ export function PopUpLayer({ def, depth, load, register, soft = true }: { def: P
             shadow,
             stand: def.stand ?? 84,
             yaw: def.yaw ?? 0,
-            side: def.x + def.w / 2 <= 0 ? -1 : def.x - def.w / 2 >= 0 ? 1 : 0,
+            side: place ? place.side : def.x + def.w / 2 <= 0 ? -1 : def.x - def.w / 2 >= 0 ? 1 : 0,
             halves: folded ? [halves[0]!, halves[1]!] : null,
             fold: def.fold ?? 0,
           }

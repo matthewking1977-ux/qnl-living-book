@@ -4,9 +4,27 @@ import { createContext, useContext, type CSSProperties, type ReactNode } from 'r
 /** True when the book is mirrored for RTL; faces counter-flip their content. */
 export const MirrorContext = createContext(false)
 
-/** Un-mirrors content drawn on a face of the (mirrored) RTL book. */
+/**
+ * True for the portrait (phone) book: the whole book is turned 90° so the spine is at
+ * the top and pages flip upwards. Face content is turned back so it reads upright.
+ */
+export const PortraitContext = createContext(false)
+
+/** Un-mirrors (RTL) or un-rotates (portrait) content drawn on a face of the book. */
 export function FaceContent({ children, className = '' }: { children?: ReactNode; className?: string }) {
   const mirrored = useContext(MirrorContext)
+  const portrait = useContext(PortraitContext)
+  if (portrait) {
+    // the face is w × h; its content box is h × w, turned back by −90° about the centre
+    return (
+      <div
+        className={`absolute ${className}`}
+        style={{ left: '50%', top: '50%', width: 'var(--fh)', height: 'var(--fw)', transform: 'translate(-50%, -50%) rotate(-90deg)' }}
+      >
+        {children}
+      </div>
+    )
+  }
   return (
     <div className={`absolute inset-0 ${className}`} style={mirrored ? { transform: 'scaleX(-1)' } : undefined}>
       {children}
@@ -41,7 +59,7 @@ export function Slab({ w, h, t, front, back, frontClass = '', backClass = '', ed
     <div className="b3d absolute left-0 top-0" style={{ width: w, height: h, ...style }}>
       {back !== undefined && (
         <div data-face="back" className={`b-face ${backClass}`} style={{ transform: 'rotateY(180deg)' }}>
-          <div className="absolute inset-0" style={{ zoom: S }}>{back}</div>
+          <div className="absolute inset-0" style={{ zoom: S, ['--fw' as string]: `${w / S}px`, ['--fh' as string]: `${h / S}px` }}>{back}</div>
         </div>
       )}
       {edgeX && (
@@ -60,7 +78,7 @@ export function Slab({ w, h, t, front, back, frontClass = '', backClass = '', ed
       )}
       {front !== undefined && (
         <div data-face="front" className={`b-face ${frontClass}`} style={{ transform: `translateZ(${t}px)` }}>
-          <div className="absolute inset-0" style={{ zoom: S }}>{front}</div>
+          <div className="absolute inset-0" style={{ zoom: S, ['--fw' as string]: `${w / S}px`, ['--fh' as string]: `${h / S}px` }}>{front}</div>
         </div>
       )}
     </div>
