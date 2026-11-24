@@ -14,7 +14,7 @@ npm run dev
 - `?lang=ar` previews the mirrored right-to-left book (Arabic copy not yet supplied).
 - Spread content: `src/data/spreads.ts`. Scroll choreography: `src/components/Book/choreography.ts`.
 
-Status: all six phases built. Lighthouse (mobile, local production build): Performance 100, Accessibility 100.
+Status: all six phases built, plus a cinematic pass on the pop-ups (camera drift, pointer response, V-folds, depth of field, stage lighting). Lighthouse (mobile, local production build): Performance 96, Accessibility 100.
 
 - `?intro=1` forces the intro for visitors who have already seen or skipped it.
 

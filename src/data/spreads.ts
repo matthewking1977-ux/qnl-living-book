@@ -20,6 +20,11 @@ export interface PopUpLayerDef {
   ratio: number
   /** turn of the fold line on the page, degrees. Wings fan outward: negative on the left page, positive on the right */
   yaw?: number
+  /**
+   * V-fold: the cut-out is creased down its centre and stands as a shallow V,
+   * like a real pop-up piece, at this angle per side (degrees). Omit for a flat card.
+   */
+  fold?: number
   /** how far the layer stands up from the page, degrees (90 = upright) */
   stand?: number
   /** kept on mobile (2 per spread) */
@@ -66,11 +71,11 @@ export const spreads: Spread[] = [
     body_ar: null,
     link: { href: '#children', label_en: "Explore children's books", label_ar: null },
     layers: [
-      { src: '/popups/spreadA-layer1.webp', base: 0.4, x: 0.12, w: 1.1, ratio: R.A1, stand: 88, mobile: true },
+      { src: '/popups/spreadA-layer1.webp', base: 0.4, x: 0.12, w: 1.1, ratio: R.A1, stand: 88, mobile: true, fold: 9 },
       { src: '/popups/spreadA-layer2.webp', base: 0.49, x: 0.06, w: 1.26, ratio: R.A2, stand: 84 },
       { src: '/popups/spreadA-layer3.webp', base: 0.58, x: 0.27, w: 0.64, ratio: R.A3, stand: 82, mobile: true },
-      { src: '/popups/spreadA-layer4.webp', base: 0.64, x: -0.6, w: 0.36, ratio: R.A4, stand: 80, yaw: -22 },
-      { src: '/popups/spreadA-layer5.webp', base: 0.64, x: 0.62, w: 0.38, ratio: R.A5, stand: 80, yaw: 22 },
+      { src: '/popups/spreadA-layer4.webp', base: 0.64, x: -0.74, w: 0.36, ratio: R.A4, stand: 80, yaw: -22, fold: 24 },
+      { src: '/popups/spreadA-layer5.webp', base: 0.64, x: 0.76, w: 0.38, ratio: R.A5, stand: 80, yaw: 22, fold: 24 },
       { src: '/popups/spreadA-layer6.webp', base: 0.7, x: 0.02, w: 1.2, ratio: R.A6, stand: 58 },
     ],
     bgPaper: '#f4f1ea',
@@ -94,11 +99,11 @@ export const spreads: Spread[] = [
       lines_ar: null,
     },
     layers: [
-      { src: '/popups/spreadB-layer1.webp', base: 0.35, x: 0.08, w: 1.04, ratio: R.B1, stand: 88, mobile: true },
+      { src: '/popups/spreadB-layer1.webp', base: 0.35, x: 0.08, w: 1.04, ratio: R.B1, stand: 88, mobile: true, fold: 9 },
       { src: '/popups/spreadB-layer2.webp', base: 0.42, x: 0.06, w: 1.2, ratio: R.B2, stand: 86 },
       { src: '/popups/spreadB-layer3.webp', base: 0.52, x: 0.1, w: 0.46, ratio: R.B3, stand: 82, mobile: true },
-      { src: '/popups/spreadB-layer4.webp', base: 0.58, x: -0.6, w: 0.36, ratio: R.B4, stand: 80, yaw: -22 },
-      { src: '/popups/spreadB-layer5.webp', base: 0.58, x: 0.64, w: 0.38, ratio: R.B5, stand: 80, yaw: 22 },
+      { src: '/popups/spreadB-layer4.webp', base: 0.58, x: -0.74, w: 0.36, ratio: R.B4, stand: 80, yaw: -22, fold: 24 },
+      { src: '/popups/spreadB-layer5.webp', base: 0.58, x: 0.76, w: 0.38, ratio: R.B5, stand: 80, yaw: 22, fold: 24 },
       { src: '/popups/spreadB-layer6.webp', base: 0.63, x: 0.02, w: 1.2, ratio: R.B6, stand: 58 },
     ],
     bgPaper: '#f4f1ea',
@@ -119,11 +124,11 @@ export const spreads: Spread[] = [
       lines_ar: null,
     },
     layers: [
-      { src: '/popups/spreadC-layer1.webp', base: 0.34, x: 0.04, w: 1.72, ratio: R.C1, stand: 88 },
+      { src: '/popups/spreadC-layer1.webp', base: 0.34, x: 0.04, w: 1.72, ratio: R.C1, stand: 88, fold: 9 },
       { src: '/popups/spreadC-layer2.webp', base: 0.43, x: 0.06, w: 0.98, ratio: R.C2, stand: 86, mobile: true },
       { src: '/popups/spreadC-layer3.webp', base: 0.5, x: 0.08, w: 0.44, ratio: R.C3, stand: 82, mobile: true },
-      { src: '/popups/spreadC-layer4.webp', base: 0.58, x: -0.62, w: 0.34, ratio: R.C4, stand: 80, yaw: -22 },
-      { src: '/popups/spreadC-layer5.webp', base: 0.58, x: 0.66, w: 0.38, ratio: R.C5, stand: 80, yaw: 22 },
+      { src: '/popups/spreadC-layer4.webp', base: 0.58, x: -0.74, w: 0.34, ratio: R.C4, stand: 80, yaw: -22, fold: 24 },
+      { src: '/popups/spreadC-layer5.webp', base: 0.58, x: 0.76, w: 0.38, ratio: R.C5, stand: 80, yaw: 22, fold: 24 },
       { src: '/popups/spreadC-layer6.webp', base: 0.63, x: 0.02, w: 1.2, ratio: R.C6, stand: 58 },
     ],
     bgPaper: '#f4f1ea',
@@ -139,11 +144,11 @@ export const spreads: Spread[] = [
     body_ar: null,
     link: { href: '#heritage', label_en: 'Explore the heritage collection', label_ar: null },
     layers: [
-      { src: '/popups/spreadD-layer1.webp', base: 0.37, x: 0.08, w: 1.1, ratio: R.D1, stand: 88, mobile: true },
+      { src: '/popups/spreadD-layer1.webp', base: 0.37, x: 0.08, w: 1.1, ratio: R.D1, stand: 88, mobile: true, fold: 9 },
       { src: '/popups/spreadD-layer2.webp', base: 0.45, x: 0.04, w: 1.16, ratio: R.D2, stand: 84 },
       { src: '/popups/spreadD-layer3.webp', base: 0.54, x: 0.08, w: 0.56, ratio: R.D3, stand: 80, mobile: true },
-      { src: '/popups/spreadD-layer4.webp', base: 0.59, x: -0.6, w: 0.36, ratio: R.D4, stand: 80, yaw: -22 },
-      { src: '/popups/spreadD-layer5.webp', base: 0.59, x: 0.64, w: 0.4, ratio: R.D5, stand: 80, yaw: 22 },
+      { src: '/popups/spreadD-layer4.webp', base: 0.59, x: -0.74, w: 0.36, ratio: R.D4, stand: 80, yaw: -22, fold: 24 },
+      { src: '/popups/spreadD-layer5.webp', base: 0.59, x: 0.76, w: 0.4, ratio: R.D5, stand: 80, yaw: 22, fold: 24 },
       { src: '/popups/spreadD-layer6.webp', base: 0.64, x: 0.02, w: 1.2, ratio: R.D6, stand: 58 },
     ],
     bgPaper: '#f1ece0',

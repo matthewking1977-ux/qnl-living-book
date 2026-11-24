@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Book, type BookHandle } from './Book/Book'
+import type { BookPose } from './Book/geometry'
 import { frameAt, isMobile, SEARCH_STOP, SPREAD_STOPS } from './Book/choreography'
 import { SpreadOutline } from './SpreadOutline'
 import { introSeen, markIntroSeen, clearIntroSeen } from '../lib/intro'
@@ -14,6 +15,12 @@ import gsap from 'gsap'
 import { ScrollTrigger, scrollToY } from '../lib/scroll'
 
 const debug = new URLSearchParams(location.search).get('debug') === '1'
+const first0 = () => frameAt(0, innerWidth, innerHeight).pose
+
+/** smoothed pointer position, −1…1 on each axis (x, y) and its target (tx, ty) */
+const pointer = { x: 0, y: 0, tx: 0, ty: 0 }
+/** the scroll pose plus the pointer's pull: up to ±4° of turn and ±2.5° of tilt */
+const withPointer = (p: BookPose): BookPose => ({ ...p, ry: p.ry + pointer.x * 4, rx: p.rx - pointer.y * 2.5 })
 
 /**
  * The opening sequence: a tall track with a sticky stage. ScrollTrigger turns
@@ -29,6 +36,9 @@ export function IntroStage() {
   const chrome = useRef<HTMLDivElement>(null)
   const railFill = useRef<HTMLDivElement>(null)
   const bookWrap = useRef<HTMLDivElement>(null)
+  const lightPool = useRef<HTMLDivElement>(null)
+  const vignette = useRef<HTMLDivElement>(null)
+  const base = useRef(first0())
   const search = useRef<SearchMorphHandle>(null)
   const [searchOn, setSearchOn] = useState(false)
   const progress = useRef(0)
@@ -43,7 +53,11 @@ export function IntroStage() {
     const render = (s: number) => {
       progress.current = s
       const f = frameAt(s, innerWidth, innerHeight)
-      book.current?.apply(f.pose)
+      base.current = f.pose
+      book.current?.apply(withPointer(f.pose))
+      // stage lighting: a warm pool behind the open book, darker edges around it
+      lightPool.current!.style.opacity = String(f.chrome)
+      vignette.current!.style.opacity = String(f.chrome)
       arrival.current!.style.opacity = String(f.arrival)
       dark.current!.style.opacity = String(0.66 + 0.22 * f.dark)
       chrome.current!.style.opacity = String(f.chrome)
@@ -63,19 +77,39 @@ export function IntroStage() {
       onUpdate: (self) => render(self.progress),
       onRefresh: (self) => render(self.progress),
     })
+    // Pointer: on desktop the open book turns a few degrees towards the mouse, so the
+    // pop-up layers shift against each other. It follows the visitor, it never moves
+    // by itself. Smoothed here and applied to the book's root transform only.
+    const fine = matchMedia('(pointer: fine)').matches
+    const onPointer = (e: PointerEvent) => {
+      pointer.tx = (e.clientX / innerWidth) * 2 - 1
+      pointer.ty = (e.clientY / innerHeight) * 2 - 1
+    }
+    if (fine) addEventListener('pointermove', onPointer, { passive: true })
+
     // Idle breath: the only thing that moves on its own. While the closed book waits
     // at the top it sways ±2° on a 6 s loop, fading out as soon as the scroll begins.
-    const breathe = (time: number) => {
+    const tick = (time: number) => {
       const s = progress.current
-      if (s > 0.04) return
-      const f = frameAt(s, innerWidth, innerHeight)
-      const k = 1 - s / 0.04
-      const a = (time / 6) * Math.PI * 2
-      f.pose.ry += 2 * Math.sin(a) * k
-      f.pose.rx += 0.7 * Math.sin(a + 1.3) * k
-      book.current?.applyRoot(f.pose)
+      const dx = pointer.tx - pointer.x
+      const dy = pointer.ty - pointer.y
+      const moving = Math.abs(dx) + Math.abs(dy) > 0.0005
+      if (moving) {
+        pointer.x += dx * 0.08
+        pointer.y += dy * 0.08
+      }
+      const breathing = s < 0.04
+      if (!moving && !breathing) return
+      const pose = withPointer(base.current)
+      if (breathing) {
+        const k = 1 - s / 0.04
+        const a = (time / 6) * Math.PI * 2
+        pose.ry += 2 * Math.sin(a) * k
+        pose.rx += 0.7 * Math.sin(a + 1.3) * k
+      }
+      book.current?.applyRoot(pose)
     }
-    gsap.ticker.add(breathe)
+    gsap.ticker.add(tick)
 
     // Returning visitors (skipped before, or already watched this session) start at the
     // search bar. Only when the page loads at the very top: a restored scroll position
@@ -109,7 +143,8 @@ export function IntroStage() {
 
     return () => {
       st.kill()
-      gsap.ticker.remove(breathe)
+      gsap.ticker.remove(tick)
+      removeEventListener('pointermove', onPointer)
       removeEventListener('resize', onResize)
       removeEventListener('keydown', onKey)
     }
@@ -155,9 +190,25 @@ export function IntroStage() {
             Focusing a link brings its spread on screen. The book itself is decorative. */}
         <SpreadOutline onFocusSpread={goTo} />
 
+        {/* warm pool of light behind the open book */}
+        <div
+          ref={lightPool}
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{ opacity: 0, background: 'radial-gradient(ellipse 42% 46% at 50% 48%, rgba(255,226,176,.17), rgba(255,226,176,.05) 55%, transparent 75%)' }}
+        />
+
         <div ref={bookWrap} className="absolute inset-0">
           <Book key={mobile ? 'm' : 'd'} ref={book} pose={first.pose} loadUpTo={loadUpTo} mobile={mobile} />
         </div>
+
+        {/* vignette: pulls the eye to the centre of the spread */}
+        <div
+          ref={vignette}
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{ opacity: 0, background: 'radial-gradient(ellipse 70% 72% at 50% 50%, transparent 52%, rgba(0,0,0,.5) 86%, rgba(0,0,0,.72) 100%)' }}
+        />
 
         {/* Phase 6: the book becomes the search bar */}
         <SearchMorph ref={search} active={searchOn} />

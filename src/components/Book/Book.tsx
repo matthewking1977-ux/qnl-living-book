@@ -42,10 +42,13 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
   const leafFaces = useRef<HTMLElement[][]>([])
   const castNodes = useRef<Record<string, HTMLElement> | null>(null)
   const leftBlock = useRef<HTMLDivElement>(null)
+  const popRoot = useRef<HTMLDivElement>(null)
+  const popCenter = useRef<HTMLDivElement>(null)
+  const popBlock = useRef<HTMLDivElement>(null)
   const pops = useRef<PopUpNodes[][]>(spreads.map(() => []))
 
   const applyRoot = (p: BookPose) => {
-    root.current!.style.transform =
+    root.current!.style.transform = popRoot.current!.style.transform =
       `translate3d(${p.x * k}px,${p.y}px,0) scale(${p.scale}) rotateX(${p.rx}deg) rotateY(${p.ry * k}deg) rotateZ(${p.rz * k}deg)`
     sheen.current!.style.transform = `translateX(${-30 - p.ry * 1.2}%)`
   }
@@ -55,10 +58,10 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
     applyRoot(p)
     root.current!.classList.toggle('book-closed', o < 0.001)
     // keep the visual centre of the book on the rotation origin
-    center.current!.style.transform = `translate3d(${lerp(-W / 2, T / 2, o)}px,${-H / 2}px,${(-T / 2) * (1 - o)}px)`
+    center.current!.style.transform = popCenter.current!.style.transform = `translate3d(${lerp(-W / 2, T / 2, o)}px,${-H / 2}px,${(-T / 2) * (1 - o)}px)`
     spine.current!.style.transform = `rotateY(${-90 - 90 * o}deg)`
     cover.current!.style.transform = `rotateY(${90 * (1 - o)}deg)`
-    block.current!.style.transform = `translate3d(${(-T / 2) * o}px,0,-2px)`
+    block.current!.style.transform = popBlock.current!.style.transform = `translate3d(${(-T / 2) * o}px,0,-2px)`
     table.current!.style.opacity = String(o)
     floor.current!.style.opacity = String(1 - o)
     floor.current!.style.transform = `translate(-50%, ${p.y + (H / 2) * p.scale + 36}px) scale(${p.scale})`
@@ -121,8 +124,15 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
         // a folded layer is not painted at all
         n.layer.style.visibility = n.shadow.style.visibility = x > 0 ? 'visible' : 'hidden'
         n.layer.style.opacity = String(Math.min(1, x * 7))
-        n.shadow.style.transform = `translateZ(${z}px) rotateZ(${n.yaw}deg)`
+        // the shadow grows out from the fold as the piece stands
+        n.shadow.style.transform = `translateZ(${z}px) rotateZ(${n.yaw}deg) scaleY(${(0.35 + 0.65 * x).toFixed(3)})`
         n.shadow.style.opacity = String(x)
+        // V-fold: the halves swing out from the crease as the piece rises, then settle
+        if (n.halves) {
+          const a = n.fold * (1.7 - 0.7 * backOut(x))
+          n.halves[0].style.transform = `rotateY(${-a}deg)`
+          n.halves[1].style.transform = `rotateY(${a}deg)`
+        }
       }
     }
   }
@@ -263,6 +273,22 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
                     }
                   />
                 ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/*
+          Pop-ups live in their own 3D rendering context, laid over the book with the
+          same transform chain. Chrome's depth sorting misplaces upright layers against
+          the page-edge strips once the book turns sideways (camera sweep, pointer); a
+          separate context is always drawn in front, which is correct because pop-ups
+          only stand while no page is moving.
+        */}
+        <div ref={popRoot} className="b3d b3d-all absolute left-1/2 top-1/2 h-0 w-0">
+          <div style={mirrored ? { transform: 'scaleX(-1)' } : undefined}>
+            <div ref={popCenter} className="absolute left-0 top-0">
+              <div ref={popBlock} className="absolute left-0 top-0">
                 {/* pop-up layers, anchored on the gutter */}
                 {spreads.map((sp, i) =>
                   // mobile keeps the two layers flagged in the data
@@ -275,6 +301,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
                       key={def.src}
                       def={def}
                       depth={all.length > 1 ? j / (all.length - 1) : 1}
+                      soft={!mobile}
                       load={i <= loadUpTo}
                       register={(n) => { pops.current[i][j] = n! }}
                     />

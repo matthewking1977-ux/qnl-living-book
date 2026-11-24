@@ -99,6 +99,22 @@ export function frameAt(s: number, vw: number, vh: number): Frame {
 
   const open = coverOpen * (1 - coverClose)
 
+  // Camera drift: while a spread rests, the camera keeps travelling slowly with the
+  // scroll, sweeping across the scene, dipping lower and pushing in, so the pop-up
+  // layers slide against each other. It eases in and out with the pop-up itself, so
+  // page turns happen from the same neutral position as before.
+  let driftY = 0
+  let driftX = 0
+  let push = 0
+  SPREAD_WINDOWS.forEach(([, b, c], i) => {
+    const env = smoothstep(0, 1, pops[i])
+    if (env <= 0) return
+    const r = clamp01((s - (b + POP_RISE[1])) / (c + POP_FOLD[0] - (b + POP_RISE[1])))
+    driftY += env * (r - 0.5) * 2 // −1 … 1 across the rest
+    driftX += env * Math.sin(Math.PI * r) // 0 → 1 → 0
+    push += env * Math.sin(Math.PI * r)
+  })
+
   // Mobile: show one page at a time. Each spread starts on its first page (label
   // and title) and pans across to the second (copy and link) once the pop-up is up.
   const mobile = isMobile(vw)
@@ -114,12 +130,13 @@ export function frameAt(s: number, vw: number, vh: number): Frame {
     pan *= overhang * open
   }
   const rxOpen = mobile ? 44 : POSE_OPEN.rx
+  const sweep = mobile ? 3 : 6 // degrees either side
   const pose: BookPose = {
     x: pan,
-    y: lerp(-vh * 0.03, vh * 0.1, face) - vh * 0.17 * settle,
-    scale: lerp(fitClosed(vw, vh), fitOpen(vw, vh), coverOpen) * lerp(1, 0.5, settle) * lerp(1, 0.7, search),
-    rx: lerp(POSE_CLOSED.rx, rxOpen, face) + 8 * settle,
-    ry: lerp(POSE_CLOSED.ry, POSE_OPEN.ry, face),
+    y: lerp(-vh * 0.03, vh * 0.1, face) - vh * 0.17 * settle + vh * 0.025 * push,
+    scale: lerp(fitClosed(vw, vh), fitOpen(vw, vh), coverOpen) * lerp(1, 0.5, settle) * lerp(1, 0.7, search) * (1 + 0.04 * push),
+    rx: lerp(POSE_CLOSED.rx, rxOpen, face) + 8 * settle + 3 * driftX,
+    ry: lerp(POSE_CLOSED.ry, POSE_OPEN.ry, face) + sweep * driftY,
     rz: lerp(POSE_CLOSED.rz, POSE_OPEN.rz, face),
     open,
     turns,
