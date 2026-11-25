@@ -10,6 +10,7 @@ import { ProgressRail } from './ProgressRail'
 import { SearchMorph, type SearchMorphHandle } from './SearchMorph'
 import { SkipIntro } from './SkipIntro'
 import { PageControls } from './PageControls'
+import { SiteHeader } from './SiteHeader'
 import { Tx } from './Tx'
 import { ui } from '../data/spreads'
 import gsap from 'gsap'
@@ -122,7 +123,7 @@ export function IntroStage() {
       bookWrap.current!.style.opacity = String(f.bookFade)
       search.current?.apply(f.search)
       setSearchOn(f.search > 0.9)
-      if (f.search > 0.9) markIntroSeen('session') // the intro plays once per session
+      if (f.search > 0.9) markIntroSeen() // watched through: start at the search bar for 30 days
       setChapter(f.chapter)
       if (s > 0.004) setLoadUpTo((n) => Math.max(n, f.chapter + 1, 0))
       if (f.chapter >= 0) setFocus(f.chapter)
@@ -265,8 +266,13 @@ export function IntroStage() {
   }
   const goTo = (i: number) => (mobile ? go(SPREAD_STOPS[i]) : yAt(SPREAD_STOPS[i]))
 
+  const introEnd = useMemo(() => () => {
+    const el = track.current
+    return el ? el.getBoundingClientRect().bottom + scrollY : innerHeight
+  }, [])
+
   const skip = () => {
-    markIntroSeen('always')
+    markIntroSeen()
     if (mobile) go(SEARCH_STOP, true)
     else yAt(SEARCH_STOP, true)
     // hand focus to the search field the user skipped to
@@ -294,11 +300,8 @@ export function IntroStage() {
         </picture>
         <div ref={dark} className="absolute inset-0 bg-ink" style={{ opacity: 0.66 }} />
 
-        {/* Skip intro comes first in the DOM so it is the first focusable element */}
-        <header className="absolute inset-x-0 top-0 z-20 mx-auto flex max-w-[1440px] flex-row-reverse items-center justify-between px-4 py-4 md:px-10 md:py-6">
-          <SkipIntro done={searchOn} onSkip={skip} onReplay={replay} />
-          <img src="/img/qnl-logo-white.webp" alt="Qatar National Library" width={480} height={250} className="h-12 w-auto md:h-14" />
-        </header>
+        {/* fixed site header; Skip intro is the first focusable element on the page */}
+        <SiteHeader action={<SkipIntro done={searchOn} onSkip={skip} onReplay={replay} />} solidAfter={introEnd} />
 
         {/* For screen readers and keyboard users: the four spreads as headings and links.
             Focusing a link brings its spread on screen. The book itself is decorative. */}

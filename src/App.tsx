@@ -8,6 +8,7 @@ import { WhatsOn } from './components/home/WhatsOn'
 import { Collections } from './components/home/Collections'
 import { Audiences } from './components/home/Audiences'
 import { Footer } from './components/home/Footer'
+import { SearchPanel } from './components/SearchPanel'
 
 /**
  * English only for now. The RTL book is still built in (mirrored hinge, turn
@@ -44,6 +45,7 @@ export default function App() {
         </div>
       </main>
       <Footer />
+      <SearchPanel />
     </LangContext.Provider>
   )
 }

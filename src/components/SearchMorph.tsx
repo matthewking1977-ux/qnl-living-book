@@ -1,6 +1,7 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { ui } from '../data/spreads'
 import { lerp, smoothstep } from '../lib/easing'
+import { VoiceButton } from './VoiceButton'
 
 export interface SearchMorphHandle {
   /** m: 0 book … 1 search bar. Transform and opacity only. */
@@ -20,6 +21,7 @@ export const SearchMorph = forwardRef<SearchMorphHandle, { active: boolean }>(fu
   const pill = useRef<HTMLDivElement>(null)
   const content = useRef<HTMLDivElement>(null)
   const around = useRef<HTMLDivElement>(null)
+  const field = useRef<HTMLInputElement>(null)
   const [filter, setFilter] = useState<string | null>(null)
 
   useImperativeHandle(ref, () => ({
@@ -49,12 +51,14 @@ export const SearchMorph = forwardRef<SearchMorphHandle, { active: boolean }>(fu
           <div ref={content} className="relative flex h-full items-center gap-2 ps-6 pe-2 md:ps-8">
             <label htmlFor="q" className="sr-only">Search the library</label>
             <input
+              ref={field}
               id="q"
               type="search"
               tabIndex={tab}
               placeholder={ui.searchPlaceholder.en}
               className="h-full min-w-0 flex-1 appearance-none rounded-none border-0 bg-transparent text-[16px] text-ink placeholder:text-g1 focus:outline-none md:text-[18px]"
             />
+            {active && <VoiceButton onText={(t) => { if (field.current) field.current.value = t }} />}
             <button
               type="submit"
               tabIndex={tab}

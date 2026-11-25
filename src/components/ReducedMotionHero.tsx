@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { Book, type BookHandle } from './Book/Book'
 import { frameAt, isMobile, SPREAD_STOPS } from './Book/choreography'
 import { SearchMorph, type SearchMorphHandle } from './SearchMorph'
+import { SiteHeader } from './SiteHeader'
 import { spreads, ui } from '../data/spreads'
 
 /**
@@ -10,6 +11,8 @@ import { spreads, ui } from '../data/spreads'
  * spreads are a tabbed carousel that cross-fades. The search bar sits below in
  * its finished state. All spread content is real text and links.
  */
+const heroEnd = () => (document.getElementById('rm-hero')?.getBoundingClientRect().bottom ?? 0) + scrollY
+
 export function ReducedMotionHero() {
   const [tab, setTab] = useState(0)
   const [shown, setShown] = useState(0)
@@ -61,7 +64,7 @@ export function ReducedMotionHero() {
   const sp = spreads[tab]
 
   return (
-    <div className="relative bg-ink text-white">
+    <div id="rm-hero" className="relative bg-ink text-white">
       <picture>
         <source type="image/avif" srcSet="/img/interior-640.avif 640w, /img/interior-1280.avif 1280w, /img/interior-1920.avif 1920w" sizes="100vw" />
         <source type="image/webp" srcSet="/img/interior-640.webp 640w, /img/interior-1280.webp 1280w, /img/interior-1920.webp 1920w" sizes="100vw" />
@@ -70,9 +73,8 @@ export function ReducedMotionHero() {
       <div className="absolute inset-0 bg-ink/85" />
 
       <div className="relative">
-        <header className="mx-auto flex max-w-[1440px] items-center justify-between px-4 py-4 md:px-10 md:py-6">
-          <img src="/img/qnl-logo-white.webp" alt="Qatar National Library" width={480} height={250} className="h-12 w-auto md:h-14" />
-        </header>
+        <SiteHeader solidAfter={heroEnd} />
+        <div className="h-[72px] md:h-[96px]" />
 
         <div className="px-6 pt-4 text-center">
           <p className="label text-white/80">{ui.institution.en}</p>

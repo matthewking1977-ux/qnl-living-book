@@ -34,3 +34,10 @@ export function scrollToY(y: number, immediate = false, duration = 1.4) {
 }
 
 export { ScrollTrigger }
+
+/** Freezes page scrolling (e.g. while the search panel is open). */
+export function setScrollLocked(locked: boolean) {
+  document.documentElement.style.overflow = locked ? 'hidden' : ''
+  if (locked) lenis?.stop()
+  else lenis?.start()
+}
