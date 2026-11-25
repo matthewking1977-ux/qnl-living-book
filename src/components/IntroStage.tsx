@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent } from 'react'
 import { Book, type BookHandle } from './Book/Book'
 import type { BookPose } from './Book/geometry'
 import { frameAt, isMobile, SEARCH_STOP, SPREAD_STOPS } from './Book/choreography'
@@ -9,12 +9,15 @@ import { DebugHud } from './DebugHud'
 import { ProgressRail } from './ProgressRail'
 import { SearchMorph, type SearchMorphHandle } from './SearchMorph'
 import { SkipIntro } from './SkipIntro'
+import { PageControls } from './PageControls'
 import { Tx } from './Tx'
 import { ui } from '../data/spreads'
 import gsap from 'gsap'
 import { ScrollTrigger, scrollToY } from '../lib/scroll'
 
 const debug = new URLSearchParams(location.search).get('debug') === '1'
+/** resting points of the sequence: closed book, the four spreads, the search bar */
+const STOPS = [0, ...SPREAD_STOPS, SEARCH_STOP]
 const first0 = () => frameAt(0, innerWidth, innerHeight).pose
 
 /** smoothed pointer position, −1…1 on each axis (x, y) and its target (tx, ty) */
@@ -53,6 +56,40 @@ export function IntroStage() {
   const first = useMemo(() => frameAt(0, innerWidth, innerHeight), [])
   const [mobile, setMobile] = useState(() => isMobile(innerWidth))
 
+  // Tap-driven playback (phones): the sequence plays as timed animation between
+  // resting points instead of following the finger.
+  const renderRef = useRef<(s: number) => void>(() => {})
+  const play = useRef<{ tween: gsap.core.Tween | null; state: { s: number }; target: number }>({ tween: null, state: { s: 0 }, target: 0 })
+  const [stopIndex, setStopIndex] = useState(0)
+
+  /** play the sequence to progress `target` (phones), or jump there with `instant` */
+  const go = (target: number, instant = false) => {
+    const pl = play.current
+    pl.tween?.kill()
+    pl.target = target
+    setStopIndex(STOPS.findIndex((x) => Math.abs(x - target) < 0.001))
+    pl.state.s = progress.current
+    if (instant) {
+      pl.state.s = target
+      renderRef.current(target)
+      return
+    }
+    const dist = Math.abs(target - pl.state.s)
+    pl.tween = gsap.to(pl.state, {
+      s: target,
+      // the page turn and pop-up rise are eased inside the choreography, so the
+      // playhead itself moves at an even pace with only a soft start and finish
+      duration: Math.min(3.4, Math.max(1.2, 0.6 + dist * 7)),
+      ease: 'sine.inOut',
+      onUpdate: () => renderRef.current(pl.state.s),
+    })
+  }
+  const step = (dir: 1 | -1) => {
+    const from = play.current.target
+    const next = dir > 0 ? STOPS.find((x) => x > from + 0.001) : [...STOPS].reverse().find((x) => x < from - 0.001)
+    if (next !== undefined) go(next)
+  }
+
   useEffect(() => {
     const render = (s: number) => {
       progress.current = s
@@ -75,13 +112,23 @@ export function IntroStage() {
       if (f.chapter >= 0) setFocus(f.chapter)
       setChromeOn(f.chrome > 0.5)
     }
-    const st = ScrollTrigger.create({
-      trigger: track.current,
-      start: 'top top',
-      end: 'bottom bottom',
-      onUpdate: (self) => render(self.progress),
-      onRefresh: (self) => render(self.progress),
-    })
+    renderRef.current = render
+
+    // Desktop: the scroll position drives the sequence. Phones: taps and swipes play it.
+    const st = mobile
+      ? null
+      : ScrollTrigger.create({
+          trigger: track.current,
+          start: 'top top',
+          end: 'bottom bottom',
+          onUpdate: (self) => render(self.progress),
+          onRefresh: (self) => render(self.progress),
+        })
+    if (mobile) {
+      play.current.tween?.kill()
+      render(play.current.target)
+    }
+
     // Pointer: on desktop the open book turns a few degrees towards the mouse, so the
     // pop-up layers shift against each other. It follows the visitor, it never moves
     // by itself. Smoothed here and applied to the book's root transform only.
@@ -93,7 +140,7 @@ export function IntroStage() {
     if (fine) addEventListener('pointermove', onPointer, { passive: true })
 
     // Idle breath: the only thing that moves on its own. While the closed book waits
-    // at the top it sways ±2° on a 6 s loop, fading out as soon as the scroll begins.
+    // at the top it sways ±2° on a 6 s loop, fading out as soon as the book opens.
     const tick = (time: number) => {
       const s = progress.current
       const dx = pointer.tx - pointer.x
@@ -126,7 +173,10 @@ export function IntroStage() {
     // search bar. Only when the page loads at the very top: a restored scroll position
     // or an anchor link always wins. ?intro=1 forces the intro.
     const force = new URLSearchParams(location.search).get('intro') === '1'
-    if (!force && introSeen() && scrollY < 4 && !location.hash) yAt(SEARCH_STOP, true)
+    if (!force && introSeen() && scrollY < 4 && !location.hash) {
+      if (mobile) go(SEARCH_STOP, true)
+      else yAt(SEARCH_STOP, true)
+    }
 
     const onResize = () => setMobile(isMobile(innerWidth))
     addEventListener('resize', onResize)
@@ -134,7 +184,6 @@ export function IntroStage() {
     // Keyboard: arrows and Page Up/Down step between the resting points of the
     // sequence. Outside the sequence (or past its ends) the keys scroll natively,
     // so there is never a trap.
-    const stops = [0, ...SPREAD_STOPS, SEARCH_STOP]
     const onKey = (e: KeyboardEvent) => {
       if (e.altKey || e.ctrlKey || e.metaKey) return
       const t = e.target as HTMLElement
@@ -142,84 +191,49 @@ export function IntroStage() {
       const fwd = e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'PageDown'
       const back = e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp'
       if (!fwd && !back) return
-      const s = progress.current
       const r = track.current!.getBoundingClientRect()
+      if (mobile) {
+        if (r.bottom < innerHeight * 0.5) return // stage scrolled away
+        const t0 = play.current.target
+        if ((fwd && t0 >= SEARCH_STOP) || (back && t0 <= 0)) return
+        e.preventDefault()
+        step(fwd ? 1 : -1)
+        return
+      }
       if (r.top > 1 || r.bottom < innerHeight - 1) return // stage not pinned
-      const next = fwd ? stops.find((x) => x > s + 0.004) : [...stops].reverse().find((x) => x < s - 0.004)
+      const s = progress.current
+      const next = fwd ? STOPS.find((x) => x > s + 0.004) : [...STOPS].reverse().find((x) => x < s - 0.004)
       if (next === undefined) return
       e.preventDefault()
       yAt(next)
     }
     addEventListener('keydown', onKey)
 
-    // Touch snapping (phones): when a swipe comes to rest inside the sequence, glide on
-    // to the next resting point in the direction of the swipe, or back to the nearest
-    // one after a small nudge. Past the search bar the page scrolls freely.
-    let touching = false
-    let startS = 0
-    let settle = 0
-    const snapNow = () => {
-      if (touching || !isMobile(innerWidth)) return
-      const s = progress.current
-      if (s <= 0.002 || s >= SEARCH_STOP - 0.002) return
-      if (stops.some((x) => Math.abs(x - s) < 0.004)) return
-      const moved = s - startS
-      let target: number
-      if (Math.abs(moved) < 0.01) target = stops.reduce((a, b) => (Math.abs(b - s) < Math.abs(a - s) ? b : a))
-      else if (moved > 0) target = stops.find((x) => x >= s) ?? SEARCH_STOP
-      else target = [...stops].reverse().find((x) => x <= s) ?? 0
-      yAt(target, false, Math.min(1.1, 0.45 + Math.abs(target - s) * 2.5))
-    }
-    const onScroll = () => {
-      clearTimeout(settle)
-      settle = window.setTimeout(snapNow, 140)
-    }
-    // A sideways drag on a spread turns the book (up to ±14°) so the layers slide
-    // against each other; it springs back on release. Vertical drags scroll as normal.
-    let tx0 = 0
-    let ty0 = 0
-    const onTouchStart = (e: TouchEvent) => {
-      touching = true
-      startS = progress.current
-      clearTimeout(settle)
-      tx0 = e.touches[0]?.clientX ?? 0
-      ty0 = e.touches[0]?.clientY ?? 0
-    }
-    const onTouchMove = (e: TouchEvent) => {
-      const t = e.touches[0]
-      if (!t || frameAt(progress.current, innerWidth, innerHeight).chapter < 0) return
-      const dx = t.clientX - tx0
-      if (Math.abs(dx) < Math.abs(t.clientY - ty0)) return
-      pointer.reach = 14
-      pointer.tx = Math.max(-1, Math.min(1, dx / (innerWidth * 0.45)))
-    }
-    const onTouchEnd = () => {
-      pointer.tx = 0
-      touching = false
-      clearTimeout(settle)
-      settle = window.setTimeout(snapNow, 140)
-    }
-    addEventListener('scroll', onScroll, { passive: true })
-    addEventListener('touchstart', onTouchStart, { passive: true })
-    addEventListener('touchmove', onTouchMove, { passive: true })
-    addEventListener('touchend', onTouchEnd, { passive: true })
-    addEventListener('touchcancel', onTouchEnd, { passive: true })
-
     return () => {
-      st.kill()
+      st?.kill()
       gsap.ticker.remove(tick)
       removeEventListener('pointermove', onPointer)
       removeEventListener('resize', onResize)
       removeEventListener('keydown', onKey)
-      clearTimeout(settle)
       clearTimeout(warmTimer)
-      removeEventListener('scroll', onScroll)
-      removeEventListener('touchstart', onTouchStart)
-      removeEventListener('touchmove', onTouchMove)
-      removeEventListener('touchend', onTouchEnd)
-      removeEventListener('touchcancel', onTouchEnd)
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [mobile]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Phones: a sideways swipe on the stage turns the page (left = next). Vertical swipes
+  // are left to the browser, so the page below always scrolls normally.
+  const swipe = useRef({ x: 0, y: 0, t: 0 })
+  const onTouchStart = (e: ReactTouchEvent) => {
+    const t = e.touches[0]
+    swipe.current = { x: t.clientX, y: t.clientY, t: performance.now() }
+  }
+  const onTouchEnd = (e: ReactTouchEvent) => {
+    if (!mobile) return
+    const t = e.changedTouches[0]
+    const dx = t.clientX - swipe.current.x
+    const dy = t.clientY - swipe.current.y
+    if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.4 || performance.now() - swipe.current.t > 700) return
+    step(dx < 0 ? 1 : -1)
+  }
 
   // newly built pop-up pieces start hidden; draw them in the current pose
   useEffect(() => {
@@ -233,22 +247,29 @@ export function IntroStage() {
     const top = el.getBoundingClientRect().top + scrollY
     scrollToY(top + s * (el.offsetHeight - innerHeight), immediate, duration)
   }
-  const goTo = (i: number) => yAt(SPREAD_STOPS[i])
+  const goTo = (i: number) => (mobile ? go(SPREAD_STOPS[i]) : yAt(SPREAD_STOPS[i]))
 
   const skip = () => {
     markIntroSeen('always')
-    yAt(SEARCH_STOP, true)
+    if (mobile) go(SEARCH_STOP, true)
+    else yAt(SEARCH_STOP, true)
     // hand focus to the search field the user skipped to
     requestAnimationFrame(() => document.getElementById('q')?.focus({ preventScroll: true }))
   }
   const replay = () => {
     clearIntroSeen()
-    yAt(0)
+    if (mobile) go(0, true)
+    else yAt(0)
   }
 
   return (
-    <div ref={track} className="relative h-[350vh] md:h-[500vh]">
-      <section className="sticky top-0 h-svh min-h-[560px] overflow-hidden bg-ink text-white" aria-label="Introduction">
+    <div ref={track} className="relative h-svh min-h-[560px] md:h-[500vh]">
+      <section
+        className="sticky top-0 h-svh min-h-[560px] overflow-hidden bg-ink text-white"
+        aria-label="Introduction"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         {/* LCP: poster still, darkened */}
         <picture>
           <source type="image/avif" srcSet="/img/interior-640.avif 640w, /img/interior-1280.avif 1280w, /img/interior-1920.avif 1920w" sizes="100vw" />
@@ -300,7 +321,7 @@ export function IntroStage() {
         {/* Phase 0 copy */}
         <div
           ref={arrival}
-          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-between px-6 pb-[9vh] pt-[15vh] text-center"
+          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-between px-6 pb-[calc(110px+env(safe-area-inset-bottom))] pt-[15vh] text-center md:pb-[9vh]"
         >
           <p className="label text-white/80">
             <Tx en={ui.institution.en} ar={ui.institution.ar} />
@@ -309,9 +330,12 @@ export function IntroStage() {
             <h1 className="font-display text-[clamp(2rem,4.6vw,3.75rem)] leading-[1.08] tracking-[-0.01em]">
               <Tx en={ui.headline.en} ar={ui.headline.ar} tbc={ui.headline.arTbc} />
             </h1>
-            <p className="label mt-5 text-white/80">
-              <Tx en={ui.cue.en} ar={ui.cue.ar} /> <span aria-hidden>↓</span>
-            </p>
+            {/* phones open the book with the button below instead */}
+            {!mobile && (
+              <p className="label mt-5 text-white/80">
+                <Tx en={ui.cue.en} ar={ui.cue.ar} /> <span aria-hidden>↓</span>
+              </p>
+            )}
           </div>
         </div>
 
@@ -320,7 +344,7 @@ export function IntroStage() {
           ref={chrome}
           className={
             mobile
-              ? 'absolute inset-x-0 bottom-3 z-10 flex justify-center focus-within:opacity-100!'
+              ? 'absolute inset-x-0 bottom-[calc(88px+env(safe-area-inset-bottom))] z-10 flex justify-center focus-within:opacity-100!'
               : 'absolute inset-y-0 start-10 z-10 flex items-center gap-4 focus-within:opacity-100!'
           }
           style={{ opacity: 0, pointerEvents: chromeOn ? 'auto' : 'none' }}
@@ -330,6 +354,17 @@ export function IntroStage() {
           </div>
           <ChapterIndex active={chapter} onSelect={goTo} row={mobile} />
         </div>
+
+        {/* Phones: glass controls that play the next or previous turn */}
+        {mobile && (
+          <PageControls
+            index={stopIndex}
+            last={STOPS.length - 1}
+            busy={false}
+            onNext={() => step(1)}
+            onBack={() => step(-1)}
+          />
+        )}
       </section>
       {debug && <DebugHud progress={progress} />}
     </div>

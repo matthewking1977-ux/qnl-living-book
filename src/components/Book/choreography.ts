@@ -124,7 +124,7 @@ export function frameAt(s: number, vw: number, vh: number): Frame {
   const pose: BookPose = {
     // the three-quarter view swings the near page left; shift the phone book back to centre
     x: mobile ? vw * 0.075 * face * (1 - settle) : 0,
-    y: lerp(-vh * 0.03, mobile ? vh * 0.1 : vh * 0.1, face) - vh * 0.17 * settle + vh * 0.025 * push,
+    y: lerp(-vh * 0.03, mobile ? vh * 0.02 : vh * 0.1, face) - vh * 0.17 * settle + vh * 0.025 * push,
     scale: lerp(fitClosed(vw, vh), fitOpen(vw, vh), coverOpen) * lerp(1, 0.5, settle) * lerp(1, 0.7, search) * (1 + 0.04 * push),
     rx: lerp(mobile ? 10 : POSE_CLOSED.rx, rxOpen, face) + 8 * settle + 3 * driftX,
     // phones rest at a slight three-quarter angle so the layers offset against each other

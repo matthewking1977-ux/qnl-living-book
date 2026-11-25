@@ -146,3 +146,31 @@ body {
 
 /* While the cover is shut nothing inside can be seen, so the pages are not painted. */
 .book-closed .paper { visibility: hidden !important; }
+
+/* Glass controls (phones). Kept small: a backdrop blur is costly on mobile GPUs. */
+.glass {
+  position: relative;
+  color: #fff;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08));
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  backdrop-filter: blur(14px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 10px 30px rgba(0, 0, 0, 0.35);
+  -webkit-tap-highlight-color: transparent;
+}
+.glass::after {
+  /* specular sheen along the top edge */
+  content: '';
+  position: absolute;
+  inset: 1px 12% auto;
+  height: 45%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent);
+  pointer-events: none;
+}
+.glass:active {
+  transform: scale(0.97);
+}
