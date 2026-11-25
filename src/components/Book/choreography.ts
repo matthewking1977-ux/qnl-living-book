@@ -62,7 +62,7 @@ const fitClosed = (vw: number, vh: number) =>
 const fitOpen = (vw: number, vh: number) =>
   isMobile(vw)
     ? // portrait: the open book fills the screen width; the spine runs across the middle
-      Math.min((vw * 1.06) / H, (vh * 0.66) / (2 * W + T))
+      Math.min((vw * 0.94) / H, (vh * 0.66) / (2 * W + T))
     : Math.min((vw * 0.8) / (2 * W + T), (vh * 0.92) / H)
 
 export const isMobile = (vw: number) => vw < 768
@@ -122,12 +122,15 @@ export function frameAt(s: number, vw: number, vh: number): Frame {
   const rxOpen = mobile ? 45 : POSE_OPEN.rx
   const sweep = mobile ? 3 : 6 // degrees either side
   const pose: BookPose = {
-    x: 0,
+    // the three-quarter view swings the near page left; shift the phone book back to centre
+    x: mobile ? vw * 0.075 * face * (1 - settle) : 0,
     y: lerp(-vh * 0.03, mobile ? vh * 0.1 : vh * 0.1, face) - vh * 0.17 * settle + vh * 0.025 * push,
     scale: lerp(fitClosed(vw, vh), fitOpen(vw, vh), coverOpen) * lerp(1, 0.5, settle) * lerp(1, 0.7, search) * (1 + 0.04 * push),
     rx: lerp(mobile ? 10 : POSE_CLOSED.rx, rxOpen, face) + 8 * settle + 3 * driftX,
-    ry: lerp(mobile ? -18 : POSE_CLOSED.ry, POSE_OPEN.ry, face) + sweep * driftY,
-    rz: lerp(POSE_CLOSED.rz, POSE_OPEN.rz, face),
+    // phones rest at a slight three-quarter angle so the layers offset against each other
+    ry: lerp(mobile ? -18 : POSE_CLOSED.ry, mobile ? -9 : POSE_OPEN.ry, face) + sweep * driftY,
+    // on phones a small turn in the page's own plane keeps the text lines level
+    rz: lerp(POSE_CLOSED.rz, mobile ? 6.5 : POSE_OPEN.rz, face),
     open,
     turns,
     pops,

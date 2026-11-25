@@ -29,7 +29,7 @@ export interface Placement {
   side: number
 }
 
-export function PopUpLayer({ def, depth, load, register, soft = true, place }: { def: PopUpLayerDef; depth: number; load: boolean; register: (n: PopUpNodes | null) => void; soft?: boolean; place?: Placement }) {
+export function PopUpLayer({ def, depth, load, register, soft = true, place, portrait = false }: { def: PopUpLayerDef; depth: number; load: boolean; register: (n: PopUpNodes | null) => void; soft?: boolean; place?: Placement; portrait?: boolean }) {
   const mirrored = useContext(MirrorContext)
   const w = place ? place.w : def.w * PW
   const h = w * def.ratio
@@ -60,9 +60,13 @@ export function PopUpLayer({ def, depth, load, register, soft = true, place }: {
   // Static per-layer finish, rasterised once: a soft shadow onto whatever stands behind,
   // slight shade on layers further back, and (desktop) a little depth of field on the
   // two rearmost layers so the eye goes to the front of the scene.
-  const blur = soft ? Math.max(0, 1 - depth * 3) * 1.6 * S : 0
+  // The portrait book is drawn about half the size, so its shadows are set larger and
+  // the shading falls off more steeply towards the back to keep the layers distinct.
+  const sh = portrait ? 2.2 : 1
+  const blur = soft ? Math.max(0, 1 - depth * 3) * 1.6 * S : portrait && depth === 0 ? 1.4 * S : 0
+  const lightness = portrait ? 0.66 + 0.34 * depth : 0.8 + 0.2 * depth
   const finish = (light: number) =>
-    `drop-shadow(0 ${3 * S}px ${2 * S}px rgba(12,8,2,.38)) drop-shadow(0 ${12 * S}px ${14 * S}px rgba(12,8,2,.42)) brightness(${(0.8 + 0.2 * depth) * light})${blur > 0.2 ? ` blur(${blur.toFixed(2)}px)` : ''}`
+    `drop-shadow(0 ${3 * S * sh}px ${2 * S * sh}px rgba(12,8,2,.42)) drop-shadow(0 ${12 * S * sh}px ${14 * S * sh}px rgba(12,8,2,.5)) brightness(${lightness * light})${blur > 0.2 ? ` blur(${blur.toFixed(2)}px)` : ''}`
   const img = (style: CSSProperties, light = 1) => (
     <img
       src={load ? def.src : undefined}

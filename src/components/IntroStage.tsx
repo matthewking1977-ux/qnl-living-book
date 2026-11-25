@@ -18,9 +18,9 @@ const debug = new URLSearchParams(location.search).get('debug') === '1'
 const first0 = () => frameAt(0, innerWidth, innerHeight).pose
 
 /** smoothed pointer position, −1…1 on each axis (x, y) and its target (tx, ty) */
-const pointer = { x: 0, y: 0, tx: 0, ty: 0 }
-/** the scroll pose plus the pointer's pull: up to ±4° of turn and ±2.5° of tilt */
-const withPointer = (p: BookPose): BookPose => ({ ...p, ry: p.ry + pointer.x * 4, rx: p.rx - pointer.y * 2.5 })
+const pointer = { x: 0, y: 0, tx: 0, ty: 0, reach: 4 }
+/** the scroll pose plus the pointer's pull: up to ±4° of turn and ±2.5° of tilt (±14° turn on a drag) */
+const withPointer = (p: BookPose): BookPose => ({ ...p, ry: p.ry + pointer.x * pointer.reach, rx: p.rx - pointer.y * 2.5 })
 
 /**
  * The opening sequence: a tall track with a sticky stage. ScrollTrigger turns
@@ -171,18 +171,34 @@ export function IntroStage() {
       clearTimeout(settle)
       settle = window.setTimeout(snapNow, 140)
     }
-    const onTouchStart = () => {
+    // A sideways drag on a spread turns the book (up to ±14°) so the layers slide
+    // against each other; it springs back on release. Vertical drags scroll as normal.
+    let tx0 = 0
+    let ty0 = 0
+    const onTouchStart = (e: TouchEvent) => {
       touching = true
       startS = progress.current
       clearTimeout(settle)
+      tx0 = e.touches[0]?.clientX ?? 0
+      ty0 = e.touches[0]?.clientY ?? 0
+    }
+    const onTouchMove = (e: TouchEvent) => {
+      const t = e.touches[0]
+      if (!t || frameAt(progress.current, innerWidth, innerHeight).chapter < 0) return
+      const dx = t.clientX - tx0
+      if (Math.abs(dx) < Math.abs(t.clientY - ty0)) return
+      pointer.reach = 14
+      pointer.tx = Math.max(-1, Math.min(1, dx / (innerWidth * 0.45)))
     }
     const onTouchEnd = () => {
+      pointer.tx = 0
       touching = false
       clearTimeout(settle)
       settle = window.setTimeout(snapNow, 140)
     }
     addEventListener('scroll', onScroll, { passive: true })
     addEventListener('touchstart', onTouchStart, { passive: true })
+    addEventListener('touchmove', onTouchMove, { passive: true })
     addEventListener('touchend', onTouchEnd, { passive: true })
     addEventListener('touchcancel', onTouchEnd, { passive: true })
 
@@ -196,6 +212,7 @@ export function IntroStage() {
       clearTimeout(warmTimer)
       removeEventListener('scroll', onScroll)
       removeEventListener('touchstart', onTouchStart)
+      removeEventListener('touchmove', onTouchMove)
       removeEventListener('touchend', onTouchEnd)
       removeEventListener('touchcancel', onTouchEnd)
     }

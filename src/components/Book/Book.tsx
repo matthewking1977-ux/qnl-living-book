@@ -308,6 +308,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
                           def={def}
                           depth={all.length > 1 ? j / (all.length - 1) : 1}
                           soft={false}
+                          portrait
                           load
                           place={portraitPlacement(def)}
                           register={(n) => { pops.current[i][j] = n! }}
@@ -347,14 +348,16 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
 function portraitPlacement(def: PopUpLayerDef): Placement {
   const half = PH / 2
   const m = def.m ?? autoPortrait(def)
-  return { x: m.x * half, foldY: m.d * PW, w: m.w * PH, side: 1 }
+  // fold lines above the spine stand on the upper page, below it on the lower page
+  return { x: m.x * half, foldY: m.d * PW, w: m.w * PH, side: m.d < 0 ? -1 : 1 }
 }
 
 function autoPortrait(def: PopUpLayerDef) {
   const wing = Math.abs(def.x) > 0.4
   const w = wing ? Math.min((def.w * PW) / PH, 0.3) : Math.min((def.w * PW * 1.25) / PH, 1.02)
   const x = wing ? Math.sign(def.x) * (1 - w) : (def.x * PW * 1.1) / (PH / 2)
-  // back to front, all within the first eighth of the lower page so the text stays clear
-  const d = Math.max(0, (def.base - 0.34) * 0.4)
+  // Back to front: rear pieces stand well back on the upper page, the front ones just
+  // below the spine, so the layers are spread out in depth and the text stays clear.
+  const d = Math.min(0.13, (def.base - 0.52) * 1.6)
   return { x, d, w }
 }
