@@ -46,9 +46,15 @@ body {
   font-size: 0.8125rem;
 }
 
-:focus-visible {
+/* Unlayered, so it outranks Tailwind utilities: text fields are excluded and show
+   their focus on their container instead (see the search pill). */
+:focus-visible:not(input, textarea) {
   outline: 2px solid currentColor;
   outline-offset: 3px;
+}
+input:focus,
+input:focus-visible {
+  outline: none;
 }
 
 /* ---------- Book (CSS 3D) ---------- */
@@ -149,7 +155,7 @@ body {
 
 /* Glass controls (phones). Kept small: a backdrop blur is costly on mobile GPUs. */
 .glass {
-  position: relative;
+  /* position comes from the element's own utility class (relative / absolute) */
   color: #fff;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08));
   -webkit-backdrop-filter: blur(14px) saturate(1.6);

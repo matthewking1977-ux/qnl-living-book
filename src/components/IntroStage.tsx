@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type TouchEvent as ReactTouchEvent } from 'react'
 import { Book, type BookHandle } from './Book/Book'
 import type { BookPose } from './Book/geometry'
-import { frameAt, isMobile, SEARCH_STOP, SPREAD_STOPS } from './Book/choreography'
+import { frameAt, isMobile, POP_RISE, SEARCH_STOP, SPREAD_STOPS, SPREAD_WINDOWS } from './Book/choreography'
 import { SpreadOutline } from './SpreadOutline'
 import { introSeen, markIntroSeen, clearIntroSeen } from '../lib/intro'
 import { ChapterIndex } from './ChapterIndex'
@@ -59,7 +59,7 @@ export function IntroStage() {
   // Tap-driven playback (phones): the sequence plays as timed animation between
   // resting points instead of following the finger.
   const renderRef = useRef<(s: number) => void>(() => {})
-  const play = useRef<{ tween: gsap.core.Tween | null; state: { s: number }; target: number }>({ tween: null, state: { s: 0 }, target: 0 })
+  const play = useRef<{ tween: gsap.core.Tween | gsap.core.Timeline | null; state: { s: number }; target: number }>({ tween: null, state: { s: 0 }, target: 0 })
   const [stopIndex, setStopIndex] = useState(0)
 
   /** play the sequence to progress `target` (phones), or jump there with `instant` */
@@ -74,15 +74,31 @@ export function IntroStage() {
       renderRef.current(target)
       return
     }
-    const dist = Math.abs(target - pl.state.s)
-    pl.tween = gsap.to(pl.state, {
-      s: target,
-      // the page turn and pop-up rise are eased inside the choreography, so the
-      // playhead itself moves at an even pace with only a soft start and finish
-      duration: Math.min(3.4, Math.max(1.2, 0.6 + dist * 7)),
-      ease: 'sine.inOut',
-      onUpdate: () => renderRef.current(pl.state.s),
+    // Paced by phase rather than one ease: seconds per unit of progress in each stretch.
+    // The page flip is brisk, the pop-up rise slow enough to watch each piece stand up
+    // and settle, and everything else (fold-away, cover, closing) in between.
+    const from = pl.state.s
+    const pace = (x: number) => {
+      for (const [a, b] of SPREAD_WINDOWS) {
+        if (x >= b + POP_RISE[0] && x < b + POP_RISE[1]) return 32 // rise ≈ 1.7 s
+        if (x >= a && x < b) return 19 // page flip ≈ 1 s
+      }
+      return 10
+    }
+    const marks = new Set<number>([target])
+    for (const [a, b] of SPREAD_WINDOWS) for (const m of [a, b + POP_RISE[0], b + POP_RISE[1]]) {
+      if ((m - from) * (target - from) > 0 && Math.abs(m - from) < Math.abs(target - from)) marks.add(m)
+    }
+    const points = [...marks].sort((x, y) => (target > from ? x - y : y - x))
+    const tl = gsap.timeline({ onUpdate: () => renderRef.current(pl.state.s) })
+    let at = from
+    points.forEach((m, i) => {
+      const mid = (at + m) / 2
+      const ease = points.length === 1 ? 'sine.inOut' : i === 0 ? 'sine.in' : i === points.length - 1 ? 'sine.out' : 'none'
+      tl.to(pl.state, { s: m, duration: Math.max(0.25, Math.abs(m - at) * pace(mid)), ease })
+      at = m
     })
+    pl.tween = tl
   }
   const step = (dir: 1 | -1) => {
     const from = play.current.target
@@ -360,7 +376,6 @@ export function IntroStage() {
           <PageControls
             index={stopIndex}
             last={STOPS.length - 1}
-            busy={false}
             onNext={() => step(1)}
             onBack={() => step(-1)}
           />

@@ -43,9 +43,9 @@ export const SearchMorph = forwardRef<SearchMorphHandle, { active: boolean }>(fu
       aria-hidden={!active}
     >
       <div className="w-full max-w-[760px] -translate-y-[4vh]">
-        <form role="search" className="relative h-16 md:h-[72px]" onSubmit={(e) => e.preventDefault()}>
+        <form role="search" className="group relative h-16 md:h-[72px]" onSubmit={(e) => e.preventDefault()}>
           {/* the one permitted blur, behind the bar */}
-          <div ref={pill} className="absolute inset-0 rounded-full bg-white shadow-[0_24px_80px_rgba(0,0,0,.55)] backdrop-blur-md" />
+          <div ref={pill} className="absolute inset-0 rounded-full bg-white shadow-[0_24px_80px_rgba(0,0,0,.55)] backdrop-blur-md transition-shadow duration-300 ease-(--ease-ui) group-focus-within:shadow-[0_0_0_3px_rgba(255,255,255,.5),0_24px_80px_rgba(0,0,0,.55)]" />
           <div ref={content} className="relative flex h-full items-center gap-2 ps-6 pe-2 md:ps-8">
             <label htmlFor="q" className="sr-only">Search the library</label>
             <input
@@ -53,7 +53,7 @@ export const SearchMorph = forwardRef<SearchMorphHandle, { active: boolean }>(fu
               type="search"
               tabIndex={tab}
               placeholder={ui.searchPlaceholder.en}
-              className="h-full min-w-0 flex-1 bg-transparent text-[16px] text-ink placeholder:text-g1 focus:outline-none md:text-[18px]"
+              className="h-full min-w-0 flex-1 appearance-none rounded-none border-0 bg-transparent text-[16px] text-ink placeholder:text-g1 focus:outline-none md:text-[18px]"
             />
             <button
               type="submit"

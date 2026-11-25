@@ -15,7 +15,7 @@ export const SPREAD_WINDOWS: [number, number, number][] = [
   [0.66, 0.712, 0.8],
 ]
 /** pop-up timing relative to a spread window: rise just as the page lands, fold before the next turn */
-const POP_RISE: [number, number] = [-0.012, 0.04]
+export const POP_RISE: [number, number] = [-0.012, 0.04]
 const POP_FOLD: [number, number] = [-0.034, -0.004]
 /** scroll progress at which the search bar is fully formed (Skip intro lands here) */
 export const SEARCH_STOP = 0.96
