@@ -48,6 +48,8 @@ export function IntroStage() {
   // the visitor starts scrolling or the page has settled, so it never competes with
   // the first paint (the closed book needs none of it).
   const [loadUpTo, setLoadUpTo] = useState(-1)
+  // the spread the reader is on (or last was); phones keep only it and the next one built
+  const [focus, setFocus] = useState(0)
   const first = useMemo(() => frameAt(0, innerWidth, innerHeight), [])
   const [mobile, setMobile] = useState(() => isMobile(innerWidth))
 
@@ -70,6 +72,7 @@ export function IntroStage() {
       if (f.search > 0.9) markIntroSeen('session') // the intro plays once per session
       setChapter(f.chapter)
       if (s > 0.004) setLoadUpTo((n) => Math.max(n, f.chapter + 1, 0))
+      if (f.chapter >= 0) setFocus(f.chapter)
       setChromeOn(f.chrome > 0.5)
     }
     const st = ScrollTrigger.create({
@@ -165,7 +168,7 @@ export function IntroStage() {
       if (Math.abs(moved) < 0.01) target = stops.reduce((a, b) => (Math.abs(b - s) < Math.abs(a - s) ? b : a))
       else if (moved > 0) target = stops.find((x) => x >= s) ?? SEARCH_STOP
       else target = [...stops].reverse().find((x) => x <= s) ?? 0
-      yAt(target, false, 0.8)
+      yAt(target, false, Math.min(1.1, 0.45 + Math.abs(target - s) * 2.5))
     }
     const onScroll = () => {
       clearTimeout(settle)
@@ -222,7 +225,7 @@ export function IntroStage() {
   useEffect(() => {
     if (loadUpTo < 0) return
     book.current?.apply(withPointer(frameAt(progress.current, innerWidth, innerHeight).pose))
-  }, [loadUpTo])
+  }, [loadUpTo, focus])
 
   /** scroll so the sequence sits at progress s */
   const yAt = (s: number, immediate = false, duration?: number) => {
@@ -273,7 +276,14 @@ export function IntroStage() {
         />
 
         <div ref={bookWrap} className="absolute inset-0">
-          <Book key={mobile ? 'm' : 'd'} ref={book} pose={first.pose} loadUpTo={loadUpTo} mobile={mobile} />
+          <Book
+            key={mobile ? 'm' : 'd'}
+            ref={book}
+            pose={first.pose}
+            loadUpTo={mobile ? (loadUpTo < 0 ? -1 : focus + 1) : loadUpTo}
+            mountFrom={mobile ? focus : 0}
+            mobile={mobile}
+          />
         </div>
 
         {/* vignette: pulls the eye to the centre of the spread */}

@@ -25,7 +25,7 @@ export interface BookHandle {
  * far end of the spine). Opening lays spine and front board flat to the left,
  * and the page block slides half a spine-width so the gutter sits centred.
  */
-export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; mobile?: boolean }>(function Book({ pose, loadUpTo = 0, mobile = false }, ref) {
+export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; mountFrom?: number; mobile?: boolean }>(function Book({ pose, loadUpTo = 0, mountFrom = 0, mobile = false }, ref) {
   const dir = useDir()
   // Portrait (phone): the book is turned 90° so it opens top-to-bottom like a pop-up
   // card. English only for now, so the portrait book is never mirrored.
@@ -301,8 +301,8 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
                   // (the fold): x runs across the page, y down the lower page.
                   <div className="absolute left-0" style={{ top: M + PH / 2, transform: 'rotateZ(-90deg)', transformOrigin: '0 0' }}>
                     {spreads.map((sp, i) =>
-                      // a spread's pieces are only built once its artwork is due (see loadUpTo)
-                      i > loadUpTo ? null : sp.layers.map((def, j, all) => (
+                      // only the spreads in [mountFrom, loadUpTo] are built (phones keep two at a time)
+                      i > loadUpTo || i < mountFrom ? null : sp.layers.map((def, j, all) => (
                         <PopUpLayer
                           key={def.src}
                           def={def}
@@ -318,7 +318,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
                   </div>
                 ) : (
                   spreads.map((sp, i) =>
-                    i > loadUpTo ? null : sp.layers.map((def, j, all) => (
+                    i > loadUpTo || i < mountFrom ? null : sp.layers.map((def, j, all) => (
                       <PopUpLayer
                         key={def.src}
                         def={def}

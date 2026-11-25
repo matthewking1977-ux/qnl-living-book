@@ -37,7 +37,8 @@ export function PopUpLayer({ def, depth, load, register, soft = true, place, por
   const foldY = place ? place.foldY : M + def.base * PH
   const cast = Math.max(h * 0.3, 60)
 
-  const folded = !!def.fold && !mirrored
+  // phones: no V-fold (it draws the artwork twice) and no live filters (see below)
+  const folded = !!def.fold && !mirrored && !portrait
 
   let layer: HTMLElement | null = null
   let shadow: HTMLElement | null = null
@@ -60,21 +61,22 @@ export function PopUpLayer({ def, depth, load, register, soft = true, place, por
   // Static per-layer finish, rasterised once: a soft shadow onto whatever stands behind,
   // slight shade on layers further back, and (desktop) a little depth of field on the
   // two rearmost layers so the eye goes to the front of the scene.
-  // The portrait book is drawn about half the size, so its shadows are set larger and
-  // the shading falls off more steeply towards the back to keep the layers distinct.
-  const sh = portrait ? 2.2 : 1
-  const blur = soft ? Math.max(0, 1 - depth * 3) * 1.6 * S : portrait && depth === 0 ? 1.4 * S : 0
-  const lightness = portrait ? 0.66 + 0.34 * depth : 0.8 + 0.2 * depth
+  const sh = 1
+  const blur = soft ? Math.max(0, 1 - depth * 3) * 1.6 * S : 0
+  const lightness = 0.8 + 0.2 * depth
   const finish = (light: number) =>
     `drop-shadow(0 ${3 * S * sh}px ${2 * S * sh}px rgba(12,8,2,.42)) drop-shadow(0 ${12 * S * sh}px ${14 * S * sh}px rgba(12,8,2,.5)) brightness(${lightness * light})${blur > 0.2 ? ` blur(${blur.toFixed(2)}px)` : ''}`
+  // Phones use pre-baked artwork (public/popups/m/, shadow and shading built in) with no
+  // CSS filters: live filters on every piece exhausted iPhone graphics memory.
+  const src = portrait ? def.src.replace('/popups/', '/popups/m/') : def.src
   const img = (style: CSSProperties, light = 1) => (
     <img
-      src={load ? def.src : undefined}
+      src={load ? src : undefined}
       alt=""
       decoding="async"
       draggable={false}
       className="block h-full"
-      style={{ filter: finish(light), ...style }}
+      style={portrait ? style : { filter: finish(light), ...style }}
     />
   )
 

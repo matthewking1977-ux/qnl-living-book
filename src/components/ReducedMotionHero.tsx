@@ -82,7 +82,7 @@ export function ReducedMotionHero() {
         {/* static open book */}
         <div className="relative h-[74svh] min-h-[420px] overflow-hidden">
           <div ref={fade} className="absolute inset-0 transition-opacity duration-200">
-            <Book key={mobile ? 'm' : 'd'} ref={book} pose={first} loadUpTo={spreads.length} mobile={mobile} />
+            <Book key={mobile ? 'm' : 'd'} ref={book} pose={first} loadUpTo={shown} mountFrom={shown} mobile={mobile} />
           </div>
         </div>
 

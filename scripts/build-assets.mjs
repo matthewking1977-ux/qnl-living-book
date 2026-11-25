@@ -63,3 +63,41 @@ for (const f of await readdir('assets/popups')) {
   }
   console.log(`${name}: ${info.width}x${info.height}, ${Math.round((await stat(dest)).size / 1024)} KB`)
 }
+
+// Phone versions of the pop-up artwork (public/popups/m/). The desktop applies drop
+// shadows and depth shading as live CSS filters; on phones those filters cost far too
+// much graphics memory (iOS kills the page), so here they are baked into the files:
+// a soft shadow cast downwards inside the cut-out's own canvas, and darker shading for
+// pieces further back. Same dimensions as the desktop files, so layouts are unchanged.
+await mkdir('public/popups/m', { recursive: true })
+const supplied = (await readdir('public/popups')).filter((f) => /^spread[A-D]-layer\d+\.webp$/.test(f))
+for (const f of supplied) {
+  const [, spread, n] = f.match(/^spread([A-D])-layer(\d+)\.webp$/)
+  const count = supplied.filter((g) => g.startsWith(`spread${spread}-`)).length
+  const depth = count > 1 ? (Number(n) - 1) / (count - 1) : 1
+  const src = `public/popups/${f}`
+  const dest = `public/popups/m/${f}`
+  if (await fresh(src, dest)) continue
+  const base = sharp(src)
+  const { width, height } = await base.metadata()
+  const side = Math.min(900, Math.max(width, height))
+  const scale = side / Math.max(width, height)
+  const w = Math.round(width * scale)
+  const h = Math.round(height * scale)
+  const art = await base.clone().resize(w, h).modulate({ brightness: 0.66 + 0.34 * depth }).png().toBuffer()
+  const alpha = await sharp(src).resize(w, h).extractChannel('alpha').toBuffer()
+  const blur = Math.max(2, Math.round(w / 70))
+  const shadow = await sharp({ create: { width: w, height: h, channels: 3, background: { r: 12, g: 8, b: 2 } } })
+    .joinChannel(await sharp(alpha).linear(0.5, 0).blur(blur).toBuffer())
+    .png()
+    .toBuffer()
+  const dy = Math.round(h * 0.03)
+  await sharp({ create: { width: w, height: h, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite([
+      { input: shadow, left: 0, top: dy },
+      { input: art, left: 0, top: 0 },
+    ])
+    .webp({ quality: 72, alphaQuality: 85 })
+    .toFile(dest)
+  console.log(`m/${f}: ${w}x${h}, ${Math.round((await stat(dest)).size / 1024)} KB`)
+}
