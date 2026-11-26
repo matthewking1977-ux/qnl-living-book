@@ -1,0 +1,997 @@
+{
+  "INLINE.langPrompt.question": {
+    "source": "src/components/LangPrompt.tsx › lp-title",
+    "en": "Would you like to view this site in Arabic?",
+    "ar": "هل تفضّل تصفّح الموقع باللغة العربية؟"
+  },
+  "UI.skipIntro": {
+    "source": "src/data/strings.ts › skipIntro",
+    "en": "Skip intro",
+    "ar": "تخطَّ المقدمة"
+  },
+  "UI.openBook": {
+    "source": "src/data/strings.ts › openBook",
+    "en": "Open the book",
+    "ar": "افتح الكتاب"
+  },
+  "UI.searchLibrary": {
+    "source": "src/data/strings.ts › searchLibrary",
+    "en": "Search the library",
+    "ar": "ابحث في المكتبة"
+  },
+  "UI.home": {
+    "source": "src/data/strings.ts › home",
+    "en": "Qatar National Library, home",
+    "ar": "مكتبة قطر الوطنية، الصفحة الرئيسية"
+  },
+  "INLINE.langSwitch.toArabic": {
+    "source": "src/components/LangSwitch.tsx › aria-label",
+    "en": "English: view the site in English",
+    "ar": "العربية: عرض الموقع باللغة العربية"
+  },
+  "BOOK.institution": {
+    "source": "src/data/spreads.ts › ui.institution",
+    "en": "Qatar National Library",
+    "ar": "مكتبة قطر الوطنية"
+  },
+  "BOOK.headline": {
+    "source": "src/data/spreads.ts › ui.headline",
+    "en": "Every story starts here.",
+    "ar": "كل قصة تبدأ هنا"
+  },
+  "UI.scrollToOpen": {
+    "source": "src/data/strings.ts › scrollToOpen",
+    "en": "Scroll to open",
+    "ar": "مرِّر لفتح الكتاب"
+  },
+  "BOOK.firstPage": {
+    "source": "src/components/Book/Book.tsx › first page",
+    "en": "Qatar National Library",
+    "ar": "مكتبة قطر الوطنية"
+  },
+  "BOOK.01.label": {
+    "source": "src/data/spreads.ts › spreads[0].label_ar",
+    "en": "Children's Library",
+    "ar": "مكتبة الطفل"
+  },
+  "BOOK.01.title": {
+    "source": "src/data/spreads.ts › spreads[0].title_ar",
+    "en": "Where small readers begin.",
+    "ar": "هنا يبدأ القرّاء الصغار."
+  },
+  "BOOK.01.body": {
+    "source": "src/data/spreads.ts › spreads[0].body_ar",
+    "en": "Stories to read aloud, to look at, and to grow up with.",
+    "ar": "حكايات تُقرأ بصوتٍ عالٍ، وصورٌ تُتأمَّل، وقصصٌ يكبرون معها."
+  },
+  "BOOK.01.link": {
+    "source": "src/data/spreads.ts › spreads[0].link.label_ar",
+    "en": "Explore children's books",
+    "ar": "استكشف كتب الأطفال"
+  },
+  "BOOK.02.label": {
+    "source": "src/data/spreads.ts › spreads[1].label_ar",
+    "en": "Research & Learning",
+    "ar": "البحث والتعلّم"
+  },
+  "BOOK.02.title": {
+    "source": "src/data/spreads.ts › spreads[1].title_ar",
+    "en": "Ask a harder question.",
+    "ar": "اطرح سؤالًا أعمق."
+  },
+  "BOOK.02.body": {
+    "source": "src/data/spreads.ts › spreads[1].body_ar",
+    "en": "Journals, databases, and people who know where to look.",
+    "ar": "دوريات وقواعد بيانات، وخبراء يعرفون أين تجد ما تبحث عنه."
+  },
+  "BOOK.02.link": {
+    "source": "src/data/spreads.ts › spreads[1].link.label_ar",
+    "en": "Search research databases",
+    "ar": "ابحث في قواعد البيانات البحثية"
+  },
+  "BOOK.02.sample1": {
+    "source": "src/data/spreads.ts › spreads[1].sample.lines_ar[0]",
+    "en": "Abstract",
+    "ar": "ملخّص"
+  },
+  "BOOK.02.sample2": {
+    "source": "src/data/spreads.ts › spreads[1].sample.lines_ar[1]",
+    "en": "Placeholder text standing in for a journal abstract. The final snippet will come from the catalogue.",
+    "ar": "نص مؤقت يحلّ محلّ ملخّص بحثي، وسيُستبدل بمقتطف من الفهرس."
+  },
+  "BOOK.03.label": {
+    "source": "src/data/spreads.ts › spreads[2].label_ar",
+    "en": "Events",
+    "ar": "الفعاليات"
+  },
+  "BOOK.03.title": {
+    "source": "src/data/spreads.ts › spreads[2].title_ar",
+    "en": "Something is always on.",
+    "ar": "هناك دائمًا ما يستحق الحضور."
+  },
+  "BOOK.03.body": {
+    "source": "src/data/spreads.ts › spreads[2].body_ar",
+    "en": "Talks, workshops and exhibitions for every kind of visitor.",
+    "ar": "محاضرات وورش عمل ومعارض لجميع الزوّار."
+  },
+  "BOOK.03.link": {
+    "source": "src/data/spreads.ts › spreads[2].link.label_ar",
+    "en": "See all events",
+    "ar": "عرض جميع الفعاليات"
+  },
+  "BOOK.03.sample1": {
+    "source": "src/data/spreads.ts › spreads[2].sample.lines_ar[0]",
+    "en": "Event title placeholder",
+    "ar": "عنوان الفعالية"
+  },
+  "BOOK.03.sample2": {
+    "source": "src/data/spreads.ts › spreads[2].sample.lines_ar[1]",
+    "en": "Date [TBC]",
+    "ar": "التاريخ [يُحدَّد لاحقًا]"
+  },
+  "BOOK.03.sample3": {
+    "source": "src/data/spreads.ts › spreads[2].sample.lines_ar[2]",
+    "en": "Location [TBC]",
+    "ar": "المكان [يُحدَّد لاحقًا]"
+  },
+  "BOOK.04.label": {
+    "source": "src/data/spreads.ts › spreads[3].label_ar",
+    "en": "Qatar & Gulf Heritage",
+    "ar": "تراث قطر والخليج"
+  },
+  "BOOK.04.title": {
+    "source": "src/data/spreads.ts › spreads[3].title_ar",
+    "en": "The region, on paper.",
+    "ar": "تاريخ المنطقة على الورق."
+  },
+  "BOOK.04.body": {
+    "source": "src/data/spreads.ts › spreads[3].body_ar",
+    "en": "Manuscripts, maps and photographs from the heritage collection.",
+    "ar": "مخطوطات وخرائط وصور فوتوغرافية من مجموعة التراث."
+  },
+  "BOOK.04.link": {
+    "source": "src/data/spreads.ts › spreads[3].link.label_ar",
+    "en": "Explore the heritage collection",
+    "ar": "استكشف مجموعة التراث"
+  },
+  "UI.sample": {
+    "source": "src/data/strings.ts › sample",
+    "en": "Sample",
+    "ar": "نموذج"
+  },
+  "UI.nextPage": {
+    "source": "src/data/strings.ts › nextPage",
+    "en": "Next page",
+    "ar": "الصفحة التالية"
+  },
+  "UI.prevPage": {
+    "source": "src/data/strings.ts › prevPage",
+    "en": "Previous page",
+    "ar": "الصفحة السابقة"
+  },
+  "UI.closeBook": {
+    "source": "src/data/strings.ts › closeBook",
+    "en": "Close the book",
+    "ar": "أغلق الكتاب"
+  },
+  "UI.bookChapters": {
+    "source": "src/data/strings.ts › bookChapters",
+    "en": "Book chapters",
+    "ar": "فصول الكتاب"
+  },
+  "UI.introRegion": {
+    "source": "src/data/strings.ts › introRegion",
+    "en": "Introduction",
+    "ar": "المقدمة"
+  },
+  "UI.insideBook": {
+    "source": "src/data/strings.ts › insideBook",
+    "en": "Inside the book",
+    "ar": "داخل الكتاب"
+  },
+  "SEARCH.placeholder": {
+    "source": "src/data/spreads.ts › ui.searchPlaceholder",
+    "en": "Search books, research, events and heritage…",
+    "ar": "ابحث في الكتب والأبحاث والفعاليات والتراث…"
+  },
+  "UI.search": {
+    "source": "src/data/strings.ts › search",
+    "en": "Search",
+    "ar": "بحث"
+  },
+  "UI.filterBooks": {
+    "source": "src/data/strings.ts › filterBooks",
+    "en": "Books",
+    "ar": "الكتب"
+  },
+  "UI.filterResearch": {
+    "source": "src/data/strings.ts › filterResearch",
+    "en": "Research",
+    "ar": "الأبحاث"
+  },
+  "UI.filterEvents": {
+    "source": "src/data/strings.ts › filterEvents",
+    "en": "Events",
+    "ar": "الفعاليات"
+  },
+  "UI.filterHeritage": {
+    "source": "src/data/strings.ts › filterHeritage",
+    "en": "Heritage",
+    "ar": "التراث"
+  },
+  "UI.close": {
+    "source": "src/data/strings.ts › close",
+    "en": "Close",
+    "ar": "إغلاق"
+  },
+  "UI.slashTip1": {
+    "source": "src/data/strings.ts › slashTip1",
+    "en": "Tip: press",
+    "ar": "نصيحة: اضغط"
+  },
+  "UI.slashTip2": {
+    "source": "src/data/strings.ts › slashTip2",
+    "en": "anywhere on the site to search.",
+    "ar": "في أي مكان من الموقع للبحث."
+  },
+  "UI.voiceStart": {
+    "source": "src/data/strings.ts › voiceStart",
+    "en": "Search by voice",
+    "ar": "البحث بالصوت"
+  },
+  "UI.voiceStop": {
+    "source": "src/data/strings.ts › voiceStop",
+    "en": "Stop listening",
+    "ar": "إيقاف الاستماع"
+  },
+  "UI.voiceListening": {
+    "source": "src/data/strings.ts › voiceListening",
+    "en": "Listening",
+    "ar": "جارٍ الاستماع"
+  },
+  "UI.voiceDenied": {
+    "source": "src/data/strings.ts › voiceDenied",
+    "en": "Microphone access is off for this site.",
+    "ar": "الوصول إلى الميكروفون غير مفعّل لهذا الموقع."
+  },
+  "UI.voiceNoSpeech": {
+    "source": "src/data/strings.ts › voiceNoSpeech",
+    "en": "Didn’t catch that. Try again.",
+    "ar": "لم نتمكن من سماعك. حاول مرة أخرى."
+  },
+  "UI.services": {
+    "source": "src/data/strings.ts › services",
+    "en": "Services",
+    "ar": "الخدمات"
+  },
+  "UI.becomeMember": {
+    "source": "src/data/strings.ts › becomeMember",
+    "en": "Become a member",
+    "ar": "انضم إلى المكتبة"
+  },
+  "UI.becomeMemberNote": {
+    "source": "src/data/strings.ts › becomeMemberNote",
+    "en": "Join online or at the Library",
+    "ar": "سجّل عبر الإنترنت أو في المكتبة"
+  },
+  "UI.bookStudy": {
+    "source": "src/data/strings.ts › bookStudy",
+    "en": "Book a study space",
+    "ar": "احجز مساحة للدراسة"
+  },
+  "UI.bookStudyNote": {
+    "source": "src/data/strings.ts › bookStudyNote",
+    "en": "Group rooms, media lounges, quiet rooms",
+    "ar": "غرف جماعية وقاعات وسائط وغرف هادئة"
+  },
+  "UI.visitUs": {
+    "source": "src/data/strings.ts › visitUs",
+    "en": "Visit us",
+    "ar": "زُرنا"
+  },
+  "UI.openNow": {
+    "source": "src/data/strings.ts › openNow",
+    "en": "Open now",
+    "ar": "مفتوح الآن"
+  },
+  "UI.closedNow": {
+    "source": "src/data/strings.ts › closedNow",
+    "en": "Closed now",
+    "ar": "مغلق الآن"
+  },
+  "UI.today": {
+    "source": "src/data/strings.ts › today",
+    "en": "Today",
+    "ar": "اليوم"
+  },
+  "UI.askLibrarian": {
+    "source": "src/data/strings.ts › askLibrarian",
+    "en": "Ask a librarian",
+    "ar": "اسأل أمين المكتبة"
+  },
+  "UI.askLibrarianNote": {
+    "source": "src/data/strings.ts › askLibrarianNote",
+    "en": "Help with research and borrowing",
+    "ar": "مساعدة في البحث والاستعارة"
+  },
+  "UI.studyQuestions": {
+    "source": "src/data/strings.ts › studyQuestions",
+    "en": "Questions? Call 4454 2152 or email qnlresourcebooking@qnl.qa",
+    "ar": "لديك استفسار؟ اتصل على 4454 2152 أو راسلنا على qnlresourcebooking@qnl.qa"
+  },
+  "STUDY.1.type": {
+    "source": "src/data/library.ts › studySpaces[0].type_ar",
+    "en": "Group study rooms",
+    "ar": "غرف الدراسة الجماعية"
+  },
+  "STUDY.1.capacity": {
+    "source": "src/data/library.ts › studySpaces[0].capacity_ar",
+    "en": "13 m², 4–6 people",
+    "ar": "13 م²، من 4 إلى 6 أشخاص"
+  },
+  "STUDY.1.equipment1": {
+    "source": "src/data/library.ts › studySpaces[0].equipment_ar[0]",
+    "en": "Seating and power sockets",
+    "ar": "مقاعد ومقابس كهرباء"
+  },
+  "STUDY.2.type": {
+    "source": "src/data/library.ts › studySpaces[1].type_ar",
+    "en": "Media lounge",
+    "ar": "قاعة الوسائط"
+  },
+  "STUDY.2.capacity": {
+    "source": "src/data/library.ts › studySpaces[1].capacity_ar",
+    "en": "28 m², up to 6 people",
+    "ar": "28 م²، حتى 6 أشخاص"
+  },
+  "STUDY.2.equipment1": {
+    "source": "src/data/library.ts › studySpaces[1].equipment_ar[0]",
+    "en": "Presentation screen",
+    "ar": "شاشة عرض"
+  },
+  "STUDY.2.equipment2": {
+    "source": "src/data/library.ts › studySpaces[1].equipment_ar[1]",
+    "en": "TV screen",
+    "ar": "شاشة تلفاز"
+  },
+  "STUDY.2.equipment3": {
+    "source": "src/data/library.ts › studySpaces[1].equipment_ar[2]",
+    "en": "Media server",
+    "ar": "خادم وسائط"
+  },
+  "STUDY.2.equipment4": {
+    "source": "src/data/library.ts › studySpaces[1].equipment_ar[3]",
+    "en": "Technician support",
+    "ar": "دعم فني"
+  },
+  "STUDY.3.type": {
+    "source": "src/data/library.ts › studySpaces[2].type_ar",
+    "en": "Media lounge",
+    "ar": "قاعة الوسائط"
+  },
+  "STUDY.3.capacity": {
+    "source": "src/data/library.ts › studySpaces[2].capacity_ar",
+    "en": "13 m², up to 4 people",
+    "ar": "13 م²، حتى 4 أشخاص"
+  },
+  "STUDY.3.equipment1": {
+    "source": "src/data/library.ts › studySpaces[2].equipment_ar[0]",
+    "en": "Presentation screen",
+    "ar": "شاشة عرض"
+  },
+  "STUDY.3.equipment2": {
+    "source": "src/data/library.ts › studySpaces[2].equipment_ar[1]",
+    "en": "TV screen",
+    "ar": "شاشة تلفاز"
+  },
+  "STUDY.3.equipment3": {
+    "source": "src/data/library.ts › studySpaces[2].equipment_ar[2]",
+    "en": "Media server",
+    "ar": "خادم وسائط"
+  },
+  "STUDY.3.equipment4": {
+    "source": "src/data/library.ts › studySpaces[2].equipment_ar[3]",
+    "en": "Technician support",
+    "ar": "دعم فني"
+  },
+  "STUDY.4.type": {
+    "source": "src/data/library.ts › studySpaces[3].type_ar",
+    "en": "Individual study rooms",
+    "ar": "غرف الدراسة الفردية"
+  },
+  "STUDY.4.zone": {
+    "source": "src/data/library.ts › studySpaces[3].zone_ar",
+    "en": "Quiet Zone",
+    "ar": "المنطقة الهادئة"
+  },
+  "STUDY.4.capacity": {
+    "source": "src/data/library.ts › studySpaces[3].capacity_ar",
+    "en": "One person",
+    "ar": "شخص واحد"
+  },
+  "STUDY.4.equipment1": {
+    "source": "src/data/library.ts › studySpaces[3].equipment_ar[0]",
+    "en": "Desk, bookcase and power socket",
+    "ar": "مكتب وخزانة كتب ومقبس كهرباء"
+  },
+  "STUDY.5.type": {
+    "source": "src/data/library.ts › studySpaces[4].type_ar",
+    "en": "Night Study Space",
+    "ar": "مساحة الدراسة الليلية"
+  },
+  "STUDY.5.zone": {
+    "source": "src/data/library.ts › studySpaces[4].zone_ar",
+    "en": "Quiet Zone",
+    "ar": "المنطقة الهادئة"
+  },
+  "STUDY.5.capacity": {
+    "source": "src/data/library.ts › studySpaces[4].capacity_ar",
+    "en": "Up to 70 people",
+    "ar": "حتى 70 شخصًا"
+  },
+  "STUDY.5.equipment1": {
+    "source": "src/data/library.ts › studySpaces[4].equipment_ar[0]",
+    "en": "PCs, seating and power sockets",
+    "ar": "حواسيب ومقاعد ومقابس كهرباء"
+  },
+  "UI.room": {
+    "source": "src/data/strings.ts › room",
+    "en": "room",
+    "ar": "غرفة"
+  },
+  "UI.rooms": {
+    "source": "src/data/strings.ts › rooms",
+    "en": "rooms",
+    "ar": "غرف"
+  },
+  "UI.openArea": {
+    "source": "src/data/strings.ts › openArea",
+    "en": "Open area",
+    "ar": "مساحة مفتوحة"
+  },
+  "UI.bookNow": {
+    "source": "src/data/strings.ts › bookNow",
+    "en": "Book now",
+    "ar": "احجز الآن"
+  },
+  "STUDY.rule1": {
+    "source": "src/data/library.ts › studyNotes_ar[0]",
+    "en": "Group study rooms and media lounges are for Library members and need booking in advance.",
+    "ar": "غرف الدراسة الجماعية وقاعات الوسائط مخصّصة لأعضاء المكتبة وتتطلب حجزًا مسبقًا."
+  },
+  "STUDY.rule2": {
+    "source": "src/data/library.ts › studyNotes_ar[1]",
+    "en": "Individual study rooms can be booked by anyone aged 15 or over.",
+    "ar": "يمكن لأي شخص يبلغ 15 عامًا فأكثر حجز غرف الدراسة الفردية."
+  },
+  "STUDY.rule3": {
+    "source": "src/data/library.ts › studyNotes_ar[2]",
+    "en": "Rooms may not be used for paid training or other for-profit activities.",
+    "ar": "لا يجوز استخدام الغرف في الدورات التدريبية المدفوعة أو أي أنشطة ربحية."
+  },
+  "INLINE.study.rooms": {
+    "source": "src/components/home/ServiceStrip.tsx › dt",
+    "en": "Rooms",
+    "ar": "الغرف"
+  },
+  "INLINE.study.capacity": {
+    "source": "src/components/home/ServiceStrip.tsx › dt",
+    "en": "Size and capacity",
+    "ar": "المساحة والسعة"
+  },
+  "INLINE.study.equipment": {
+    "source": "src/components/home/ServiceStrip.tsx › dt",
+    "en": "Equipment",
+    "ar": "التجهيزات"
+  },
+  "UI.whatsOn": {
+    "source": "src/data/strings.ts › whatsOn",
+    "en": "What's on",
+    "ar": "الفعاليات"
+  },
+  "UI.whatsOnTitle": {
+    "source": "src/data/strings.ts › whatsOnTitle",
+    "en": "This week at the library.",
+    "ar": "هذا الأسبوع في المكتبة."
+  },
+  "UI.seeAllEvents": {
+    "source": "src/data/strings.ts › seeAllEvents",
+    "en": "See all events",
+    "ar": "عرض جميع الفعاليات"
+  },
+  "EVENT.1.kind": {
+    "source": "src/data/library.ts › events[0].kind_ar",
+    "en": "Family",
+    "ar": "للعائلة"
+  },
+  "EVENT.1.title": {
+    "source": "src/data/library.ts › events[0].title_ar",
+    "en": "Saturday storytime: tales of the sea",
+    "ar": "حكايات السبت: قصص من البحر"
+  },
+  "EVENT.1.date": {
+    "source": "src/data/library.ts › events[0].date_ar",
+    "en": "Sat 5 Dec 2026",
+    "ar": "السبت 5 ديسمبر 2026"
+  },
+  "EVENT.1.time": {
+    "source": "src/data/library.ts › events[0].time_ar",
+    "en": "10:30 AM",
+    "ar": "10:30 ص"
+  },
+  "EVENT.1.place": {
+    "source": "src/data/library.ts › events[0].place_ar",
+    "en": "Children's Library",
+    "ar": "مكتبة الطفل"
+  },
+  "EVENT.2.kind": {
+    "source": "src/data/library.ts › events[1].kind_ar",
+    "en": "Workshop",
+    "ar": "ورشة عمل"
+  },
+  "EVENT.2.title": {
+    "source": "src/data/library.ts › events[1].title_ar",
+    "en": "Getting started with research databases",
+    "ar": "مدخل إلى قواعد البيانات البحثية"
+  },
+  "EVENT.2.date": {
+    "source": "src/data/library.ts › events[1].date_ar",
+    "en": "Tue 8 Dec 2026",
+    "ar": "الثلاثاء 8 ديسمبر 2026"
+  },
+  "EVENT.2.time": {
+    "source": "src/data/library.ts › events[1].time_ar",
+    "en": "6:00 PM",
+    "ar": "6:00 م"
+  },
+  "EVENT.2.place": {
+    "source": "src/data/library.ts › events[1].place_ar",
+    "en": "Research and Learning, Level 1",
+    "ar": "البحث والتعلّم، الطابق الأول"
+  },
+  "EVENT.3.kind": {
+    "source": "src/data/library.ts › events[2].kind_ar",
+    "en": "Exhibition",
+    "ar": "معرض"
+  },
+  "EVENT.3.title": {
+    "source": "src/data/library.ts › events[2].title_ar",
+    "en": "Charting the Gulf: maps from the collection",
+    "ar": "رسم الخليج: خرائط من المجموعة"
+  },
+  "EVENT.3.date": {
+    "source": "src/data/library.ts › events[2].date_ar",
+    "en": "From 10 Dec 2026",
+    "ar": "ابتداءً من 10 ديسمبر 2026"
+  },
+  "EVENT.3.time": {
+    "source": "src/data/library.ts › events[2].time_ar",
+    "en": "Library hours",
+    "ar": "خلال ساعات العمل"
+  },
+  "EVENT.3.place": {
+    "source": "src/data/library.ts › events[2].place_ar",
+    "en": "Heritage Library",
+    "ar": "مكتبة التراث"
+  },
+  "UI.collections": {
+    "source": "src/data/strings.ts › collections",
+    "en": "From the collections",
+    "ar": "من المجموعات"
+  },
+  "UI.collectionsTitle": {
+    "source": "src/data/strings.ts › collectionsTitle",
+    "en": "Three ways in.",
+    "ar": "ثلاثة مداخل إلى المعرفة."
+  },
+  "COLL.1.kind": {
+    "source": "src/data/library.ts › collections[0].kind_ar",
+    "en": "Books",
+    "ar": "الكتب"
+  },
+  "COLL.1.title": {
+    "source": "src/data/library.ts › collections[0].title_ar",
+    "en": "On the shelves",
+    "ar": "على الرفوف"
+  },
+  "COLL.1.body": {
+    "source": "src/data/library.ts › collections[0].body_ar",
+    "en": "Borrow from the open collection, in print and online.",
+    "ar": "استعِر من المجموعة المفتوحة، مطبوعةً وإلكترونيًا."
+  },
+  "COLL.1.link": {
+    "source": "src/data/library.ts › collections[0].link_ar",
+    "en": "Browse the catalogue",
+    "ar": "تصفّح الفهرس"
+  },
+  "COLL.2.kind": {
+    "source": "src/data/library.ts › collections[1].kind_ar",
+    "en": "Research",
+    "ar": "الأبحاث"
+  },
+  "COLL.2.title": {
+    "source": "src/data/library.ts › collections[1].title_ar",
+    "en": "Journals and databases",
+    "ar": "الدوريات وقواعد البيانات"
+  },
+  "COLL.2.body": {
+    "source": "src/data/library.ts › collections[1].body_ar",
+    "en": "Search across subscribed research resources.",
+    "ar": "ابحث في مصادر البحث المشتركة."
+  },
+  "COLL.2.link": {
+    "source": "src/data/library.ts › collections[1].link_ar",
+    "en": "Search research databases",
+    "ar": "ابحث في قواعد البيانات البحثية"
+  },
+  "COLL.3.kind": {
+    "source": "src/data/library.ts › collections[2].kind_ar",
+    "en": "Heritage",
+    "ar": "التراث"
+  },
+  "COLL.3.title": {
+    "source": "src/data/library.ts › collections[2].title_ar",
+    "en": "Qatar and the Gulf",
+    "ar": "قطر والخليج"
+  },
+  "COLL.3.body": {
+    "source": "src/data/library.ts › collections[2].body_ar",
+    "en": "Manuscripts, maps and photographs from the heritage collection.",
+    "ar": "مخطوطات وخرائط وصور فوتوغرافية من مجموعة التراث."
+  },
+  "COLL.3.link": {
+    "source": "src/data/library.ts › collections[2].link_ar",
+    "en": "Explore the heritage collection",
+    "ar": "استكشف مجموعة التراث"
+  },
+  "UI.forYou": {
+    "source": "src/data/strings.ts › forYou",
+    "en": "For you",
+    "ar": "لك"
+  },
+  "UI.forYouTitle": {
+    "source": "src/data/strings.ts › forYouTitle",
+    "en": "A library for every kind of reader.",
+    "ar": "مكتبة لكل قارئ."
+  },
+  "AUD.1.title": {
+    "source": "src/data/library.ts › audiences[0].title_ar",
+    "en": "Children",
+    "ar": "الأطفال"
+  },
+  "AUD.1.body": {
+    "source": "src/data/library.ts › audiences[0].body_ar",
+    "en": "Stories, activities and a library of their own.",
+    "ar": "قصص وأنشطة ومكتبة خاصة بهم."
+  },
+  "AUD.2.title": {
+    "source": "src/data/library.ts › audiences[1].title_ar",
+    "en": "Students & researchers",
+    "ar": "الطلاب والباحثون"
+  },
+  "AUD.2.body": {
+    "source": "src/data/library.ts › audiences[1].body_ar",
+    "en": "Study space, databases and expert help.",
+    "ar": "مساحات للدراسة وقواعد بيانات ومساعدة متخصصة."
+  },
+  "AUD.3.title": {
+    "source": "src/data/library.ts › audiences[2].title_ar",
+    "en": "Visitors",
+    "ar": "الزوّار"
+  },
+  "AUD.3.body": {
+    "source": "src/data/library.ts › audiences[2].body_ar",
+    "en": "Plan a visit to the building and its exhibitions.",
+    "ar": "خطّط لزيارة المبنى ومعارضه."
+  },
+  "AUD.4.title": {
+    "source": "src/data/library.ts › audiences[3].title_ar",
+    "en": "Professionals",
+    "ar": "المهنيون"
+  },
+  "AUD.4.body": {
+    "source": "src/data/library.ts › audiences[3].body_ar",
+    "en": "Resources and services for work and practice.",
+    "ar": "مصادر وخدمات للعمل والممارسة المهنية."
+  },
+  "UI.planVisit": {
+    "source": "src/data/strings.ts › planVisit",
+    "en": "Plan your visit",
+    "ar": "خطّط لزيارتك"
+  },
+  "UI.planVisitTitle": {
+    "source": "src/data/strings.ts › planVisitTitle",
+    "en": "Open seven days a week.",
+    "ar": "نستقبلكم طوال أيام الأسبوع."
+  },
+  "UI.openingHours": {
+    "source": "src/data/strings.ts › openingHours",
+    "en": "Opening hours",
+    "ar": "ساعات العمل"
+  },
+  "UI.todayLower": {
+    "source": "src/data/strings.ts › todayLower",
+    "en": "today",
+    "ar": "اليوم"
+  },
+  "HOURS.1.days": {
+    "source": "src/data/library.ts › hoursSummary[0].days_ar",
+    "en": "Saturday to Thursday",
+    "ar": "من السبت إلى الخميس"
+  },
+  "HOURS.1.time": {
+    "source": "src/data/library.ts › hoursSummary[0].time_ar",
+    "en": "8:00 AM – 8:00 PM",
+    "ar": "8:00 ص – 8:00 م"
+  },
+  "HOURS.2.days": {
+    "source": "src/data/library.ts › hoursSummary[1].days_ar",
+    "en": "Friday",
+    "ar": "الجمعة"
+  },
+  "HOURS.2.time": {
+    "source": "src/data/library.ts › hoursSummary[1].time_ar",
+    "en": "4:00 PM – 8:00 PM",
+    "ar": "4:00 م – 8:00 م"
+  },
+  "HOURS.childrensNote": {
+    "source": "src/data/library.ts › childrensNote_ar",
+    "en": "The Children's Library closes at 6:30 PM, except on Friday and Saturday, when it closes at 8:00 PM.",
+    "ar": "تُغلق مكتبة الطفل أبوابها الساعة 6:30 مساءً، باستثناء يومي الجمعة والسبت حيث تُغلق الساعة 8:00 مساءً."
+  },
+  "UI.gettingHere": {
+    "source": "src/data/strings.ts › gettingHere",
+    "en": "Getting here",
+    "ar": "الوصول إلينا"
+  },
+  "UI.weAreIn": {
+    "source": "src/data/strings.ts › weAreIn",
+    "en": "We are in Education City, Al Rayyan.",
+    "ar": "نقع في المدينة التعليمية، الريان."
+  },
+  "TRAVEL.1.mode": {
+    "source": "src/data/library.ts › gettingHere[0].mode_ar",
+    "en": "Metro",
+    "ar": "المترو"
+  },
+  "TRAVEL.1.text": {
+    "source": "src/data/library.ts › gettingHere[0].text_ar",
+    "en": "Doha Metro Green Line to Qatar National Library station (Library side).",
+    "ar": "الخط الأخضر لمترو الدوحة، محطة مكتبة قطر الوطنية (جهة المكتبة)."
+  },
+  "TRAVEL.2.mode": {
+    "source": "src/data/library.ts › gettingHere[1].mode_ar",
+    "en": "Car",
+    "ar": "السيارة"
+  },
+  "TRAVEL.2.text": {
+    "source": "src/data/library.ts › gettingHere[1].text_ar",
+    "en": "Parking near the Library is limited. Park at the Oxygen Park underground car park or the Education City Mosque parking lots, then take the free Education City tram to Multaqa (Student Center) station, which also serves the Library.",
+    "ar": "المواقف القريبة من المكتبة محدودة. يمكنك ركن سيارتك في المواقف تحت الأرضية لحديقة الأكسجين أو في مواقف مسجد المدينة التعليمية، ثم استقلال ترام المدينة التعليمية المجاني إلى محطة الملتقى (مركز الطلاب) التي تخدم المكتبة أيضًا."
+  },
+  "TRAVEL.drivingNote": {
+    "source": "src/data/library.ts › drivingNote_ar",
+    "en": "There is a 40 kph speed limit in Education City, which is subject to the traffic and parking rules of the Ministry of Interior.",
+    "ar": "الحد الأقصى للسرعة في المدينة التعليمية 40 كم/ساعة، وتخضع المنطقة لقواعد المرور والمواقف الصادرة عن وزارة الداخلية."
+  },
+  "UI.openInMaps": {
+    "source": "src/data/strings.ts › openInMaps",
+    "en": "Open in Google Maps",
+    "ar": "افتح في خرائط Google"
+  },
+  "UI.buildingPhoto": {
+    "source": "src/data/strings.ts › buildingPhoto",
+    "en": "Qatar National Library building at dusk",
+    "ar": "مبنى مكتبة قطر الوطنية عند الغروب"
+  },
+  "UI.a11yLine1": {
+    "source": "src/data/strings.ts › a11yLine1",
+    "en": "We aim to meet WCAG 2.2 AA. Read our",
+    "ar": "نسعى إلى استيفاء معايير WCAG 2.2 بمستوى AA. اطّلع على"
+  },
+  "UI.a11yStatement": {
+    "source": "src/data/strings.ts › a11yStatement",
+    "en": "accessibility statement",
+    "ar": "بيان إمكانية الوصول"
+  },
+  "UI.a11yOr": {
+    "source": "src/data/strings.ts › a11yOr",
+    "en": "or",
+    "ar": "أو"
+  },
+  "UI.a11yBarrier": {
+    "source": "src/data/strings.ts › a11yBarrier",
+    "en": "tell us about a barrier",
+    "ar": "أبلغنا عن عائق"
+  },
+  "UI.draftNote": {
+    "source": "src/data/strings.ts › draftNote",
+    "en": "",
+    "ar": "النص العربي مسودة أولى قيد المراجعة."
+  },
+  "UI.libraryName": {
+    "source": "src/data/strings.ts › libraryName",
+    "en": "Qatar National Library",
+    "ar": "مكتبة قطر الوطنية"
+  },
+  "UI.findUs": {
+    "source": "src/data/strings.ts › findUs",
+    "en": "Find us",
+    "ar": "موقعنا"
+  },
+  "FOOTER.address": {
+    "source": "src/data/library.ts › findUs.address_ar",
+    "en": "Education City, Al Rayyan, Doha, Qatar",
+    "ar": "المدينة التعليمية، الريان، الدوحة، قطر"
+  },
+  "FOOTER.transit": {
+    "source": "src/data/library.ts › findUs.transit_ar",
+    "en": "Doha Metro Green Line, Qatar National Library station",
+    "ar": "الخط الأخضر لمترو الدوحة، محطة مكتبة قطر الوطنية"
+  },
+  "UI.phone": {
+    "source": "src/data/strings.ts › phone",
+    "en": "Phone",
+    "ar": "الهاتف"
+  },
+  "UI.email": {
+    "source": "src/data/strings.ts › email",
+    "en": "Email",
+    "ar": "البريد الإلكتروني"
+  },
+  "UI.getApp": {
+    "source": "src/data/strings.ts › getApp",
+    "en": "Get the app",
+    "ar": "حمّل التطبيق"
+  },
+  "UI.appAndroid": {
+    "source": "src/data/strings.ts › appAndroid",
+    "en": "Get the Qatar National Library app on Google Play",
+    "ar": "حمّل تطبيق مكتبة قطر الوطنية من Google Play"
+  },
+  "UI.appIos": {
+    "source": "src/data/strings.ts › appIos",
+    "en": "Download the Qatar National Library app on the App Store",
+    "ar": "حمّل تطبيق مكتبة قطر الوطنية من App Store"
+  },
+  "FOOTER.col1": {
+    "source": "src/data/library.ts › footerColumns[0].title_ar",
+    "en": "About",
+    "ar": "عن المكتبة"
+  },
+  "FOOTER.col1.link1": {
+    "source": "src/data/library.ts › footerColumns[0].links_ar[0]",
+    "en": "About the library",
+    "ar": "نبذة عن المكتبة"
+  },
+  "FOOTER.col1.link2": {
+    "source": "src/data/library.ts › footerColumns[0].links_ar[1]",
+    "en": "Plan your visit",
+    "ar": "خطّط لزيارتك"
+  },
+  "FOOTER.col1.link3": {
+    "source": "src/data/library.ts › footerColumns[0].links_ar[2]",
+    "en": "Children's Library",
+    "ar": "مكتبة الطفل"
+  },
+  "FOOTER.col1.link4": {
+    "source": "src/data/library.ts › footerColumns[0].links_ar[3]",
+    "en": "Heritage Library",
+    "ar": "مكتبة التراث"
+  },
+  "FOOTER.col1.link5": {
+    "source": "src/data/library.ts › footerColumns[0].links_ar[4]",
+    "en": "Research and learning",
+    "ar": "البحث والتعلّم"
+  },
+  "FOOTER.col2": {
+    "source": "src/data/library.ts › footerColumns[1].title_ar",
+    "en": "Services",
+    "ar": "الخدمات"
+  },
+  "FOOTER.col2.link1": {
+    "source": "src/data/library.ts › footerColumns[1].links_ar[0]",
+    "en": "Membership",
+    "ar": "العضوية"
+  },
+  "FOOTER.col2.link2": {
+    "source": "src/data/library.ts › footerColumns[1].links_ar[1]",
+    "en": "Borrowing and returns",
+    "ar": "الاستعارة والإرجاع"
+  },
+  "FOOTER.col2.link3": {
+    "source": "src/data/library.ts › footerColumns[1].links_ar[2]",
+    "en": "Study spaces",
+    "ar": "مساحات الدراسة"
+  },
+  "FOOTER.col2.link4": {
+    "source": "src/data/library.ts › footerColumns[1].links_ar[3]",
+    "en": "Printing and scanning",
+    "ar": "الطباعة والمسح الضوئي"
+  },
+  "FOOTER.col3": {
+    "source": "src/data/library.ts › footerColumns[2].title_ar",
+    "en": "Help",
+    "ar": "المساعدة"
+  },
+  "FOOTER.col3.link1": {
+    "source": "src/data/library.ts › footerColumns[2].links_ar[0]",
+    "en": "Ask a librarian",
+    "ar": "اسأل أمين المكتبة"
+  },
+  "FOOTER.col3.link2": {
+    "source": "src/data/library.ts › footerColumns[2].links_ar[1]",
+    "en": "Contact us",
+    "ar": "تواصل معنا"
+  },
+  "FOOTER.col3.link3": {
+    "source": "src/data/library.ts › footerColumns[2].links_ar[2]",
+    "en": "Accessibility services",
+    "ar": "خدمات إمكانية الوصول"
+  },
+  "FOOTER.col3.link4": {
+    "source": "src/data/library.ts › footerColumns[2].links_ar[3]",
+    "en": "Lost property",
+    "ar": "المفقودات"
+  },
+  "FOOTER.col4": {
+    "source": "src/data/library.ts › footerColumns[3].title_ar",
+    "en": "Policies",
+    "ar": "السياسات"
+  },
+  "FOOTER.col4.link1": {
+    "source": "src/data/library.ts › footerColumns[3].links_ar[0]",
+    "en": "Library policies",
+    "ar": "سياسات المكتبة"
+  },
+  "FOOTER.col4.link2": {
+    "source": "src/data/library.ts › footerColumns[3].links_ar[1]",
+    "en": "Privacy",
+    "ar": "الخصوصية"
+  },
+  "FOOTER.col4.link3": {
+    "source": "src/data/library.ts › footerColumns[3].links_ar[2]",
+    "en": "Terms of use",
+    "ar": "شروط الاستخدام"
+  },
+  "FOOTER.col4.link4": {
+    "source": "src/data/library.ts › footerColumns[3].links_ar[3]",
+    "en": "Accessibility statement",
+    "ar": "بيان إمكانية الوصول"
+  },
+  "UI.followUs": {
+    "source": "src/data/strings.ts › followUs",
+    "en": "Follow us",
+    "ar": "تابعونا"
+  },
+  "FOOTER.social1": {
+    "source": "src/data/library.ts › social_ar[0]",
+    "en": "X",
+    "ar": "إكس"
+  },
+  "FOOTER.social2": {
+    "source": "src/data/library.ts › social_ar[1]",
+    "en": "Instagram",
+    "ar": "إنستغرام"
+  },
+  "FOOTER.social3": {
+    "source": "src/data/library.ts › social_ar[2]",
+    "en": "YouTube",
+    "ar": "يوتيوب"
+  },
+  "FOOTER.social4": {
+    "source": "src/data/library.ts › social_ar[3]",
+    "en": "LinkedIn",
+    "ar": "لينكد إن"
+  },
+  "UI.copyright": {
+    "source": "src/data/strings.ts › copyright",
+    "en": "© Qatar National Library. A member of Qatar Foundation.",
+    "ar": "© مكتبة قطر الوطنية. عضو في مؤسسة قطر."
+  },
+  "UI.conceptBy": {
+    "source": "src/data/strings.ts › conceptBy",
+    "en": "Concept by Vistas Global",
+    "ar": "تصميم مقترح من Vistas Global"
+  }
+}
