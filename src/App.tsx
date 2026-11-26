@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { ReducedMotionHero } from './components/ReducedMotionHero'
 import { IntroStage } from './components/IntroStage'
-import { applyLang, LangContext, type Lang } from './lib/dir'
+import { applyLang, initialLang, LangContext, rememberLang, SetLangContext, type Lang } from './lib/dir'
+import { LangPrompt } from './components/LangPrompt'
 import { initScroll } from './lib/scroll'
 import { ServiceStrip } from './components/home/ServiceStrip'
 import { WhatsOn } from './components/home/WhatsOn'
@@ -12,13 +13,17 @@ import { Footer } from './components/home/Footer'
 import { SearchPanel } from './components/SearchPanel'
 
 /**
- * English only for now. The RTL book is still built in (mirrored hinge, turn
- * direction and layout) and can be previewed with ?lang=ar; the toggle
- * (components/LangToggle.tsx) returns once Arabic copy is supplied.
+ * Language: switched from the header (or the first-visit prompt / footer), remembered
+ * on the device and reflected in the address (?lang=ar). Arabic mode mirrors the book
+ * and layout; copy without an approved Arabic version is marked [AR – TBC].
  */
-const lang: Lang = new URLSearchParams(location.search).get('lang') === 'ar' ? 'ar' : 'en'
-
 export default function App() {
+  const [lang, setLangState] = useState<Lang>(initialLang)
+  const setLang = (l: Lang) => {
+    rememberLang(l)
+    setLangState(l)
+  }
+
   // prefers-reduced-motion: no smooth scroll, no pinned sequence. Follows the setting live.
   const [reduced, setReduced] = useState(() => matchMedia('(prefers-reduced-motion: reduce)').matches)
   useEffect(() => {
@@ -28,17 +33,17 @@ export default function App() {
     return () => mq.removeEventListener('change', on)
   }, [])
 
-  useEffect(() => {
-    applyLang(lang)
-    return initScroll()
-  }, [reduced])
+  useEffect(() => applyLang(lang), [lang])
+  useEffect(() => initScroll(), [reduced])
 
   return (
     <LangContext.Provider value={lang}>
+    <SetLangContext.Provider value={setLang}>
       <main>
         {reduced ? <ReducedMotionHero /> : <IntroStage />}
         {/* the normal homepage: the book is an entrance, not the whole site */}
-        <div className="bg-[#fcfcfc] text-ink">
+        {/* No Arabic copy for the homepage yet: in Arabic mode it stays English, left-to-right */}
+        <div className="bg-[#fcfcfc] text-ink" lang="en" dir="ltr">
           <ServiceStrip />
           <WhatsOn />
           <Collections />
@@ -46,8 +51,12 @@ export default function App() {
           <Visit />
         </div>
       </main>
-      <Footer />
+      <div lang="en" dir="ltr">
+        <Footer />
+      </div>
       <SearchPanel />
+      <LangPrompt />
+    </SetLangContext.Provider>
     </LangContext.Provider>
   )
 }

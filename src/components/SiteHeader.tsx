@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { openSearch } from './SearchPanel'
+import { LangSwitch } from './LangSwitch'
 
 /**
  * (DOM order: actions first, so "Skip intro" is the first focusable element; shown
@@ -29,6 +30,7 @@ export function SiteHeader({ action, solidAfter }: { action?: ReactNode; solidAf
       <div className="mx-auto flex max-w-[1440px] flex-row-reverse items-center justify-between gap-3 px-4 py-3 md:px-10 md:py-5">
         <div className="flex items-center gap-1 md:gap-4">
           {action}
+          <LangSwitch />
           {/* desktop: looks like a short field, opens the search panel */}
           <button
             type="button"

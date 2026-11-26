@@ -11,6 +11,7 @@ import { SearchMorph, type SearchMorphHandle } from './SearchMorph'
 import { SkipIntro } from './SkipIntro'
 import { PageControls } from './PageControls'
 import { SiteHeader } from './SiteHeader'
+import { useLang } from '../lib/dir'
 import { Tx } from './Tx'
 import { ui } from '../data/spreads'
 import gsap from 'gsap'
@@ -56,6 +57,7 @@ export function IntroStage() {
   const [focus, setFocus] = useState(0)
   const first = useMemo(() => frameAt(0, innerWidth, innerHeight), [])
   const [mobile, setMobile] = useState(() => isMobile(innerWidth))
+  const lang = useLang()
 
   // Tap-driven playback (phones): the sequence plays as timed animation between
   // resting points instead of following the finger.
@@ -317,7 +319,7 @@ export function IntroStage() {
 
         <div ref={bookWrap} className="absolute inset-0">
           <Book
-            key={mobile ? 'm' : 'd'}
+            key={(mobile ? 'm' : 'd') + lang}
             ref={book}
             pose={first.pose}
             loadUpTo={mobile ? (loadUpTo < 0 ? -1 : focus + 1) : loadUpTo}

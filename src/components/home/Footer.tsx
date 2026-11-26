@@ -1,10 +1,13 @@
 import { findUs, footerColumns, social } from '../../data/library'
+import { useLang, useSetLang } from '../../lib/dir'
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 const link = 'inline-flex min-h-11 items-center text-[15px] text-white/85 underline-offset-4 hover:text-white hover:underline md:min-h-9'
 
 /** Site footer. Link destinations are placeholders until the full site exists. */
 export function Footer() {
+  const lang = useLang()
+  const setLang = useSetLang()
   return (
     <footer className="bg-ink text-white">
       <div className="mx-auto max-w-[1440px] px-4 md:px-10">
@@ -63,9 +66,15 @@ export function Footer() {
           </nav>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] text-white/70">
             <p>© Qatar National Library. A member of Qatar Foundation.</p>
-            <a href="#ar" lang="ar" dir="rtl" className="inline-flex min-h-11 items-center text-[15px] text-white hover:underline" style={{ fontFamily: 'var(--font-arabic)' }}>
-              العربية
-            </a>
+            <button
+              type="button"
+              lang={lang === 'ar' ? 'en' : 'ar'}
+              onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
+              className="inline-flex min-h-11 items-center text-[15px] text-white hover:underline"
+              style={lang === 'ar' ? undefined : { fontFamily: 'var(--font-arabic)' }}
+            >
+              {lang === 'ar' ? 'English' : 'العربية'}
+            </button>
             <p>Concept by Vistas Global</p>
           </div>
         </div>
