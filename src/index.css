@@ -207,3 +207,62 @@ html { scroll-padding-top: 96px; }
 
 /* direction arrows point the reading way */
 [dir='rtl'] .flip-rtl { display: inline-block; transform: scaleX(-1); }
+
+/* ---------- Tiles: service shortcuts and audience cards ----------
+   A quiet editorial hover instead of a full dark fill: a 2px rule draws across the top
+   in reading direction, the tile takes a paper tint, and its arrow nudges forward.
+   Transform, opacity and background only (no layout); ≤ 400 ms, ease-ui. */
+.tile {
+  position: relative;
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+.tile::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 2px;
+  background: #0b0b0b;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[dir='rtl'] .tile::before {
+  transform-origin: right center;
+}
+.tile-arrow {
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tile:focus-visible,
+.tile[aria-expanded='true'] {
+  background-color: #f4f1ea;
+}
+.tile:focus-visible::before,
+.tile[aria-expanded='true']::before {
+  transform: scaleX(1);
+}
+.tile:focus-visible .tile-arrow {
+  transform: translateX(4px);
+}
+[dir='rtl'] .tile:focus-visible .tile-arrow {
+  transform: translateX(-4px);
+}
+.tile:active {
+  background-color: #ece8de;
+}
+@media (hover: hover) {
+  .tile:hover {
+    background-color: #f4f1ea;
+  }
+  .tile:hover::before {
+    transform: scaleX(1);
+  }
+  .tile:hover .tile-arrow {
+    transform: translateX(4px);
+  }
+  [dir='rtl'] .tile:hover .tile-arrow {
+    transform: translateX(-4px);
+  }
+}

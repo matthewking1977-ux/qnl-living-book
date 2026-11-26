@@ -5,7 +5,7 @@ import { useLang } from '../../lib/dir'
 import { today } from '../../lib/hours'
 
 const cell =
-  'btn-slide light flex min-h-[132px] w-full flex-col justify-between px-0 py-6 text-start transition-[color,padding] duration-400 ease-(--ease-ui) hover:px-5 focus-visible:px-5 lg:px-6'
+  'tile flex min-h-[132px] w-full flex-col justify-between px-4 py-6 text-start focus-visible:outline-offset-[-2px] lg:px-6'
 
 /** Four service shortcuts, directly under the book. "Book a study space" opens a menu of space types. */
 export function ServiceStrip() {
@@ -30,14 +30,14 @@ export function ServiceStrip() {
   }, [open])
 
   return (
-    <div ref={wrap} className="mx-auto max-w-[1440px] scroll-mt-24 px-4 pt-[72px] md:px-10 md:pt-[96px]">
+    <div ref={wrap} className="mx-auto max-w-[1440px] scroll-mt-24 pt-[72px] sm:px-4 md:px-10 md:pt-[96px]">
       <nav aria-label={tr('services')}>
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <li className="border-b border-g3 lg:border-b-0 lg:border-e">
             <a href="#membership" className={cell}>
               <span className="label opacity-60">01</span>
               <span>
-                <span className="block text-[18px] font-medium">{tr('becomeMember')}</span>
+                <span className="flex items-center gap-2 text-[18px] font-medium">{tr('becomeMember')}<span aria-hidden className="tile-arrow text-[15px] opacity-60"><span className="flip-rtl">→</span></span></span>
                 <span className="mt-1 block text-[14px] opacity-70">{tr('becomeMemberNote')}</span>
               </span>
             </a>
@@ -61,7 +61,7 @@ export function ServiceStrip() {
                 <span className={`inline-block size-1.5 rounded-full ${t.openNow ? 'bg-[#2f7d4f]' : 'bg-g2'}`} aria-hidden />
               </span>
               <span>
-                <span className="block text-[18px] font-medium">{tr('visitUs')}</span>
+                <span className="flex items-center gap-2 text-[18px] font-medium">{tr('visitUs')}<span aria-hidden className="tile-arrow text-[15px] opacity-60"><span className="flip-rtl">→</span></span></span>
                 <span className="mt-1 block text-[14px] opacity-70">
                   {t.openNow ? tr('openNow') : tr('closedNow')} · {tr('today')} {t.range}
                 </span>
@@ -72,7 +72,7 @@ export function ServiceStrip() {
             <a href="#ask" className={cell}>
               <span className="label opacity-60">04</span>
               <span>
-                <span className="block text-[18px] font-medium">{tr('askLibrarian')}</span>
+                <span className="flex items-center gap-2 text-[18px] font-medium">{tr('askLibrarian')}<span aria-hidden className="tile-arrow text-[15px] opacity-60"><span className="flip-rtl">→</span></span></span>
                 <span className="mt-1 block text-[14px] opacity-70">{tr('askLibrarianNote')}</span>
               </span>
             </a>
@@ -84,7 +84,7 @@ export function ServiceStrip() {
       <div
         id="study-menu"
         hidden={!open}
-        className="border-b border-t border-g3 bg-white py-8 md:px-6"
+        className="border-b border-t border-g3 bg-white px-4 py-8 md:px-6"
       >
         <div className="flex flex-wrap items-baseline justify-between gap-4">
           <h2 className="text-[20px] font-medium">{tr('bookStudy')}</h2>

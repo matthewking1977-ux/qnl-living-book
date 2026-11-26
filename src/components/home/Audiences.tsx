@@ -12,8 +12,8 @@ export function Audiences() {
       <ul className="grid border-s border-t border-g3 sm:grid-cols-2 lg:grid-cols-4">
         {audiences.map((a) => (
           <li key={a.id} id={a.id} className="scroll-mt-24 border-b border-e border-g3">
-            <a href={`#${a.id}`} className="btn-slide light flex min-h-[220px] flex-col justify-between p-6 transition-colors duration-400 ease-(--ease-ui)">
-              <span aria-hidden className="flip-rtl text-[20px]">→</span>
+            <a href={`#${a.id}`} className="tile flex min-h-[220px] flex-col justify-between p-6 focus-visible:outline-offset-[-2px]">
+              <span aria-hidden className="tile-arrow text-[20px]"><span className="flip-rtl">→</span></span>
               <span>
                 <span className="block text-[20px] font-medium">{p(a.title, a.title_ar)}</span>
                 <span className="mt-2 block max-w-[30ch] text-[14px] leading-relaxed opacity-70">{p(a.body, a.body_ar)}</span>
