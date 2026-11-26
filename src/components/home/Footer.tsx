@@ -74,7 +74,7 @@ export function Footer() {
               type="button"
               lang={lang === 'ar' ? 'en' : 'ar'}
               onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
-              className="inline-flex min-h-11 items-center text-[15px] text-white hover:underline"
+              className="inline-flex min-h-11 items-center text-[15px] font-medium text-white hover:underline"
               style={lang === 'ar' ? undefined : { fontFamily: 'var(--font-arabic)' }}
             >
               {lang === 'ar' ? 'English' : 'العربية'}

@@ -8,7 +8,7 @@ export function Photo({ name, alt = '', className = '', sizes = '(min-width: 768
     <picture>
       <source type="image/avif" srcSet={set('avif')} sizes={sizes} />
       <source type="image/webp" srcSet={set('webp')} sizes={sizes} />
-      <img src={`/img/${name}-1280.webp`} alt={alt} loading="lazy" decoding="async" className={`h-full w-full object-cover ${className}`} />
+      <img src={`/img/${name}-1280.webp`} alt={alt} loading="lazy" decoding="async" fetchPriority="low" className={`h-full w-full object-cover ${className}`} />
     </picture>
   )
 }
