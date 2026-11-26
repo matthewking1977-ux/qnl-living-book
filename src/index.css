@@ -204,3 +204,6 @@ input:focus-visible {
 
 /* in-page links land below the fixed header */
 html { scroll-padding-top: 96px; }
+
+/* direction arrows point the reading way */
+[dir='rtl'] .flip-rtl { display: inline-block; transform: scaleX(-1); }

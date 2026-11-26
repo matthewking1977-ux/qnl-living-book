@@ -42,8 +42,7 @@ export default function App() {
       <main>
         {reduced ? <ReducedMotionHero /> : <IntroStage />}
         {/* the normal homepage: the book is an entrance, not the whole site */}
-        {/* No Arabic copy for the homepage yet: in Arabic mode it stays English, left-to-right */}
-        <div className="bg-[#fcfcfc] text-ink" lang="en" dir="ltr">
+        <div className="bg-[#fcfcfc] text-ink">
           <ServiceStrip />
           <WhatsOn />
           <Collections />
@@ -51,9 +50,7 @@ export default function App() {
           <Visit />
         </div>
       </main>
-      <div lang="en" dir="ltr">
-        <Footer />
-      </div>
+      <Footer />
       <SearchPanel />
       <LangPrompt />
     </SetLangContext.Provider>

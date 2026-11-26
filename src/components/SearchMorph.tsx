@@ -2,13 +2,15 @@ import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { ui } from '../data/spreads'
 import { lerp, smoothstep } from '../lib/easing'
 import { VoiceButton } from './VoiceButton'
+import { usePick, useT } from '../lib/i18n'
+import { useLang } from '../lib/dir'
 
 export interface SearchMorphHandle {
   /** m: 0 book … 1 search bar. Transform and opacity only. */
   apply(m: number): void
 }
 
-const FILTERS = ['Books', 'Research', 'Events', 'Heritage'] as const
+const FILTERS = ['filterBooks', 'filterResearch', 'filterEvents', 'filterHeritage'] as const
 
 /**
  * The search bar the book turns into. The white pill starts at roughly the
@@ -17,6 +19,9 @@ const FILTERS = ['Books', 'Research', 'Events', 'Heritage'] as const
  * Not wired to a search backend in this concept.
  */
 export const SearchMorph = forwardRef<SearchMorphHandle, { active: boolean }>(function SearchMorph({ active }, ref) {
+  const t = useT()
+  const p = usePick()
+  const lang = useLang()
   const wrap = useRef<HTMLDivElement>(null)
   const pill = useRef<HTMLDivElement>(null)
   const content = useRef<HTMLDivElement>(null)
@@ -49,22 +54,22 @@ export const SearchMorph = forwardRef<SearchMorphHandle, { active: boolean }>(fu
           {/* the one permitted blur, behind the bar */}
           <div ref={pill} className="absolute inset-0 rounded-full bg-white shadow-[0_24px_80px_rgba(0,0,0,.55)] backdrop-blur-md transition-shadow duration-300 ease-(--ease-ui) group-focus-within:shadow-[0_0_0_3px_rgba(255,255,255,.5),0_24px_80px_rgba(0,0,0,.55)]" />
           <div ref={content} className="relative flex h-full items-center gap-2 ps-6 pe-2 md:ps-8">
-            <label htmlFor="q" className="sr-only">Search the library</label>
+            <label htmlFor="q" className="sr-only">{t('searchLibrary')}</label>
             <input
               ref={field}
               id="q"
               type="search"
               tabIndex={tab}
-              placeholder={ui.searchPlaceholder.en}
+              placeholder={p(ui.searchPlaceholder.en, ui.searchPlaceholder.ar)}
               className="h-full min-w-0 flex-1 appearance-none rounded-none border-0 bg-transparent text-[16px] text-ink placeholder:text-g1 focus:outline-none md:text-[18px]"
             />
-            {active && <VoiceButton onText={(t) => { if (field.current) field.current.value = t }} />}
+            {active && <VoiceButton lang={lang === 'ar' ? 'ar-QA' : 'en-GB'} onText={(t) => { if (field.current) field.current.value = t }} />}
             <button
               type="submit"
               tabIndex={tab}
               className="btn-slide h-12 shrink-0 rounded-full bg-ink px-6 text-[14px] font-medium text-white md:h-14 md:px-8"
             >
-              <span>Search</span>
+              <span>{t('search')}</span>
             </button>
           </div>
         </form>
@@ -80,7 +85,7 @@ export const SearchMorph = forwardRef<SearchMorphHandle, { active: boolean }>(fu
                 filter === f ? 'border-white bg-white text-ink' : 'border-white/45 text-white hover:border-white'
               }`}
             >
-              {f}
+              {t(f)}
             </button>
           ))}
         </div>

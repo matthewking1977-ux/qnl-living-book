@@ -16,6 +16,7 @@ import { Tx } from './Tx'
 import { ui } from '../data/spreads'
 import gsap from 'gsap'
 import { ScrollTrigger, scrollToY } from '../lib/scroll'
+import { useT } from '../lib/i18n'
 
 const debug = new URLSearchParams(location.search).get('debug') === '1'
 /** resting points of the sequence: closed book, the four spreads, the search bar */
@@ -58,6 +59,7 @@ export function IntroStage() {
   const first = useMemo(() => frameAt(0, innerWidth, innerHeight), [])
   const [mobile, setMobile] = useState(() => isMobile(innerWidth))
   const lang = useLang()
+  const t = useT()
 
   // Tap-driven playback (phones): the sequence plays as timed animation between
   // resting points instead of following the finger.
@@ -290,7 +292,7 @@ export function IntroStage() {
     <div ref={track} className="relative h-svh min-h-[560px] md:h-[500vh]">
       <section
         className="sticky top-0 h-svh min-h-[560px] overflow-hidden bg-ink text-white"
-        aria-label="Introduction"
+        aria-label={t('introRegion')}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >

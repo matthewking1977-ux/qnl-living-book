@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { listen, voiceSupported } from '../lib/voice'
+import { useT } from '../lib/i18n'
 
 /**
  * Mic button for search. Shown only where the browser supports speech recognition.
@@ -7,6 +8,7 @@ import { listen, voiceSupported } from '../lib/voice'
  * and writes the words into the field as they are recognised.
  */
 export function VoiceButton({ onText, onFinal, lang = 'en-GB', tone = 'light' }: { onText: (t: string) => void; onFinal?: (t: string) => void; lang?: string; tone?: 'light' | 'dark' }) {
+  const t = useT()
   const [supported] = useState(voiceSupported)
   const [on, setOn] = useState(false)
   const [note, setNote] = useState('')
@@ -30,7 +32,7 @@ export function VoiceButton({ onText, onFinal, lang = 'en-GB', tone = 'light' }:
       onEnd: () => setOn(false),
       onError: (code) => {
         setOn(false)
-        setNote(code === 'not-allowed' || code === 'service-not-allowed' ? 'Microphone access is off for this site.' : code === 'no-speech' ? 'Didn’t catch that. Try again.' : '')
+        setNote(code === 'not-allowed' || code === 'service-not-allowed' ? t('voiceDenied') : code === 'no-speech' ? t('voiceNoSpeech') : '')
       },
     })
   }
@@ -42,7 +44,7 @@ export function VoiceButton({ onText, onFinal, lang = 'en-GB', tone = 'light' }:
         type="button"
         onClick={toggle}
         aria-pressed={on}
-        aria-label={on ? 'Stop listening' : 'Search by voice'}
+        aria-label={on ? t('voiceStop') : t('voiceStart')}
         className={`relative grid size-11 shrink-0 place-items-center rounded-full transition-colors duration-300 ease-(--ease-ui) md:size-12 ${
           on ? (dark ? 'bg-white text-ink' : 'bg-ink text-white') : dark ? 'text-white hover:bg-white/10' : 'text-ink hover:bg-g3'
         }`}
@@ -53,7 +55,7 @@ export function VoiceButton({ onText, onFinal, lang = 'en-GB', tone = 'light' }:
           <path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" />
         </svg>
       </button>
-      <span role="status" aria-live="polite" className="sr-only">{on ? 'Listening' : note}</span>
+      <span role="status" aria-live="polite" className="sr-only">{on ? t('voiceListening') : note}</span>
       {note && (
         <span className={`absolute right-0 top-full mt-2 whitespace-nowrap text-[13px] ${dark ? 'text-white/80' : 'text-g1'}`}>{note}</span>
       )}

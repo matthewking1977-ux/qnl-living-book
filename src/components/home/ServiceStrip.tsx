@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { studyNotes, studySpaces } from '../../data/library'
+import { studyNotes, studyNotes_ar, studySpaces } from '../../data/library'
+import { usePick, useT } from '../../lib/i18n'
+import { useLang } from '../../lib/dir'
 import { today } from '../../lib/hours'
 
 const cell =
@@ -8,7 +10,10 @@ const cell =
 /** Four service shortcuts, directly under the book. "Book a study space" opens a menu of space types. */
 export function ServiceStrip() {
   const [open, setOpen] = useState(false)
-  const t = today()
+  const lang = useLang()
+  const tr = useT()
+  const p = usePick()
+  const t = today(lang)
   const wrap = useRef<HTMLDivElement>(null)
 
   // close on Escape or a click outside
@@ -26,14 +31,14 @@ export function ServiceStrip() {
 
   return (
     <div ref={wrap} className="mx-auto max-w-[1440px] scroll-mt-24 px-4 pt-[72px] md:px-10 md:pt-[96px]">
-      <nav aria-label="Services">
+      <nav aria-label={tr('services')}>
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <li className="border-b border-g3 lg:border-b-0 lg:border-e">
             <a href="#membership" className={cell}>
               <span className="label opacity-60">01</span>
               <span>
-                <span className="block text-[18px] font-medium">Become a member</span>
-                <span className="mt-1 block text-[14px] opacity-70">Join online or at the Library</span>
+                <span className="block text-[18px] font-medium">{tr('becomeMember')}</span>
+                <span className="mt-1 block text-[14px] opacity-70">{tr('becomeMemberNote')}</span>
               </span>
             </a>
           </li>
@@ -44,8 +49,8 @@ export function ServiceStrip() {
                 <span aria-hidden className={`text-[16px] transition-transform duration-400 ease-(--ease-ui) ${open ? 'rotate-180' : ''}`}>⌄</span>
               </span>
               <span>
-                <span className="block text-[18px] font-medium">Book a study space</span>
-                <span className="mt-1 block text-[14px] opacity-70">Group rooms, media lounges, quiet rooms</span>
+                <span className="block text-[18px] font-medium">{tr('bookStudy')}</span>
+                <span className="mt-1 block text-[14px] opacity-70">{tr('bookStudyNote')}</span>
               </span>
             </button>
           </li>
@@ -56,9 +61,9 @@ export function ServiceStrip() {
                 <span className={`inline-block size-1.5 rounded-full ${t.openNow ? 'bg-[#2f7d4f]' : 'bg-g2'}`} aria-hidden />
               </span>
               <span>
-                <span className="block text-[18px] font-medium">Visit us</span>
+                <span className="block text-[18px] font-medium">{tr('visitUs')}</span>
                 <span className="mt-1 block text-[14px] opacity-70">
-                  {t.openNow ? 'Open now' : 'Closed now'} · Today {t.range}
+                  {t.openNow ? tr('openNow') : tr('closedNow')} · {tr('today')} {t.range}
                 </span>
               </span>
             </a>
@@ -67,8 +72,8 @@ export function ServiceStrip() {
             <a href="#ask" className={cell}>
               <span className="label opacity-60">04</span>
               <span>
-                <span className="block text-[18px] font-medium">Ask a librarian</span>
-                <span className="mt-1 block text-[14px] opacity-70">Help with research and borrowing</span>
+                <span className="block text-[18px] font-medium">{tr('askLibrarian')}</span>
+                <span className="mt-1 block text-[14px] opacity-70">{tr('askLibrarianNote')}</span>
               </span>
             </a>
           </li>
@@ -82,30 +87,30 @@ export function ServiceStrip() {
         className="border-b border-t border-g3 bg-white py-8 md:px-6"
       >
         <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <h2 className="text-[20px] font-medium">Book a study space</h2>
-          <p className="text-[13px] text-g1">Questions? Call 4454 2152 or email qnlresourcebooking@qnl.qa</p>
+          <h2 className="text-[20px] font-medium">{tr('bookStudy')}</h2>
+          <p className="text-[13px] text-g1">{tr('studyQuestions')}</p>
         </div>
         <ul className="mt-6 grid gap-px bg-g3 sm:grid-cols-2 lg:grid-cols-5">
           {studySpaces.map((sp, i) => (
             <li key={i} className="flex flex-col bg-white p-5">
-              <p className="text-[16px] font-medium leading-snug">{sp.type}</p>
-              {sp.zone && <p className="label mt-1 text-g1">{sp.zone}</p>}
+              <p className="text-[16px] font-medium leading-snug">{p(sp.type, sp.type_ar)}</p>
+              {sp.zone && <p className="label mt-1 text-g1">{p(sp.zone, sp.zone_ar)}</p>}
               <dl className="mt-3 space-y-1 text-[14px] text-g1">
-                <div className="flex gap-2"><dt className="sr-only">Rooms</dt><dd>{sp.rooms === 'Open area' ? 'Open area' : `${sp.rooms} ${sp.rooms === '1' ? 'room' : 'rooms'}`}</dd></div>
-                <div className="flex gap-2"><dt className="sr-only">Size and capacity</dt><dd>{sp.capacity}</dd></div>
-                <div><dt className="sr-only">Equipment</dt><dd>{sp.equipment.join(' · ')}</dd></div>
+                <div className="flex gap-2"><dt className="sr-only">{lang === 'ar' ? 'الغرف' : 'Rooms'}</dt><dd>{sp.rooms === 'Open area' ? tr('openArea') : `${sp.rooms} ${sp.rooms === '1' ? tr('room') : tr('rooms')}`}</dd></div>
+                <div className="flex gap-2"><dt className="sr-only">{lang === 'ar' ? 'المساحة والسعة' : 'Size and capacity'}</dt><dd>{p(sp.capacity, sp.capacity_ar)}</dd></div>
+                <div><dt className="sr-only">{lang === 'ar' ? 'التجهيزات' : 'Equipment'}</dt><dd>{p(sp.equipment, sp.equipment_ar).join(' · ')}</dd></div>
               </dl>
               <a
                 href={sp.href}
                 className="mt-auto inline-flex min-h-11 items-center gap-2 pt-4 text-[14px] font-medium underline decoration-1 underline-offset-[6px]"
               >
-                Book now<span className="sr-only">: {sp.type}{sp.capacity ? `, ${sp.capacity}` : ''}</span> <span aria-hidden>→</span>
+                {tr('bookNow')}<span className="sr-only">: {p(sp.type, sp.type_ar)}, {p(sp.capacity, sp.capacity_ar)}</span> <span aria-hidden className="flip-rtl">→</span>
               </a>
             </li>
           ))}
         </ul>
         <ul className="mt-5 space-y-1 text-[13px] text-g1">
-          {studyNotes.map((n) => <li key={n}>{n}</li>)}
+          {p(studyNotes, studyNotes_ar).map((n) => <li key={n}>{n}</li>)}
         </ul>
       </div>
     </div>

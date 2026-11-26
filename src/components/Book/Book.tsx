@@ -4,6 +4,7 @@ import { backOut, clamp01, lerp } from '../../lib/easing'
 import { sign, useDir } from '../../lib/dir'
 import { BLOCK_L, BLOCK_R, C, H, LEAF, LEAF_GAP, LEAVES, M, PH, PW, T, W, type BookPose } from './geometry'
 import { Page, PaperFace, SpreadLead, SpreadTrail } from './Page'
+import { Tx } from '../Tx'
 import { PopUpLayer, type Placement, type PopUpNodes } from './PopUpLayer'
 import { FaceContent, MirrorContext, PortraitContext, Slab } from './Slab'
 import type { PopUpLayerDef } from '../../data/spreads'
@@ -263,7 +264,7 @@ export const Book = forwardRef<BookHandle, { pose: BookPose; loadUpTo?: number; 
                       i === 0 ? (
                         <PaperFace gutter="left" cast="R0">
                           <div className="flex h-full items-end justify-center pb-12">
-                            <p className="label text-g1" lang="en">Qatar National Library</p>
+                            <p className="label text-g1"><Tx en="Qatar National Library" ar="مكتبة قطر الوطنية" /></p>
                           </div>
                         </PaperFace>
                       ) : (

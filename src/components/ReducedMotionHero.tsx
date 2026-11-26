@@ -5,6 +5,7 @@ import { SearchMorph, type SearchMorphHandle } from './SearchMorph'
 import { SiteHeader } from './SiteHeader'
 import { useLang } from '../lib/dir'
 import { spreads, ui } from '../data/spreads'
+import { usePick, useT } from '../lib/i18n'
 
 /**
  * prefers-reduced-motion version of the intro. Nothing is pinned and nothing
@@ -24,6 +25,8 @@ export function ReducedMotionHero() {
   const tabs = useRef<(HTMLButtonElement | null)[]>([])
   const mobile = isMobile(size.vw)
   const lang = useLang()
+  const t = useT()
+  const p = usePick()
 
   // the same pose the scroll version rests on for this spread
   const poseFor = (i: number) => {
@@ -79,8 +82,8 @@ export function ReducedMotionHero() {
         <div className="h-[72px] md:h-[96px]" />
 
         <div className="px-6 pt-4 text-center">
-          <p className="label text-white/80">{ui.institution.en}</p>
-          <h1 className="font-display mt-4 text-[clamp(2rem,4.6vw,3.75rem)] leading-[1.08] tracking-[-0.01em]">{ui.headline.en}</h1>
+          <p className="label text-white/80">{p(ui.institution.en, ui.institution.ar)}</p>
+          <h1 className="font-display mt-4 text-[clamp(2rem,4.6vw,3.75rem)] leading-[1.08] tracking-[-0.01em]">{p(ui.headline.en, ui.headline.ar)}</h1>
         </div>
 
         {/* static open book */}
@@ -92,7 +95,7 @@ export function ReducedMotionHero() {
 
         {/* the four spreads as tabs */}
         <div className="mx-auto max-w-[720px] px-4 pb-10 text-center">
-          <div role="tablist" aria-label="Book chapters" className="flex flex-wrap justify-center gap-2" onKeyDown={onKey}>
+          <div role="tablist" aria-label={t('bookChapters')} className="flex flex-wrap justify-center gap-2" onKeyDown={onKey}>
             {spreads.map((s, i) => (
               <button
                 key={s.id}
@@ -107,21 +110,21 @@ export function ReducedMotionHero() {
                   tab === i ? 'border-white bg-white text-ink' : 'border-white/45 text-white hover:border-white'
                 }`}
               >
-                {s.index} · {s.label_en}
+                {s.index} · {p(s.label_en, s.label_ar)}
               </button>
             ))}
           </div>
           <div role="tabpanel" id={`panel-${sp.id}`} aria-labelledby={`tab-${sp.id}`} className="mt-6">
-            <h2 className="text-[20px] font-medium">{sp.title_en}</h2>
-            <p className="mx-auto mt-2 max-w-[60ch] text-[15px] leading-relaxed text-white/85">{sp.body_en}</p>
+            <h2 className="text-[20px] font-medium">{p(sp.title_en, sp.title_ar)}</h2>
+            <p className="mx-auto mt-2 max-w-[60ch] text-[15px] leading-relaxed text-white/85">{p(sp.body_en, sp.body_ar)}</p>
             {sp.sample && (
               <p className="mx-auto mt-3 max-w-[60ch] text-[13px] text-white/75">
-                <span className="label me-2 border border-white/50 px-2 py-1 text-[10px]">Sample</span>
-                {sp.sample.lines_en.join(' · ')}
+                <span className="label me-2 border border-white/50 px-2 py-1 text-[10px]">{t('sample')}</span>
+                {p(sp.sample.lines_en, sp.sample.lines_ar).join(' · ')}
               </p>
             )}
             <a href={sp.link.href} className="mt-3 inline-flex min-h-11 items-center gap-2 text-[15px] font-medium underline decoration-1 underline-offset-[6px]">
-              {sp.link.label_en} <span aria-hidden>→</span>
+              {p(sp.link.label_en, sp.link.label_ar)} <span aria-hidden className="flip-rtl">→</span>
             </a>
           </div>
         </div>

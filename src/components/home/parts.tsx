@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useT } from '../../lib/i18n'
 
 /** Responsive AVIF/WebP photo from /public/img (built by `npm run assets`). */
 export function Photo({ name, alt = '', className = '', sizes = '(min-width: 768px) 33vw, 100vw' }: { name: string; alt?: string; className?: string; sizes?: string }) {
@@ -37,11 +38,12 @@ export function TextLink({ href, children }: { href: string; children: ReactNode
   return (
     <a href={href} className="group inline-flex min-h-11 items-center gap-2 text-[14px] font-medium underline decoration-1 underline-offset-[6px]">
       {children}
-      <span aria-hidden className="transition-transform duration-300 ease-(--ease-ui) group-hover:translate-x-1">→</span>
+      <span aria-hidden className="flip-rtl transition-transform duration-300 ease-(--ease-ui)">→</span>
     </a>
   )
 }
 
 export function SampleTag() {
-  return <span className="label border border-ink/40 px-2 py-1 text-[10px] text-g1">Sample</span>
+  const t = useT()
+  return <span className="label border border-ink/40 px-2 py-1 text-[10px] text-g1">{t('sample')}</span>
 }

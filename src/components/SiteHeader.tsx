@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { openSearch } from './SearchPanel'
 import { LangSwitch } from './LangSwitch'
+import { useT } from '../lib/i18n'
 
 /**
  * (DOM order: actions first, so "Skip intro" is the first focusable element; shown
@@ -11,6 +12,7 @@ import { LangSwitch } from './LangSwitch'
  * over the intro; solid once the page has scrolled past it.
  */
 export function SiteHeader({ action, solidAfter }: { action?: ReactNode; solidAfter: () => number }) {
+  const t = useT()
   const [solid, setSolid] = useState(false)
   useEffect(() => {
     const on = () => setSolid(scrollY > solidAfter() - 72)
@@ -38,20 +40,20 @@ export function SiteHeader({ action, solidAfter }: { action?: ReactNode; solidAf
             className="hidden min-h-11 w-[260px] items-center gap-3 rounded-full border border-white/35 px-4 text-[13px] text-white/75 transition-colors duration-300 ease-(--ease-ui) hover:border-white hover:text-white md:flex"
           >
             <SearchIcon />
-            <span className="flex-1 text-start">Search the library</span>
+            <span className="flex-1 text-start">{t('searchLibrary')}</span>
             <kbd aria-hidden className="rounded border border-white/30 px-1.5 text-[11px] text-white/70">/</kbd>
           </button>
           {/* phones: icon only */}
           <button
             type="button"
             onClick={openSearch}
-            aria-label="Search the library"
+            aria-label={t('searchLibrary')}
             className="grid size-11 place-items-center rounded-full text-white hover:bg-white/10 md:hidden"
           >
             <SearchIcon />
           </button>
         </div>
-        <a href="#" aria-label="Qatar National Library, home" className="shrink-0">
+        <a href="#" aria-label={t('home')} className="shrink-0">
           <img src="/img/qnl-logo-white.webp" alt="" width={480} height={250} className="h-11 w-auto md:h-14" />
         </a>
       </div>

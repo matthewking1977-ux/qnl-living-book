@@ -81,7 +81,7 @@ export function SpreadTrail({ spread }: { spread: Spread }) {
     <div className="flex h-full flex-col justify-end gap-2 pb-6 pt-9 pe-9 ps-11">
       {spread.sample && (
         <div className="sp-sample border-t border-ink/25 pt-2">
-          <p className="label mb-0.5 text-g1" style={{ fontSize: 9 }} lang="en">Sample</p>
+          <p className="label mb-0.5 text-g1" style={{ fontSize: 9 }}><Tx en="Sample" ar="نموذج" /></p>
           {spread.sample.lines_en.map((l, i) => (
             <p key={i} className={i === 0 ? 'text-[12px] font-medium' : 'text-[10.5px] leading-snug text-g1'}>
               <Tx en={l} ar={spread.sample!.lines_ar?.[i] ?? null} />
@@ -131,7 +131,7 @@ function SpreadCard({ spread }: { spread: Spread }) {
         style={{ fontSize: 25 }}
       >
         <Tx en={spread.link.label_en} ar={spread.link.label_ar} />
-        <span aria-hidden>→</span>
+        <span aria-hidden className="flip-rtl">→</span>
       </a>
     </div>
   )

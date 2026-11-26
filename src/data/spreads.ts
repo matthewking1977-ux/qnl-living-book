@@ -1,4 +1,7 @@
 /**
+ * Arabic: the headline and search placeholder were supplied by QNL; everything else
+ * is a first draft for copywriter review (see docs/arabic-copy.md).
+ *
  * The four spreads of the book. This array is the only place spread content
  * lives, so a CMS can feed it later.
  *
@@ -71,12 +74,12 @@ export const spreads: Spread[] = [
     id: 'children',
     index: '01',
     label_en: "Children's Library",
-    label_ar: null,
+    label_ar: 'مكتبة الطفل',
     title_en: 'Where small readers begin.',
-    title_ar: null,
+    title_ar: 'هنا يبدأ القرّاء الصغار.',
     body_en: 'Stories to read aloud, to look at, and to grow up with.',
-    body_ar: null,
-    link: { href: '#children', label_en: "Explore children's books", label_ar: null },
+    body_ar: 'حكايات تُقرأ بصوتٍ عالٍ، وصورٌ تُتأمَّل، وقصصٌ يكبرون معها.',
+    link: { href: '#children', label_en: "Explore children's books", label_ar: 'استكشف كتب الأطفال' },
     layers: [
       { src: '/popups/spreadA-layer1.webp', base: 0.4, x: 0.12, w: 1.1, ratio: R.A1, stand: 88, mobile: true, fold: 9, m: { x: 0.02, d: -0.46, w: 1.04 } },
       { src: '/popups/spreadA-layer2.webp', base: 0.49, x: 0.06, w: 1.26, ratio: R.A2, stand: 84, m: { x: 0.0, d: -0.24, w: 1.06 } },
@@ -91,19 +94,19 @@ export const spreads: Spread[] = [
     id: 'research',
     index: '02',
     label_en: 'Research & Learning',
-    label_ar: null,
+    label_ar: 'البحث والتعلّم',
     title_en: 'Ask a harder question.',
-    title_ar: null,
+    title_ar: 'اطرح سؤالًا أعمق.',
     body_en: 'Journals, databases, and people who know where to look.',
-    body_ar: null,
-    link: { href: '#research', label_en: 'Search research databases', label_ar: null },
+    body_ar: 'دوريات وقواعد بيانات، وخبراء يعرفون أين تجد ما تبحث عنه.',
+    link: { href: '#research', label_en: 'Search research databases', label_ar: 'ابحث في قواعد البيانات البحثية' },
     sample: {
       kind: 'abstract',
       lines_en: [
         'Abstract',
         'Placeholder text standing in for a journal abstract. The final snippet will come from the catalogue.',
       ],
-      lines_ar: null,
+      lines_ar: ['ملخّص', 'نص مؤقت يحلّ محلّ ملخّص بحثي، وسيُستبدل بمقتطف من الفهرس.'],
     },
     layers: [
       { src: '/popups/spreadB-layer1.webp', base: 0.35, x: 0.08, w: 1.04, ratio: R.B1, stand: 88, mobile: true, fold: 9 },
@@ -119,16 +122,16 @@ export const spreads: Spread[] = [
     id: 'events',
     index: '03',
     label_en: 'Events',
-    label_ar: null,
+    label_ar: 'الفعاليات',
     title_en: 'Something is always on.',
-    title_ar: null,
+    title_ar: 'هناك دائمًا ما يستحق الحضور.',
     body_en: 'Talks, workshops and exhibitions for every kind of visitor.',
-    body_ar: null,
-    link: { href: '#events', label_en: 'See all events', label_ar: null },
+    body_ar: 'محاضرات وورش عمل ومعارض لجميع الزوّار.',
+    link: { href: '#events', label_en: 'See all events', label_ar: 'عرض جميع الفعاليات' },
     sample: {
       kind: 'event',
       lines_en: ['Event title placeholder', 'Date [TBC]', 'Location [TBC]'],
-      lines_ar: null,
+      lines_ar: ['عنوان الفعالية', 'التاريخ [يُحدَّد لاحقًا]', 'المكان [يُحدَّد لاحقًا]'],
     },
     layers: [
       { src: '/popups/spreadC-layer1.webp', base: 0.34, x: 0.04, w: 1.72, ratio: R.C1, stand: 88, fold: 9 },
@@ -144,12 +147,12 @@ export const spreads: Spread[] = [
     id: 'heritage',
     index: '04',
     label_en: 'Qatar & Gulf Heritage',
-    label_ar: null,
+    label_ar: 'تراث قطر والخليج',
     title_en: 'The region, on paper.',
-    title_ar: null,
+    title_ar: 'تاريخ المنطقة على الورق.',
     body_en: 'Manuscripts, maps and photographs from the heritage collection.',
-    body_ar: null,
-    link: { href: '#heritage', label_en: 'Explore the heritage collection', label_ar: null },
+    body_ar: 'مخطوطات وخرائط وصور فوتوغرافية من مجموعة التراث.',
+    link: { href: '#heritage', label_en: 'Explore the heritage collection', label_ar: 'استكشف مجموعة التراث' },
     layers: [
       { src: '/popups/spreadD-layer1.webp', base: 0.37, x: 0.08, w: 1.1, ratio: R.D1, stand: 88, mobile: true, fold: 9 },
       { src: '/popups/spreadD-layer2.webp', base: 0.45, x: 0.04, w: 1.16, ratio: R.D2, stand: 84 },
@@ -164,10 +167,10 @@ export const spreads: Spread[] = [
 
 /** UI strings outside the book. Same rule: null = [AR – TBC]. */
 export const ui = {
-  institution: { en: 'Qatar National Library', ar: null as string | null },
+  institution: { en: 'Qatar National Library', ar: 'مكتبة قطر الوطنية' as string | null },
   headline: { en: 'Every story starts here.', ar: 'كل قصة تبدأ هنا' as string | null, arTbc: true },
-  cue: { en: 'Scroll to open', ar: null as string | null },
-  skip: { en: 'Skip intro', ar: null as string | null },
+  cue: { en: 'Scroll to open', ar: 'مرِّر لفتح الكتاب' as string | null },
+  skip: { en: 'Skip intro', ar: 'تخطَّ المقدمة' as string | null },
   searchPlaceholder: {
     en: 'Search books, research, events and heritage…',
     ar: 'ابحث في الكتب والأبحاث والفعاليات والتراث…' as string | null,
