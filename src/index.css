@@ -134,16 +134,25 @@ input:focus-visible {
   transform: translateX(-101%);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.btn-slide:hover::before,
 .btn-slide:focus-visible::before {
   transform: translateX(0);
+}
+/* hover fills only where there is a real hover (a tap would leave them stuck on) */
+@media (hover: hover) {
+  .btn-slide:hover::before {
+    transform: translateX(0);
+  }
 }
 .btn-slide.light::before {
   background: #0b0b0b;
 }
-.btn-slide.light:hover,
 .btn-slide.light:focus-visible {
   color: #fff;
+}
+@media (hover: hover) {
+  .btn-slide.light:hover {
+    color: #fff;
+  }
 }
 
 
@@ -192,3 +201,6 @@ input:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .voice-pulse { animation: none; opacity: 0.35; }
 }
+
+/* in-page links land below the fixed header */
+html { scroll-padding-top: 96px; }

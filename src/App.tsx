@@ -7,6 +7,7 @@ import { ServiceStrip } from './components/home/ServiceStrip'
 import { WhatsOn } from './components/home/WhatsOn'
 import { Collections } from './components/home/Collections'
 import { Audiences } from './components/home/Audiences'
+import { Visit } from './components/home/Visit'
 import { Footer } from './components/home/Footer'
 import { SearchPanel } from './components/SearchPanel'
 
@@ -42,6 +43,7 @@ export default function App() {
           <WhatsOn />
           <Collections />
           <Audiences />
+          <Visit />
         </div>
       </main>
       <Footer />

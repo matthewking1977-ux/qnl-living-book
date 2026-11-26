@@ -1,12 +1,7 @@
+import { events } from '../../data/library'
 import { Photo, SampleTag, Section, SectionHead, TextLink } from './parts'
 
-const events = [
-  { img: 'hall', kind: 'Talk' },
-  { img: 'terraces', kind: 'Workshop' },
-  { img: 'mezzanine', kind: 'Exhibition' },
-]
-
-/** Three event cards. All content is SAMPLE: no real event names or dates. */
+/** Three event cards. Illustrative SAMPLE content: not real events. */
 export function WhatsOn() {
   return (
     <Section id="events">
@@ -22,8 +17,12 @@ export function WhatsOn() {
                 <p className="label text-g1">{e.kind}</p>
                 <SampleTag />
               </div>
-              <h3 className="mt-3 text-[20px] font-medium leading-snug">Event title placeholder</h3>
-              <p className="mt-2 text-[14px] text-g1">Date [TBC] · Location [TBC]</p>
+              <h3 className="mt-3 text-[20px] font-medium leading-snug">{e.title}</h3>
+              <p className="mt-2 text-[14px] text-g1">
+                {e.date} · {e.time}
+                <br />
+                {e.place}
+              </p>
             </a>
           </li>
         ))}

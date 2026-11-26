@@ -101,3 +101,17 @@ for (const f of supplied) {
     .toFile(dest)
   console.log(`m/${f}: ${w}x${h}, ${Math.round((await stat(dest)).size / 1024)} KB`)
 }
+
+// App store badges, cut from the supplied artwork (assets/badges/store-badges.webp).
+await mkdir('public/img/badges', { recursive: true })
+{
+  const src = 'assets/badges/store-badges.webp'
+  for (const [name, top, height] of [['google-play', 30, 655], ['app-store', 795, 625]]) {
+    const dest = `public/img/badges/${name}.webp`
+    if (await fresh(src, dest)) continue
+    const piece = await sharp(src).extract({ left: 30, top, width: 1950, height }).png().toBuffer()
+    await sharp(piece).trim({ threshold: 10 }).resize({ height: 120 }).webp({ quality: 90 }).toFile(dest)
+    const m = await sharp(dest).metadata()
+    console.log(`badges/${name}: ${m.width}x${m.height}`)
+  }
+}
